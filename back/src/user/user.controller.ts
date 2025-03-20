@@ -10,25 +10,26 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { UserService } from './user.service';
+import { User } from './interfaces/user.interface';
 
 @Controller('user')
 export class UserController {
+  constructor(private userService: UserService) {}
+
   @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<string> {
-    return 'This action adds a new user';
+  async create(@Body() createUserDto: CreateUserDto) {
+    this.userService.create(createUserDto);
   }
 
   @Get()
-  async findAll(
-    @Query('age') age: number,
-    @Query('name') name: string,
-  ): Promise<string> {
-    return `This action returns all users filtered by age: ${age} and name: ${name}`;
+  async findAll(): Promise<User[]> {
+    return this.userService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<string> {
-    return `This action returns a #${id} user`;
+  @Get(':name')
+  async findOne(@Param('name') name: string): Promise<User> {
+    return this.userService.findOne(name);
   }
 
   @Put(':id')

@@ -10,11 +10,16 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiBody({
+    type: CreateUserDto,
+    description: "Objeto para criação de um novo usuário."
+  })
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -30,6 +35,10 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
+  @ApiBody({
+    type: UpdateUserDto,
+    description: "Obejto para atualização de informações de um usuário."
+  })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);

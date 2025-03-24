@@ -1,0 +1,23 @@
+
+on:
+  push:
+    branches: 
+      - "main"
+    paths:
+      - "front/**"
+  pull_request:
+    branches: 
+      - "main"
+    paths:
+      - "front/**"
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build .front/ --file Dockerfile --tag front-pe-estudantes:$(date +%s)

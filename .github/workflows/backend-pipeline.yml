@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: 
+      - "main"
+    paths:
+      - "back/**"
+  pull_request:
+    branches: 
+      - "main"
+    paths:
+      - "back/**"
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build .back/ --file Dockerfile --tag back-pe-estudantes:$(date +%s)

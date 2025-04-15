@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  nest-app:
+    build: .
+    container_name: nest-backend
+    ports:
+      - 3001:3001
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres-db
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=meubanco
+    networks:
+      - nest-network
+    depends_on:
+      - postgres-db
+
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: meubanco
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - nest-network
+
+networks:
+  nest-network:
+    driver: bridge
+
+volumes:
+  pgdata:

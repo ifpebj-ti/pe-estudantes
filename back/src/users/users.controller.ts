@@ -20,7 +20,7 @@ export class UsersController {
   @Public()
   @ApiBody({
     type: CreateUserDto,
-    description: "Objeto para criação de um novo usuário."
+    description: 'Objeto para criação de um novo usuário.',
   })
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
@@ -39,7 +39,7 @@ export class UsersController {
 
   @ApiBody({
     type: UpdateUserDto,
-    description: "Obejto para atualização de informações de um usuário."
+    description: 'Obejto para atualização de informações de um usuário.',
   })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

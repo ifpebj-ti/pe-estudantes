@@ -19,10 +19,10 @@ export class UsersService {
     return this.prisma.user.findMany();
   }
 
-  async findOne(id: number) {
+  async findOne(email: string) {
     return this.prisma.user.findUnique({
       where: {
-        id: id,
+        email: email,
       }
     });
   }

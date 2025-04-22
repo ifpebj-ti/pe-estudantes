@@ -11,11 +11,13 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody } from '@nestjs/swagger';
+import { Public } from 'src/auth/constants/constants';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Public()
   @ApiBody({
     type: CreateUserDto,
     description: "Objeto para criação de um novo usuário."
@@ -30,9 +32,9 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get(':email')
+  findOne(@Param('email') email: string) {
+    return this.usersService.findOne(email);
   }
 
   @ApiBody({

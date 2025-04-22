@@ -10,7 +10,9 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const encryptedPassword = await hash(createUserDto.password, 10);
-    const userCreated = this.prisma.user.create({ data: {...createUserDto, password: encryptedPassword} });
+    const userCreated = this.prisma.user.create({
+      data: { ...createUserDto, password: encryptedPassword },
+    });
 
     return userCreated;
   }
@@ -19,18 +21,18 @@ export class UsersService {
     return this.prisma.user.findMany();
   }
 
-  async findOne(id: number) {
+  async findOne(email: string) {
     return this.prisma.user.findUnique({
       where: {
-        id: id,
-      }
+        email: email,
+      },
     });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     return this.prisma.user.update({
       where: { id: id },
-      data: { name: updateUserDto.name }
+      data: { name: updateUserDto.name },
     });
   }
 
@@ -38,7 +40,7 @@ export class UsersService {
     return this.prisma.user.delete({
       where: {
         id: id,
-      }
+      },
     });
   }
 }

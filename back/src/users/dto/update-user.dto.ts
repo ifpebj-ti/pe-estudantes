@@ -10,5 +10,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   })
   @IsNotEmpty({ message: 'O campo name não deve estar vazio.' })
   @IsString({ message: 'O campo name deve ser uma string.' })
-  name: string;
+  full_name: string;
 }

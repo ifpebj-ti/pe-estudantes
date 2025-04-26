@@ -14,8 +14,14 @@ datasource db {
 }
 
 model User {
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  name  String?
-  password String
+  id                   Int      @id @default(autoincrement())
+  full_name            String
+  cpf                  String   @unique
+  email                String   @unique
+  password             String
+  affliation           String? 
+  pedagogical_manager  String?  
+  created_at           DateTime @default(now())  
+  updated_at           DateTime @updatedAt     
+  deleted_at           DateTime?                
 }

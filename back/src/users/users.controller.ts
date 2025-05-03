@@ -20,7 +20,8 @@ export class UsersController {
   @Public()
   @ApiBody({
     type: CreateUserDto,
-    description: 'Objeto para criação de um novo usuário.',
+    description:
+      'Objeto para criação de um novo usuário, novos usuário são setados automaticamente com id_level 2 (Aluno/Família)',
   })
   @Post()
   create(@Body() createUserDto: CreateUserDto) {

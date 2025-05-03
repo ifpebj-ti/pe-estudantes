@@ -20,8 +20,21 @@ model User {
   email                String   @unique
   password             String
   affliation           String? 
-  pedagogical_manager  String?  
+  pedagogical_manager  String?
   created_at           DateTime @default(now())  
-  updated_at           DateTime @updatedAt     
-  deleted_at           DateTime?                
+  updated_at           DateTime? @updatedAt     
+  deleted_at           DateTime?
+
+  id_level             Int
+  level                Level   @relation(fields: [id_level], references: [id]) 
+}
+
+model Level {
+  id                   Int      @id @default(autoincrement())
+  name                 String   @unique
+  created_at           DateTime @default(now())  
+  updated_at           DateTime? @updatedAt     
+  deleted_at           DateTime? 
+
+  users                User[]    
 }

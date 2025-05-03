@@ -9,16 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@govbr-ds/react-components": "^2.1.0",
+    "@govbr-ds/webcomponents": "^2.0.0-next.38",
+    "next": "15.2.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.2.4"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@govbr-ds-testing/webcomponents": "^1.23.5",
+    "@govbr-ds-testing/webcomponents-react": "^1.23.5",
+    "@govbr-ds/core": "^3.6.1",
+    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }

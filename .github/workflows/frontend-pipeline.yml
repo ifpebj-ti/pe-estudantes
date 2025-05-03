@@ -11,50 +11,71 @@ on:
       - "front/**"
   workflow_dispatch:
 
+env:
+  IMAGE_NAME: front-pe-estudantes
+  REGISTRY: ghcr.io
+  TAG: ${{ github.sha }}
+
 jobs:
-  build:
+
+  # Stage 1: Build
+  build-code:
+    name: 1. Build (Lint & Code)
     runs-on: ubuntu-latest
 
-    env:
-      IMAGE_NAME: front-pe-estudantes
-      REGISTRY: ghcr.io
-      TAG: ${{ github.sha }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: ./front
+        run: npm ci
+
+      - name: 1.1 Lint
+        working-directory: ./front
+        run: npm run lint
+
+      - name: 1.2 Build frontend
+        working-directory: ./front
+        run: npm run build
+
+  # Stage 2: Docker Build & Push
+  docker-build-push:
+    name: 2. Build and Push Docker
+    runs-on: ubuntu-latest
+    needs: build-code
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # - name: Set up Node.js
-    #   uses: actions/setup-node@v4
-    #   with:
-    #     node-version: 20
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-    # - name: Install dependencies
-    #   working-directory: ./front
-    #   run: npm ci
+      - name: 2.1 Build Docker image
+        run: |
+          docker build ./front --file front/Dockerfile --tag $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG
 
-    # - name: Lint
-    #   working-directory: ./front
-    #   run: npm run lint
+      - name: 2.2 Push Docker image to GitHub Packages
+        run: |
+          docker push $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG
 
-    # - name: Build frontend
-    #   working-directory: ./front
-    #   run: npm run build
+  # Stage 3: Scan
+  scan-image:
+    name: 3. Scan Docker Image
+    runs-on: ubuntu-latest
+    needs: docker-build-push
 
-    - name: Login to GitHub Container Registry
-      run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-    - name: Build Docker image
-      run: |
-        docker build ./front --file front/Dockerfile --tag $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG
-
-    - name: Push Docker image to GitHub Packages
-      run: |
-        docker push $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG
-
-    - name: Scan image for vulnerabilities with Trivy
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ghcr.io/ifpebj-ti/front-pe-estudantes:${{ env.TAG }}
-        format: table
-        exit-code: 0
-        severity: CRITICAL,HIGH
+    steps:
+      - name: 3.1 Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/front-pe-estudantes:${{ env.TAG }}
+          format: table
+          exit-code: 0
+          severity: CRITICAL,HIGH

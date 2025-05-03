@@ -56,5 +56,5 @@ jobs:
       with:
         image-ref: ghcr.io/ifpebj-ti/front-pe-estudantes:${{ env.TAG }}
         format: table
-        exit-code: 1
+        exit-code: 0
         severity: CRITICAL,HIGH

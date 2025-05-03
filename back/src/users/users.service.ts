@@ -9,9 +9,15 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
+    const DEFAULT_LEVEL_ID = 2; // ID do nível Aluno/Estudante
+
     const encryptedPassword = await hash(createUserDto.password, 10);
     const userCreated = this.prisma.user.create({
-      data: { ...createUserDto, password: encryptedPassword },
+      data: {
+        ...createUserDto,
+        password: encryptedPassword,
+        id_level: DEFAULT_LEVEL_ID,
+      },
     });
 
     return userCreated;

@@ -8,7 +8,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Documentação API pe-estudantes')
     .setDescription(
-      'API criada para auxiliar estudantes e seus responsáveis com necessidades específicas especiais.',
+      'API criada para auxiliar estudantes com necessidades educacionais específicas.',
     )
     .setVersion('1.0')
     .build();

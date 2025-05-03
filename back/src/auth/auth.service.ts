@@ -22,7 +22,12 @@ export class AuthService {
       throw new UnauthorizedException('credenciais inválidas');
     }
 
-    const payload = { sub: user.id, email: user.email, name: user.full_name };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      name: user.full_name,
+      id_level: user.id_level,
+    };
 
     const token = {
       access_token: await this.jwtService.signAsync(payload),

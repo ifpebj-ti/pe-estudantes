@@ -1,4 +1,3 @@
-
 on:
   push:
     branches: 
@@ -12,12 +11,36 @@ on:
       - "front/**"
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build .front/ --file Dockerfile --tag front-pe-estudantes:$(date +%s)
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install dependencies
+      working-directory: ./front
+      run: npm ci
+
+    - name: Lint
+      working-directory: ./front
+      run: npm run lint
+
+    - name: Build frontend
+      working-directory: ./front
+      run: npm run build
+
+    - name: Build Docker image
+      run: docker build ./front --file front/Dockerfile --tag front-pe-estudantes:$(date +%s)
+
+    - name: Docker Scout analysis
+      uses: docker/scout-action@v1
+      with:
+        image: front-pe-estudantes:$(date +%s)
+        only-severities: critical,high
+        ignore-unchanged: true
+        token: ${{ secrets.GITHUB_TOKEN }}

@@ -12,8 +12,8 @@ export class CreateUserDto {
     description: 'Nome do usuário',
     example: 'Luizin',
   })
-  @IsNotEmpty({ message: 'O campo name não deve estar vazio.' })
-  @IsString({ message: 'O campo name deve ser uma string.' })
+  @IsNotEmpty({ message: 'O campo full_name não deve estar vazio.' })
+  @IsString({ message: 'O campo full_name deve ser uma string.' })
   full_name: string;
 
   @ApiProperty({
@@ -49,16 +49,27 @@ export class CreateUserDto {
   @ApiProperty({
     description: 'Filiação do usuário',
     example: 'Filiação',
+    required: false,
   })
   @IsOptional({ message: 'O campo affliation é opcional.' })
   @IsString({ message: 'O campo affliation deve ser uma string.' })
-  affliation: string;
+  affliation?: string;
 
   @ApiProperty({
     description: 'Responsável pedagógico',
     example: 'Luizin',
+    required: false,
   })
   @IsOptional({ message: 'O campo pedagogical_manager é opcional.' })
   @IsString({ message: 'O campo pedagogical_manager deve ser uma string.' })
-  pedagogical_manager: string;
+  pedagogical_manager?: string;
+
+  @ApiProperty({
+    description:
+      'O campo é setado automaticamente na criação do usuário como 2(Aluno/Família), não envie esse campo.',
+    default: 2,
+    readOnly: true,
+    required: false,
+  })
+  readonly id_level: number;
 }

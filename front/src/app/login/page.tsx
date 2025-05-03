@@ -1,19 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { BrInput, BrButton } from "@govbr-ds-testing/webcomponents-react";
 import Image from "next/image";
 
 import "@govbr-ds/core/dist/core.min.css";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Email:", email);
-    console.log("Password:", password);
     // Aqui você faria a chamada à API para autenticar
   };
 
@@ -44,7 +39,7 @@ export default function LoginPage() {
                 icon
                 class="w-full"
             >
-              <img slot="icon" src="/user.svg" alt="Ícone usuário"/>
+              <Image width={15} height={10} slot="icon" src="/user.svg" alt="Ícone usuário"/>
             </BrInput>
             <BrInput
                 label="Senha"
@@ -54,7 +49,7 @@ export default function LoginPage() {
                 icon
                 class="w-full"    
             >
-              <img slot="icon" src="/locker.svg" alt="Ícone usuário"/>
+              <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone usuário"/>
             </BrInput>
             <div className="flex items-center justify-end w-full">
               <a className="text-sm" href="/forgot-password">

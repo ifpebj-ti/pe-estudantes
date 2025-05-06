@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  nest-app:
+    image: ghcr.io/ifpebj-ti/back-pe-estudantes:be7ab62fa0e00692edf2d93b79573241b534192a
+    container_name: nest-backend
+    ports:
+      - 3001:3001
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+      NODE_ENV: "${NODE_ENV}"
+    networks:
+      - nest-network
+      - front-back-network
+    depends_on:
+      - postgres-db
+
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - nest-network
+
+  next-app:
+    image: ghcr.io/ifpebj-ti/front-pe-estudantes:ed42c7985c831f2b6631a6ab806a5b0b2d9f3588
+    container_name: next-frontend
+    ports:
+      - 8080:3000
+    networks:
+      - front-back-network
+    depends_on:
+      - nest-app
+
+networks:
+  nest-network:
+    driver: bridge
+
+  front-back-network:
+    driver: bridge
+
+volumes:
+  pgdata:

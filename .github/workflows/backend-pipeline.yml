@@ -1,5 +1,3 @@
-name: Docker Image CI
-
 on:
   push:
     branches: 
@@ -11,14 +9,79 @@ on:
       - "main"
     paths:
       - "back/**"
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: back-pe-estudantes
+  REGISTRY: ghcr.io
+  TAG: ${{ github.sha }}
 
 jobs:
 
-  build:
-
+  # Stage 1: Build
+  build-code:
+    name: 1. Build (Lint & Code)
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build .back/ --file Dockerfile --tag back-pe-estudantes:$(date +%s)
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: ./back
+        run: npm ci
+
+      - name: 1.1 Lint
+        working-directory: ./back
+        run: npm run lint
+
+      - name: 1.2 Build backend
+        working-directory: ./back
+        run: npm run build
+
+  # Stage 2: Docker Build & Push
+  docker-build-push:
+    name: 2. Build and Push Docker
+    runs-on: ubuntu-latest
+    needs: build-code
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: 2.1 Build Docker image
+        run: |
+          docker build ./back --file back/Dockerfile --tag $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG
+
+      - name: 2.2 Push Docker image to GitHub Packages
+        run: |
+          docker push $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG
+
+  # Stage 3: Scan
+  scan-image:
+    name: 3. Scan Docker Image
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        
+      - name: 3.1 Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/back-pe-estudantes:${{ env.TAG }}
+          format: table
+          exit-code: 0
+          severity: CRITICAL,HIGH

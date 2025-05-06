@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -18,6 +19,7 @@ async function main() {
       create: level,
     });
   }
+
   console.log('Seed concluída: 5 níveis de acesso adicionados.');
 }
 

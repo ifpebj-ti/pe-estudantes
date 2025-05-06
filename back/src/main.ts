@@ -5,6 +5,10 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: '*', // para dev, ou especifique seu domínio de frontend
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Documentação API pe-estudantes')
     .setDescription(
@@ -15,9 +19,11 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, documentFactory);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3001);
 }
+
 bootstrap().catch((err) => {
+  
   console.error('Erro ao iniciar a aplicação:', err);
   process.exit(1);
 });

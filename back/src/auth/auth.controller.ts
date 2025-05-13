@@ -33,7 +33,7 @@ export class AuthController {
   @Get('profile')
   @ApiBody({
     description:
-      'Para obter o perfil do usuário, basta passar o token na requisição.',
+      'Para obter o perfil do usuário, basta passar o token no header da requisição ex: "Authorization: "Bearer {token}""',
   })
   getProfile(@Request() req) {
     return req.user;

@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: '*', // para dev, ou especifique seu domínio de frontend
+    origin: '*',
   });
 
   const config = new DocumentBuilder()
@@ -23,7 +23,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((err) => {
-  
   console.error('Erro ao iniciar a aplicação:', err);
   process.exit(1);
 });

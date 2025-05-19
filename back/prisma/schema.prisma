@@ -38,3 +38,20 @@ model Level {
 
   users                User[]    
 }
+
+model Screening {
+  id                   Int      @id @default(autoincrement())
+  full_name            String
+  email                String   @unique
+  report               String?
+  specific_need        Json
+  special_service      Boolean
+  physical_disability  Json 
+  visual_impairment    Json
+  hearing_impairment   Json 
+  global_disorder      Json
+  other_disabilities   String?
+  created_at           DateTime @default(now())  
+  updated_at           DateTime? @updatedAt     
+  deleted_at           DateTime? 
+}

@@ -9,6 +9,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { ConfigModule } from '@nestjs/config';
 import { StudentsModule } from './students/students.module';
 import { LevelsModule } from './levels/levels.module';
+import { ScreeningsModule } from './screenings/screenings.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { LevelsModule } from './levels/levels.module';
     ConfigModule.forRoot({ isGlobal: true }),
     StudentsModule,
     LevelsModule,
+    ScreeningsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -3,20 +3,20 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { hash } from 'bcryptjs';
+import { LEVELS, PHASES } from 'src/constants';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    const DEFAULT_LEVEL_ID = 2; // ID do nível Aluno/Estudante
-
     const encryptedPassword = await hash(createUserDto.password, 10);
     const userCreated = this.prisma.user.create({
       data: {
         ...createUserDto,
         password: encryptedPassword,
-        id_level: DEFAULT_LEVEL_ID,
+        id_level: LEVELS.ALUNO_ESTUDANTE,
+        id_current_phase: PHASES.TRIAGEM
       },
     });
 

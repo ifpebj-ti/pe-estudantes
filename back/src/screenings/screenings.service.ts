@@ -5,13 +5,13 @@ import { PrismaService } from 'src/database/prisma.service';
 @Injectable()
 export class ScreeningsService {
   constructor(private prisma: PrismaService) {}
-  
+
   create(createScreeningDto: CreateScreeningDto) {
     const screeningCreated = this.prisma.screening.create({
-       data: createScreeningDto 
-      });
+      data: createScreeningDto,
+    });
 
-      return screeningCreated;
+    return screeningCreated;
   }
 
   findAll() {

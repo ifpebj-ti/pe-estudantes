@@ -14,44 +14,84 @@ datasource db {
 }
 
 model User {
-  id                   Int      @id @default(autoincrement())
-  full_name            String
-  cpf                  String   @unique
-  email                String   @unique
-  password             String
-  affliation           String? 
-  pedagogical_manager  String?
-  created_at           DateTime @default(now())  
-  updated_at           DateTime? @updatedAt     
-  deleted_at           DateTime?
+  id                  Int        @id @default(autoincrement())
+  full_name           String
+  cpf                 String     @unique
+  email               String     @unique
+  password            String
+  affliation          String?
+  pedagogical_manager String?
+  comments            Comments[]
+  created_at          DateTime   @default(now())
+  updated_at          DateTime?  @updatedAt
+  deleted_at          DateTime?
 
-  id_level             Int
-  level                Level   @relation(fields: [id_level], references: [id]) 
+  id_level Int
+  level    Level @relation(fields: [id_level], references: [id])
+
+  id_current_phase Int
+  current_phase    CurrentPhases @relation(fields: [id_current_phase], references: [id])
 }
 
 model Level {
-  id                   Int      @id @default(autoincrement())
-  name                 String   @unique
-  created_at           DateTime @default(now())  
-  updated_at           DateTime? @updatedAt     
-  deleted_at           DateTime? 
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
 
-  users                User[]    
+  users User[]
 }
 
 model Screening {
-  id                   Int      @id @default(autoincrement())
-  full_name            String
-  email                String   @unique
-  report               String?
-  specific_need        Json
-  special_service      Boolean
-  physical_disability  Json 
-  visual_impairment    Json
-  hearing_impairment   Json 
-  global_disorder      Json
-  other_disabilities   String?
-  created_at           DateTime @default(now())  
-  updated_at           DateTime? @updatedAt     
-  deleted_at           DateTime? 
+  id                  Int       @id @default(autoincrement())
+  full_name           String
+  email               String    @unique
+  report              String?
+  specific_need       Json
+  special_service     Boolean
+  physical_disability Json
+  visual_impairment   Json
+  hearing_impairment  Json
+  global_disorder     Json
+  other_disabilities  String?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime? @updatedAt
+  deleted_at          DateTime?
+}
+
+model Comments {
+  id         Int       @id @default(autoincrement())
+  comment    String
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
+
+  id_user Int
+  user    User @relation(fields: [id_user], references: [id])
+}
+
+model CurrentPhases {
+  id         Int       @id @default(autoincrement())
+  name       String
+  users      User[]
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
+  deleted_at DateTime?
+}
+
+model Anmnesis {
+  id                          Int       @id @default(autoincrement())
+  identification              Json
+  family_data                 Json
+  family_conditions           Json
+  mother_background           Json
+  verbal_language_three_years Json
+  development                 Json
+  sexuality                   Json
+  student_assessment          Json
+  student_development         Json
+  created_at                  DateTime  @default(now())
+  updated_at                  DateTime? @updatedAt
+  deleted_at                  DateTime?
 }

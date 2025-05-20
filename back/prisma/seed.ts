@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -20,7 +19,19 @@ async function main() {
     });
   }
 
-  console.log('Seed concluída: 5 níveis de acesso adicionados.');
+  const phases = [
+    { name: 'Triagem' },
+  ]
+
+  for (const phase of phases) {
+    await prisma.currentPhases.upsert({
+      where: { name: phase.name },
+      update: {},
+      create: phase,
+    });
+  }
+
+  console.log('Seed concluída');
 }
 
 main()

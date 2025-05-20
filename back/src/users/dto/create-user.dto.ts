@@ -72,4 +72,13 @@ export class CreateUserDto {
     required: false,
   })
   readonly id_level: number;
+
+  @ApiProperty({
+    description:
+      'O campo é setado automaticamente na criação do usuário como 1(Triagem), não envie esse campo.',
+    default: 1,
+    readOnly: true,
+    required: false,
+  })
+  readonly id_current_phase: number;
 }

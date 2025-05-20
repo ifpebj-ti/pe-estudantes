@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"prisma/**/*.prisma\"",
     "start": "nest start --env-file .env",
     "start:dev": "nest start --env-file .env --watch",
     "start:debug": "nest start --env-file .env --debug --watch",
@@ -38,6 +38,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "pg": "^8.14.1",
+    "prettier-plugin-prisma": "^5.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.21"

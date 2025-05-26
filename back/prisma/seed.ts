@@ -21,6 +21,7 @@ async function main() {
 
   const phases = [
     { name: 'Triagem' },
+    { name: 'Anamnese' },
   ]
 
   for (const phase of phases) {

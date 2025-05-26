@@ -10,6 +10,8 @@ import { ConfigModule } from '@nestjs/config';
 import { StudentsModule } from './students/students.module';
 import { LevelsModule } from './levels/levels.module';
 import { ScreeningsModule } from './screenings/screenings.module';
+import { PhasesModule } from './phases/phases.module';
+import { AnamnesisModule } from './anamnesis/anamnesis.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { ScreeningsModule } from './screenings/screenings.module';
     StudentsModule,
     LevelsModule,
     ScreeningsModule,
+    PhasesModule,
+    AnamnesisModule,
   ],
   controllers: [AppController],
   providers: [

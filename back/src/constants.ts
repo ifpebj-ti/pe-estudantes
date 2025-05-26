@@ -1,5 +1,6 @@
 export const PHASES = {
-  TRIAGEM: 1
+  TRIAGEM: 1,
+  ANAMNESE: 2,
 } as const;
 
 export const LEVELS = {

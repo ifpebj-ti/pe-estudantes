@@ -80,14 +80,16 @@ model CurrentPhases {
   deleted_at DateTime?
 }
 
-model Anmnesis {
+model Anamnesis {
   id                          Int       @id @default(autoincrement())
+  email String @unique
   identification              Json
   family_data                 Json
   family_conditions           Json
   mother_background           Json
   verbal_language_three_years Json
   development                 Json
+  school_information Json
   sexuality                   Json
   student_assessment          Json
   student_development         Json

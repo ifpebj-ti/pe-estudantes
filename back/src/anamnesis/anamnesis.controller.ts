@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { AnamnesisService } from './anamnesis.service';
 import { CreateAnamnesisDto } from './dto/create-anamnesis.dto';
+import { Levels } from 'src/auth/decorators/levels.decorator';
+import { LEVELS } from 'src/constants';
 
 @Controller('anamnesis')
 export class AnamnesisController {
@@ -11,6 +13,7 @@ export class AnamnesisController {
     return this.anamnesisService.create(createAnamnesisDto);
   }
 
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
   @Get()
   findAll() {
     return this.anamnesisService.findAll();

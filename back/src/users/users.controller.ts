@@ -12,6 +12,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody } from '@nestjs/swagger';
 import { Public } from 'src/auth/constants/constants';
+import { Levels } from 'src/auth/decorators/levels.decorator';
+import { LEVELS } from 'src/constants';
 
 @Controller('users')
 export class UsersController {
@@ -28,16 +30,19 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
   @Get(':email')
   findOne(@Param('email') email: string) {
     return this.usersService.findOne(email);
   }
 
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
   @ApiBody({
     type: UpdateUserDto,
     description: 'Obejto para atualização de informações de um usuário.',
@@ -47,6 +52,7 @@ export class UsersController {
     return this.usersService.update(+id, updateUserDto);
   }
 
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);

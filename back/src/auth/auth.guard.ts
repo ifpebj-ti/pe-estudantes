@@ -36,7 +36,21 @@ export class AuthGuard implements CanActivate {
       });
 
       request['user'] = payload;
-    } catch {
+
+      const requiredLevels =
+        this.reflector.get<number[]>('levels', context.getHandler()) || [];
+
+      if (
+        requiredLevels.length > 0 &&
+        requiredLevels.includes(payload.id_level)
+      ) {
+        throw new UnauthorizedException('Nível de acesso insuficiente');
+      }
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
       throw new UnauthorizedException('Token expirado');
     }
     return true;

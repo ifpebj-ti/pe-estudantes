@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ScreeningsService } from './screenings.service';
 import { CreateScreeningDto } from './dto/create-screening.dto';
+import { Levels } from 'src/auth/decorators/levels.decorator';
+import { LEVELS } from 'src/constants';
 
 @Controller('screenings')
 export class ScreeningsController {
@@ -11,6 +13,7 @@ export class ScreeningsController {
     return this.screeningsService.create(createScreeningDto);
   }
 
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
   @Get()
   findAll() {
     return this.screeningsService.findAll();

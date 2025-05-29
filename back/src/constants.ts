@@ -8,7 +8,7 @@ export const LEVELS = {
   ALUNO_ESTUDANTE: 2,
   PROFISSIONAL_EDUCACAO: 3,
   PROFISSIONAL_SAUDE: 4,
-  PROFESSOR: 5
+  PROFESSOR: 5,
 } as const;
 
 export type Phase = keyof typeof PHASES;

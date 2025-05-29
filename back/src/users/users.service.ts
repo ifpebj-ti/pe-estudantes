@@ -16,7 +16,7 @@ export class UsersService {
         ...createUserDto,
         password: encryptedPassword,
         id_level: LEVELS.ALUNO_ESTUDANTE,
-        id_current_phase: PHASES.TRIAGEM
+        id_current_phase: PHASES.TRIAGEM,
       },
     });
 

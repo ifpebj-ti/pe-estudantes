@@ -13,3 +13,4 @@ export const LEVELS = {
 
 export type Phase = keyof typeof PHASES;
 export type Level = keyof typeof LEVELS;
+export type LevelValue = (typeof LEVELS)[Level];

@@ -12,6 +12,7 @@ import { LevelsModule } from './levels/levels.module';
 import { ScreeningsModule } from './screenings/screenings.module';
 import { PhasesModule } from './phases/phases.module';
 import { AnamnesisModule } from './anamnesis/anamnesis.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AnamnesisModule } from './anamnesis/anamnesis.module';
     ScreeningsModule,
     PhasesModule,
     AnamnesisModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [

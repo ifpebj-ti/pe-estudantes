@@ -6,10 +6,10 @@ import { PrismaService } from 'src/database/prisma.service';
 @Injectable()
 export class PhasesService {
   constructor(private prisma: PrismaService) {}
-  
+
   create(createPhaseDto: CreatePhaseDto) {
     const phaseCreated = this.prisma.currentPhases.create({
-      data: createPhaseDto
+      data: createPhaseDto,
     });
 
     return phaseCreated;
@@ -30,7 +30,7 @@ export class PhasesService {
   update(id: number, updatePhaseDto: UpdatePhaseDto) {
     return this.prisma.currentPhases.update({
       where: { id: id },
-      data: { name: updatePhaseDto.name},
+      data: { name: updatePhaseDto.name },
     });
   }
 

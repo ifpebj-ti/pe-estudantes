@@ -4,6 +4,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { Levels } from 'src/auth/decorators/levels.decorator';
 import { LEVELS } from 'src/constants';
 import { ApiBody } from '@nestjs/swagger';
+import { AuthenticatedRequest } from './types/express';
 
 @Controller('comments')
 export class CommentsController {
@@ -15,14 +16,20 @@ export class CommentsController {
     description: 'Objeto para criação de um novo comentário.',
   })
   @Post()
-  async create(@Body() createCommentDto: CreateCommentDto, @Request() request) {
+  async create(
+    @Body() createCommentDto: CreateCommentDto,
+    @Request() request: AuthenticatedRequest,
+  ) {
     const idUser = request.user.sub;
 
     return this.commentsService.create(createCommentDto, idUser);
   }
 
   @Get(':id_user')
-  findAllByIdUser(@Param('id_user') id_user: string, @Request() request) {
+  findAllByIdUser(
+    @Param('id_user') id_user: string,
+    @Request() request: AuthenticatedRequest,
+  ) {
     return this.commentsService.findAllByIdUser(+id_user, request);
   }
 }

@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { LEVELS } from 'src/constants';
+import { AuthenticatedRequest } from './types/express';
 
 @Injectable()
 export class CommentsService {
@@ -18,7 +19,7 @@ export class CommentsService {
     return commentCreated;
   }
 
-  async findAllByIdUser(idUser: number, request) {
+  async findAllByIdUser(idUser: number, request: AuthenticatedRequest) {
     const isStudent = request.user.id_level === LEVELS.ALUNO_ESTUDANTE;
     const isViewingOtherProfile = request.user.sub !== idUser;
 

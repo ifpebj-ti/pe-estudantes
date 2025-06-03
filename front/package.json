@@ -11,6 +11,8 @@
   "dependencies": {
     "@govbr-ds/react-components": "^2.1.0",
     "@govbr-ds/webcomponents": "^2.0.0-next.38",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.511.0",
     "next": "15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

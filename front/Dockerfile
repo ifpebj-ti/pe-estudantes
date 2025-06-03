@@ -6,7 +6,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 WORKDIR /app
 
-# Dependencie
+# Dependenciews
 FROM base AS dependencies
 
 COPY package.json package-lock.json ./

@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
 import "@govbr-ds/core/dist/core.min.css";
 import AppLayout from "@/components/AppLayout";
 
@@ -18,13 +17,13 @@ const BrCheckbox = dynamic(() =>
 );
 
 export default function TriagemPage() {
-  const [formData, setFormData] = useState({
-    curso: "",
-    telefone: "",
-    email: "",
-    laudo: null,
-    necessidades: [],
-  });
+  // const [formData, setFormData] = useState({
+  //   curso: "",
+  //   telefone: "",
+  //   email: "",
+  //   laudo: null,
+  //   necessidades: [],
+  // });
 
   return (
     <AppLayout

@@ -5,7 +5,7 @@ services:
     image: ghcr.io/ifpebj-ti/back-pe-estudantes:be7ab62fa0e00692edf2d93b79573241b534192a
     container_name: nest-backend
     ports:
-      - 3001:3001
+      - 3001:30011
     environment:
       DATABASE_URL: "${DATABASE_URL}"
       NODE_ENV: "${NODE_ENV}"

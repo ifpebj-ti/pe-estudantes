@@ -5,5 +5,6 @@ export interface AuthenticatedRequest extends Request {
   user: {
     sub: number;
     id_level: number;
+    email: string;
   };
 }

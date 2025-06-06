@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsObject,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsObject } from 'class-validator';
 
 export class CreatePlansEducationDto {
   @ApiProperty({
@@ -129,7 +123,7 @@ export class CreatePlansEducationDto {
       agitacao_psicomotora: false,
       adequacao_postural: true,
       coordenacao_motora_equilibrio: true,
-      alimentacao_independente: true
+      alimentacao_independente: true,
     },
   })
   @IsNotEmpty({ message: 'O campo skills não deve estar vazio.' })
@@ -137,7 +131,8 @@ export class CreatePlansEducationDto {
   skills: object;
 
   @ApiProperty({
-    description: 'Tipo de recurso e/ou equipamento já utilizado pelo aluno em formato JSON',
+    description:
+      'Tipo de recurso e/ou equipamento já utilizado pelo aluno em formato JSON',
     example: {
       reduzir_quantidade_material_atividade: true,
       provas_orais_escrita_minima: true,
@@ -147,28 +142,38 @@ export class CreatePlansEducationDto {
       nao_avaliar_caligrafia_ortografia: true,
       concentrar_notas_originalidade_ideias: true,
       encorajar_pratica_escrita: true,
-      outro: 'Nenhum recurso adicional'
+      outro: 'Nenhum recurso adicional',
     },
   })
-  @IsNotEmpty({ message: 'O campo resource_equipment_used não deve estar vazio.' })
-  @IsObject({ message: 'O campo resource_equipment_used deve ser um objeto JSON.' })
+  @IsNotEmpty({
+    message: 'O campo resource_equipment_used não deve estar vazio.',
+  })
+  @IsObject({
+    message: 'O campo resource_equipment_used deve ser um objeto JSON.',
+  })
   resource_equipment_used: object;
 
   @ApiProperty({
-    description: 'Tipo de recurso e/ou equipamento que precisa ser providenciado para o aluno em formato JSON',
+    description:
+      'Tipo de recurso e/ou equipamento que precisa ser providenciado para o aluno em formato JSON',
     example: {
       acompanhante_sala_aula: true,
       adaptacao_metodologia_professor: true,
       compreensao_companheirismo_turma: true,
-      outro: ''
+      outro: '',
     },
   })
-  @IsNotEmpty({ message: 'O campo resource_equipment_needs não deve estar vazio.' })
-  @IsObject({ message: 'O campo resource_equipment_needs deve ser um objeto JSON.' })
+  @IsNotEmpty({
+    message: 'O campo resource_equipment_needs não deve estar vazio.',
+  })
+  @IsObject({
+    message: 'O campo resource_equipment_needs deve ser um objeto JSON.',
+  })
   resource_equipment_needs: object;
 
   @ApiProperty({
-    description: 'Implicações da necessidade educacional especial do aluno para a acessibilidade curricular em formato JSON',
+    description:
+      'Implicações da necessidade educacional especial do aluno para a acessibilidade curricular em formato JSON',
     example: {
       leitura_sem_entonacao: true,
       pronuncia_trocas_omissoes: true,
@@ -176,11 +181,15 @@ export class CreatePlansEducationDto {
       escrita_incorreta_ordem_letras: true,
       tempo_maior_trabalhos_escritos: true,
       disfuncao_linguagem_comunicacao: true,
-      outro: ''
+      outro: '',
     },
   })
-  @IsNotEmpty({ message: 'O campo curriculum_accessibility não deve estar vazio.' })
-  @IsObject({ message: 'O campo curriculum_accessibility deve ser um objeto JSON.' })
+  @IsNotEmpty({
+    message: 'O campo curriculum_accessibility não deve estar vazio.',
+  })
+  @IsObject({
+    message: 'O campo curriculum_accessibility deve ser um objeto JSON.',
+  })
   curriculum_accessibility: object;
 
   @ApiProperty({
@@ -192,16 +201,21 @@ export class CreatePlansEducationDto {
   school_content: string;
 
   @ApiProperty({
-    description: 'Descrever atividades que pretende desenvolver com o aluno em formato JSON',
+    description:
+      'Descrever atividades que pretende desenvolver com o aluno em formato JSON',
     example: {
       comunicacao_alternativa: true,
       informatica_acessivel: true,
       adequacao_material: true,
-      outro: ''
+      outro: '',
     },
   })
-  @IsNotEmpty({ message: 'O campo activities_to_be_developed não deve estar vazio.' })
-  @IsObject({ message: 'O campo activities_to_be_developed deve ser um objeto JSON.' })
+  @IsNotEmpty({
+    message: 'O campo activities_to_be_developed não deve estar vazio.',
+  })
+  @IsObject({
+    message: 'O campo activities_to_be_developed deve ser um objeto JSON.',
+  })
   activities_to_be_developed: object;
 
   @ApiProperty({
@@ -220,7 +234,7 @@ export class CreatePlansEducationDto {
       dialogos: true,
       visitas_tecnicas: true,
       atividades_grupo: true,
-      atividades_corte_colagem: true
+      atividades_corte_colagem: true,
     },
   })
   @IsNotEmpty({ message: 'O campo work_methodology não deve estar vazio.' })
@@ -236,7 +250,7 @@ export class CreatePlansEducationDto {
       apostilas: true,
       artigos: true,
       tablet: true,
-      outro: ''
+      outro: '',
     },
   })
   @IsNotEmpty({ message: 'O campo materials_used não deve estar vazio.' })
@@ -252,7 +266,7 @@ export class CreatePlansEducationDto {
       participacao_individual: true,
       uso_ferramentas_tecnologicas: true,
       fotos_videos_relatos: true,
-      outro: ''
+      outro: '',
     },
   })
   @IsNotEmpty({ message: 'O campo evaluation_criteria não deve estar vazio.' })

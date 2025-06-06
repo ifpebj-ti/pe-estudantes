@@ -10,7 +10,7 @@ export class PlansEducationService {
 
   create(createPlansEducationDto: CreatePlansEducationDto) {
     const plansEducationCreated = this.prisma.plansEducation.create({
-      data: createPlansEducationDto
+      data: createPlansEducationDto,
     });
 
     return plansEducationCreated;
@@ -33,7 +33,7 @@ export class PlansEducationService {
     const planEducation = this.prisma.plansEducation.findUnique({
       where: {
         student_email: email,
-      }
+      },
     });
     return planEducation;
   }

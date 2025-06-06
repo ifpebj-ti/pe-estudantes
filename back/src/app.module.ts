@@ -13,6 +13,7 @@ import { ScreeningsModule } from './screenings/screenings.module';
 import { PhasesModule } from './phases/phases.module';
 import { AnamnesisModule } from './anamnesis/anamnesis.module';
 import { CommentsModule } from './comments/comments.module';
+import { PlansEducationModule } from './plans-education/plans-education.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CommentsModule } from './comments/comments.module';
     PhasesModule,
     AnamnesisModule,
     CommentsModule,
+    PlansEducationModule,
   ],
   controllers: [AppController],
   providers: [

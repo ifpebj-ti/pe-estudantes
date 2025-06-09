@@ -239,13 +239,13 @@ export default function TriagemPage() {
           </div>
         </div>
         {/* Repetir estrutura similar para as outras seções: Visual, Auditiva, Transtornos, Outros */}
-        <div className="flex justify-center mt-8">
-          <BrButton type="button" >
-            Voltar
-          </BrButton>
-          <BrButton type="submit" >
-            Salvar
-          </BrButton>
+        <div className="flex justify-center gap-4 mt-8">
+            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full">
+                Voltar
+            </button>
+            <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full">
+                Salvar
+            </button>
         </div>
       </div>
     </AppLayout>

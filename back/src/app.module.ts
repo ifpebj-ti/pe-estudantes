@@ -34,5 +34,6 @@ import { PlansEducationModule } from './plans-education/plans-education.module';
     PrismaService,
     { provide: APP_GUARD, useClass: AuthGuard },
   ],
+  exports: [AppService]
 })
 export class AppModule {}

@@ -31,7 +31,7 @@ export class CreateScreeningDto {
   })
   @IsOptional()
   @IsString({ message: 'O campo report deve ser uma string.' })
-  report?: string;
+  report: string;
 
   @ApiProperty({
     description: 'Necessidades específicas em formato JSON',
@@ -115,5 +115,5 @@ export class CreateScreeningDto {
   })
   @IsOptional()
   @IsString({ message: 'O campo other_disabilities deve ser uma string.' })
-  other_disabilities?: string;
+  other_disabilities: string;
 }

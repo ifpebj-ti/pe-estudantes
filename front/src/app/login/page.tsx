@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import Image from "next/image";
 import "@govbr-ds/core/dist/core.min.css";
+import { login } from "@/services/auth";
+import { useRouter } from "next/navigation";
 
 // Importação dinâmica para evitar erro de hydration
 const BrInput = dynamic(() =>
@@ -15,17 +17,19 @@ const BrButton = dynamic(() =>
 );
 
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3001/");
-      const data = await response.text();
-      setMensagem(data);
+      await login(email, password);
+      router.push("/home");
     } catch (error) {
-      setMensagem("Erro ao conectar com o servidor.");
+      setMensagem("Erro ao fazer login.");
       console.error(error);
     }
   };
@@ -57,6 +61,7 @@ export default function LoginPage() {
             pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
             icon
             class="w-full"
+            onInput={(e: any) => setEmail(e.target.value)}
           >
             <Image width={15} height={10} slot="icon" src="/user.svg" alt="Ícone usuário" />
           </BrInput>
@@ -68,6 +73,7 @@ export default function LoginPage() {
             pattern="[0-9]{8,11}"
             icon
             class="w-full"
+            onInput={(e: any) => setPassword(e.target.value)}
           >
             <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone senha" />
           </BrInput>

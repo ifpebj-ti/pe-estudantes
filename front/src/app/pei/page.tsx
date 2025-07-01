@@ -16,7 +16,7 @@ export default function PEIPage() {
   return (
     <AppLayout
       breadcrumbs={[
-        { href: '/', label: 'Página Inicial' },
+        { href: '/home', label: 'Página Inicial' },
         { href: '/joao-bosco', label: 'João Bosco de Siqueira Filho' },
         { href: '/pei', label: 'PEI' },
       ]}

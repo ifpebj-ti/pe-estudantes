@@ -16,7 +16,7 @@ export default function AnamnesePage() {
   return (
     <AppLayout
       breadcrumbs={[
-        { href: '/', label: 'Página Inicial' },
+        { href: '/home', label: 'Página Inicial' },
         { href: '/joao-bosco', label: 'João Bosco de Siqueira Filho' },
         { href: '/anamnese', label: 'Anamnese' },
       ]}

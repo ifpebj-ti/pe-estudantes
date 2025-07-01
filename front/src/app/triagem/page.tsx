@@ -28,7 +28,7 @@ export default function TriagemPage() {
   return (
     <AppLayout
       breadcrumbs={[
-          { href: '/', label: 'Página Inicial' },
+          { href: '/home', label: 'Página Inicial' },
           { href: '/joao-bosco', label: 'João Bosco de Siqueira Filho' },
           { href: '/triagem', label: 'Triagem' },
         ]}

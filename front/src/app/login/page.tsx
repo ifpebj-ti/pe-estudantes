@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import Image from "next/image";
 import "@govbr-ds/core/dist/core.min.css";
-import { login } from "@/services/auth";
+import { login } from "@/services/auth/login";
 import { useRouter } from "next/navigation";
 
 // Importação dinâmica para evitar erro de hydration
@@ -99,7 +99,7 @@ export default function LoginPage() {
           )}
 
           <div className="flex items-center justify-center w-full">
-            <a className="text-lg" href="/forgot-password">
+            <a className="text-lg" href="/register">
               Primeiro Acesso?
             </a>
           </div>

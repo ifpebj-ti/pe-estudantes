@@ -172,7 +172,7 @@ jobs:
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/back-${{ github.event.repository.name }}:${{ env.TAG }}
           format: table
           exit-code: 0
           severity: CRITICAL,HIGH

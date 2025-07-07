@@ -7,6 +7,7 @@
 ![Open PRs](https://img.shields.io/github/issues-pr/ifpebj-ti/pe-estudantes)
 ![Forks](https://img.shields.io/github/forks/ifpebj-ti/pe-estudantes)
 ![Stars](https://img.shields.io/github/stars/ifpebj-ti/pe-estudantes)
+![Coverage](https://img.shields.io/badge/Coverage-0%25-lightgrey) <!-- COVERAGE_BADGE -->
 
 # 🏫 Prontuário Eletrônico para Estudantes NEE
 

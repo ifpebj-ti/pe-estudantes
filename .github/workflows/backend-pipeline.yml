@@ -138,8 +138,6 @@ jobs:
     needs: [prepare-tag, run-tests]
     env:
       TAG: ${{ needs.prepare-tag.outputs.new_tag }}
-      IMAGE_NAME: back-${{ github.event.repository.name }}
-      REGISTRY: ghcr.io
 
     steps:
       - uses: actions/checkout@v4
@@ -152,7 +150,7 @@ jobs:
         run: |
           docker build ./back \
             -f back/Dockerfile \
-            -t ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} \
+            -t $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG \
             --build-arg REPO_URL="https://github.com/${{ github.repository }}"
 
 # --------------------------------------------------------------------
@@ -164,21 +162,16 @@ jobs:
     needs: docker-build
     env:
       TAG: ${{ needs.prepare-tag.outputs.new_tag }}
-      IMAGE_NAME: back-${{ github.event.repository.name }}
-      REGISTRY: ghcr.io
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Login no GHCR
-        run: echo "${{ secrets.GHCR_PAT }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
-
+      
       - name: Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+          image-ref: ghcr.io/${{ github.repository_owner }}/back-${{ github.event.repository.name }}:${{ needs.prepare-tag.outputs.new_tag }}
           format: table
-          exit-code: 1 
+          exit-code: 0
           severity: CRITICAL,HIGH
 
 

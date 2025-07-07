@@ -112,13 +112,22 @@ jobs:
   
       - name: Atualizar badge no README
         run: |
+          # Atualizar badge no README.md
           BADGE="![Coverage](https://img.shields.io/badge/Coverage-${{ steps.coverage.outputs.coverage }}%25-brightgreen)"
           sed -i '0,/<!-- COVERAGE_BADGE -->/s|.*<!-- COVERAGE_BADGE -->|'"$BADGE"' <!-- COVERAGE_BADGE -->|' README.md
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md
-          git commit -m "ci: atualizar badge de cobertura para ${{ steps.coverage.outputs.coverage }}%"
-          git push
+        
+          # Configurar autenticação com GitHub CLI
+          echo "${{ secrets.GHCR_PAT }}" | gh auth login --with-token
+        
+          # Fazer commit e push via GitHub API
+          gh api \
+            --method PUT \
+            -H "Accept: application/vnd.github.v3+json" \
+            /repos/${{ github.repository }}/contents/README.md \
+            -f message="ci: atualizar badge de cobertura para ${{ steps.coverage.outputs.coverage }}%" \
+            -f content="$(base64 -w0 README.md)" \
+            -f sha="$(gh api repos/${{ github.repository }}/contents/README.md --jq .sha)"
+
 
 # --------------------------------------------------------------------
 # 3) BUILD & PUSH ----------------------------------------------------

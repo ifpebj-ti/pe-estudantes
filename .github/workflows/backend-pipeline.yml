@@ -7,7 +7,7 @@ on:
     paths:
       - 'back/**'
   workflow_dispatch:
-
+  
 env:
   IMAGE_NAME: back-${{ github.event.repository.name }}
   REGISTRY: ghcr.io
@@ -131,7 +131,7 @@ jobs:
 # --------------------------------------------------------------------
 # 3) SONARQUBE ANALYSIS ----------------------------------------------
 # --------------------------------------------------------------------
-build-and-analyze:
+  build-and-analyze:
     runs-on: ubuntu-latest
 
     steps:
@@ -157,14 +157,14 @@ build-and-analyze:
         uses: sonarsource/sonarqube-scan-action@v2.0.2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: http://sonar-ifpe.eastus2.cloudapp.azure.com:9000
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           projectBaseDir: back
 
 # --------------------------------------------------------------------
 # 4) BUILD, SCAN & PUSH DOCKER IMAGE ---------------------------------
 # --------------------------------------------------------------------
-docker-build-scan-push:
+  docker-build-scan-push:
     name: 4. Build, Scan and Push Docker Image
     runs-on: ubuntu-latest
     needs: [prepare-tag]
@@ -217,7 +217,7 @@ docker-build-scan-push:
       TIPO:    ${{ needs.prepare-tag.outputs.tipo }}
     steps:
       - uses: actions/checkout@v4
-
+    
       - name: Publicar release
         uses: softprops/action-gh-release@v1
         with:

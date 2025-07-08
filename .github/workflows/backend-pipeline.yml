@@ -2,7 +2,7 @@ name: backend-pipeline
 
 on:
   pull_request:
-    types: [closed]         
+    types: [closed]
     branches: [ "main" ]
     paths:
       - 'back/**'
@@ -109,7 +109,7 @@ jobs:
           COVERAGE=$(jq '.total.lines.pct' coverage/coverage-summary.json)
           echo "Cobertura total: $COVERAGE%"
           echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
-  
+
       - name: Atualizar badge no README
         run: |
           # Atualizar badge no README.md
@@ -128,14 +128,45 @@ jobs:
             -f content="$(base64 -w0 README.md)" \
             -f sha="$(gh api repos/${{ github.repository }}/contents/README.md --jq .sha)"
 
+# --------------------------------------------------------------------
+# 3) SONARQUBE ANALYSIS ----------------------------------------------
+# --------------------------------------------------------------------
+  sonarqube-analysis:
+    name: 3. Analisar código com SonarQube
+    runs-on: ubuntu-latest
+    needs: run-tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependências
+        working-directory: ./back
+        run: npm ci
+
+      - name: Rodar análise SonarQube
+        working-directory: ./back
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+        run: |
+          npm install -g sonarqube-scanner
+          npx sonar-scanner \
+            -Dsonar.projectKey=${{ github.repository }}-back \
+            -Dsonar.organization=${{ github.repository_owner }} \
+            -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
 # --------------------------------------------------------------------
-# 3) BUILD, SCAN & PUSH DOCKER IMAGE ---------------------------------
+# 4) BUILD, SCAN & PUSH DOCKER IMAGE ---------------------------------
 # --------------------------------------------------------------------
   docker-build-scan-push:
-    name: 3. Build, Scan and Push Docker Image
+    name: 4. Build, Scan and Push Docker Image
     runs-on: ubuntu-latest
-    needs: [prepare-tag, run-tests]
+    needs: [prepare-tag, sonarqube-analysis]
     env:
       TAG: ${{ needs.prepare-tag.outputs.new_tag }}
       IMAGE_NAME: back-${{ github.event.repository.name }}
@@ -162,7 +193,7 @@ jobs:
         with:
           image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
           format: table
-          exit-code: 1 # Falha se encontrar CRITICAL ou HIGH
+          exit-code: 1
           severity: CRITICAL,HIGH
 
       # Push Docker image
@@ -174,10 +205,10 @@ jobs:
           docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
 
 # --------------------------------------------------------------------
-# 4) CREATE RELEASE --------------------------------------------------
+# 5) CREATE RELEASE --------------------------------------------------
 # --------------------------------------------------------------------
   create-release:
-    name: 4. Criar release
+    name: 5. Criar release
     runs-on: ubuntu-latest
     needs: [docker-build-scan-push, prepare-tag]
     env:

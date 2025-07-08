@@ -154,7 +154,7 @@ jobs:
   docker-build-scan-push:
     name: 4. Build, Scan and Push Docker Image
     runs-on: ubuntu-latest
-    needs: build-and-analyze
+    needs: [build-and-analyze, prepare-tag]
     env:
       TAG: ${{ needs.prepare-tag.outputs.new_tag }}
       IMAGE_NAME: back-${{ github.event.repository.name }}

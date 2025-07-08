@@ -36,11 +36,17 @@ describe('PhasesService', () => {
   describe('create', () => {
     it('should create a phase', async () => {
       const createPhaseDto = { name: 'Test Phase' };
-      const createdPhase = { id: 1, created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, ...createPhaseDto };
+      const createdPhase = {
+        id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        ...createPhaseDto,
+      };
 
-      jest.spyOn(prisma.currentPhases, 'create').mockResolvedValue(createdPhase);
+      jest
+        .spyOn(prisma.currentPhases, 'create')
+        .mockResolvedValue(createdPhase);
 
       const result = await service.create(createPhaseDto);
 
@@ -53,12 +59,25 @@ describe('PhasesService', () => {
 
   describe('findAll', () => {
     it('should return an array of phases', async () => {
-      const phasesList = [{ id: 1, name: 'Phase 1', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null }, { id: 2, name: 'Phase 2', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null }];
-      jest.spyOn(prisma.currentPhases, 'findMany').mockResolvedValue(phasesList);
+      const phasesList = [
+        {
+          id: 1,
+          name: 'Phase 1',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        },
+        {
+          id: 2,
+          name: 'Phase 2',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        },
+      ];
+      jest
+        .spyOn(prisma.currentPhases, 'findMany')
+        .mockResolvedValue(phasesList);
 
       const result = await service.findAll();
 
@@ -70,9 +89,13 @@ describe('PhasesService', () => {
   describe('findOne', () => {
     it('should return a single phase by ID', async () => {
       const id = 1;
-      const phase = { id: 1, name: 'Test Phase', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null };
+      const phase = {
+        id: 1,
+        name: 'Test Phase',
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
       jest.spyOn(prisma.currentPhases, 'findUnique').mockResolvedValue(phase);
 
       const result = await service.findOne(id);
@@ -88,11 +111,17 @@ describe('PhasesService', () => {
     it('should update a phase', async () => {
       const id = 1;
       const updatePhaseDto = { name: 'Updated Phase' };
-      const updatedPhase = { id: 1, created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, ...updatePhaseDto };
+      const updatedPhase = {
+        id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        ...updatePhaseDto,
+      };
 
-      jest.spyOn(prisma.currentPhases, 'update').mockResolvedValue(updatedPhase);
+      jest
+        .spyOn(prisma.currentPhases, 'update')
+        .mockResolvedValue(updatedPhase);
 
       const result = await service.update(id, updatePhaseDto);
 
@@ -107,11 +136,17 @@ describe('PhasesService', () => {
   describe('remove', () => {
     it('should remove a phase', async () => {
       const id = 1;
-      const removedPhase = { id: 1, name: 'Removed Phase', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null };
+      const removedPhase = {
+        id: 1,
+        name: 'Removed Phase',
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
 
-      jest.spyOn(prisma.currentPhases, 'delete').mockResolvedValue(removedPhase);
+      jest
+        .spyOn(prisma.currentPhases, 'delete')
+        .mockResolvedValue(removedPhase);
 
       const result = await service.remove(id);
 
@@ -122,5 +157,3 @@ describe('PhasesService', () => {
     });
   });
 });
-
-

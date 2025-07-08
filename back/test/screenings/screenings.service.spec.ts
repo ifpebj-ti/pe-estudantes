@@ -34,47 +34,55 @@ describe('ScreeningsService', () => {
   describe('create', () => {
     it('should create a screening', async () => {
       const createScreeningDto = {
-          full_name: "João Silva",
-          email: "joao@example.com",
-          report: "Link do Relatório Médico",
-          specific_need: {
-              "deficiencia_fisica": true,
-              "deficiencia_auditiva": true,
-              "baixa_visao": true,
-              "cegueira": true,
-              "surdocegueira": true,
-              "transtornos_globais_de_desenvolvimento": true,
-              "superdotacao": true,
-              "disturbio_de_aprendizagem": true,
-              "outros": "Algum outro tipo"
-          },
-          special_service: true,
-          physical_disability: {
-              "necessita_de_transcritor": true,
-              "acesso_para_cadeirante": true,
-              "outros": "Algum outro tipo"
-          },
-          visual_impairment: {
-              "necessita_de_braille": true,
-              "material_com_fonte_aumentada": true,
-              "necessita_de_transcritor": true,
-              "outros": "Algum outro tipo"
-          },
-          hearing_impairment: {
-              "necessita_de_interprete_de_lingua_de_sinais": true,
-              "necessita_de_interprete_oralizador": true,
-              "outros": "Algum outro tipo"
-          },
-          global_disorder: {
-              "necessita_de_ledor": true,
-              "necessita_de_transcritor": true,
-              "outros": "Algum outro tipo"
-          },
-          other_disabilities: "Descrição de outras deficiências não listadas"
+        full_name: 'João Silva',
+        email: 'joao@example.com',
+        report: 'Link do Relatório Médico',
+        specific_need: {
+          deficiencia_fisica: true,
+          deficiencia_auditiva: true,
+          baixa_visao: true,
+          cegueira: true,
+          surdocegueira: true,
+          transtornos_globais_de_desenvolvimento: true,
+          superdotacao: true,
+          disturbio_de_aprendizagem: true,
+          outros: 'Algum outro tipo',
+        },
+        special_service: true,
+        physical_disability: {
+          necessita_de_transcritor: true,
+          acesso_para_cadeirante: true,
+          outros: 'Algum outro tipo',
+        },
+        visual_impairment: {
+          necessita_de_braille: true,
+          material_com_fonte_aumentada: true,
+          necessita_de_transcritor: true,
+          outros: 'Algum outro tipo',
+        },
+        hearing_impairment: {
+          necessita_de_interprete_de_lingua_de_sinais: true,
+          necessita_de_interprete_oralizador: true,
+          outros: 'Algum outro tipo',
+        },
+        global_disorder: {
+          necessita_de_ledor: true,
+          necessita_de_transcritor: true,
+          outros: 'Algum outro tipo',
+        },
+        other_disabilities: 'Descrição de outras deficiências não listadas',
       };
-      const createdScreening = { id: 1, created_at: new Date(), updated_at: new Date(), deleted_at: null, ...createScreeningDto };
+      const createdScreening = {
+        id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        ...createScreeningDto,
+      };
 
-      jest.spyOn(prisma.screening, 'create').mockResolvedValue(createdScreening);
+      jest
+        .spyOn(prisma.screening, 'create')
+        .mockResolvedValue(createdScreening);
 
       const result = await service.create(createScreeningDto);
 
@@ -89,93 +97,95 @@ describe('ScreeningsService', () => {
     it('should return an array of screenings', async () => {
       const screeningsList = [
         {
-            id: 1,
-            full_name: "João Silva",
-            email: "joao@example.com",
-            report: "Link do Relatório Médico",
-            specific_need: {
-                "deficiencia_fisica": true,
-                "deficiencia_auditiva": true,
-                "baixa_visao": true,
-                "cegueira": true,
-                "surdocegueira": true,
-                "transtornos_globais_de_desenvolvimento": true,
-                "superdotacao": true,
-                "disturbio_de_aprendizagem": true,
-                "outros": "Algum outro tipo"
-            },
-            special_service: true,
-            physical_disability: {
-                "necessita_de_transcritor": true,
-                "acesso_para_cadeirante": true,
-                "outros": "Algum outro tipo"
-            },
-            visual_impairment: {
-                "necessita_de_braille": true,
-                "material_com_fonte_aumentada": true,
-                "necessita_de_transcritor": true,
-                "outros": "Algum outro tipo"
-            },
-            hearing_impairment: {
-                "necessita_de_interprete_de_lingua_de_sinais": true,
-                "necessita_de_interprete_oralizador": true,
-                "outros": "Algum outro tipo"
-            },
-            global_disorder: {
-                "necessita_de_ledor": true,
-                "necessita_de_transcritor": true,
-                "outros": "Algum outro tipo"
-            },
-            other_disabilities: "Descrição de outras deficiências não listadas",
-            created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null,
+          id: 1,
+          full_name: 'João Silva',
+          email: 'joao@example.com',
+          report: 'Link do Relatório Médico',
+          specific_need: {
+            deficiencia_fisica: true,
+            deficiencia_auditiva: true,
+            baixa_visao: true,
+            cegueira: true,
+            surdocegueira: true,
+            transtornos_globais_de_desenvolvimento: true,
+            superdotacao: true,
+            disturbio_de_aprendizagem: true,
+            outros: 'Algum outro tipo',
+          },
+          special_service: true,
+          physical_disability: {
+            necessita_de_transcritor: true,
+            acesso_para_cadeirante: true,
+            outros: 'Algum outro tipo',
+          },
+          visual_impairment: {
+            necessita_de_braille: true,
+            material_com_fonte_aumentada: true,
+            necessita_de_transcritor: true,
+            outros: 'Algum outro tipo',
+          },
+          hearing_impairment: {
+            necessita_de_interprete_de_lingua_de_sinais: true,
+            necessita_de_interprete_oralizador: true,
+            outros: 'Algum outro tipo',
+          },
+          global_disorder: {
+            necessita_de_ledor: true,
+            necessita_de_transcritor: true,
+            outros: 'Algum outro tipo',
+          },
+          other_disabilities: 'Descrição de outras deficiências não listadas',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
         },
         {
-            id: 2,
-            full_name: "João Silva",
-            email: "joao@example.com",
-            report: "Link do Relatório Médico",
-            specific_need: {
-                "deficiencia_fisica": true,
-                "deficiencia_auditiva": true,
-                "baixa_visao": true,
-                "cegueira": true,
-                "surdocegueira": true,
-                "transtornos_globais_de_desenvolvimento": true,
-                "superdotacao": true,
-                "disturbio_de_aprendizagem": true,
-                "outros": "Algum outro tipo"
-            },
-            special_service: true,
-            physical_disability: {
-                "necessita_de_transcritor": true,
-                "acesso_para_cadeirante": true,
-                "outros": "Algum outro tipo"
-            },
-            visual_impairment: {
-                "necessita_de_braille": true,
-                "material_com_fonte_aumentada": true,
-                "necessita_de_transcritor": true,
-                "outros": "Algum outro tipo"
-            },
-            hearing_impairment: {
-                "necessita_de_interprete_de_lingua_de_sinais": true,
-                "necessita_de_interprete_oralizador": true,
-                "outros": "Algum outro tipo"
-            },
-            global_disorder: {
-                "necessita_de_ledor": true,
-                "necessita_de_transcritor": true,
-                "outros": "Algum outro tipo"
-            },
-            other_disabilities: "Descrição de outras deficiências não listadas",
-            created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null,
-        }
+          id: 2,
+          full_name: 'João Silva',
+          email: 'joao@example.com',
+          report: 'Link do Relatório Médico',
+          specific_need: {
+            deficiencia_fisica: true,
+            deficiencia_auditiva: true,
+            baixa_visao: true,
+            cegueira: true,
+            surdocegueira: true,
+            transtornos_globais_de_desenvolvimento: true,
+            superdotacao: true,
+            disturbio_de_aprendizagem: true,
+            outros: 'Algum outro tipo',
+          },
+          special_service: true,
+          physical_disability: {
+            necessita_de_transcritor: true,
+            acesso_para_cadeirante: true,
+            outros: 'Algum outro tipo',
+          },
+          visual_impairment: {
+            necessita_de_braille: true,
+            material_com_fonte_aumentada: true,
+            necessita_de_transcritor: true,
+            outros: 'Algum outro tipo',
+          },
+          hearing_impairment: {
+            necessita_de_interprete_de_lingua_de_sinais: true,
+            necessita_de_interprete_oralizador: true,
+            outros: 'Algum outro tipo',
+          },
+          global_disorder: {
+            necessita_de_ledor: true,
+            necessita_de_transcritor: true,
+            outros: 'Algum outro tipo',
+          },
+          other_disabilities: 'Descrição de outras deficiências não listadas',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        },
       ];
-      jest.spyOn(prisma.screening, 'findMany').mockResolvedValue(screeningsList);
+      jest
+        .spyOn(prisma.screening, 'findMany')
+        .mockResolvedValue(screeningsList);
 
       const result = await service.findAll();
 
@@ -189,45 +199,45 @@ describe('ScreeningsService', () => {
       const email = 'test@example.com';
       const screening = {
         id: 1,
-        full_name: "João Silva",
-        email: "joao@example.com",
-        report: "Link do Relatório Médico",
+        full_name: 'João Silva',
+        email: 'joao@example.com',
+        report: 'Link do Relatório Médico',
         specific_need: {
-            "deficiencia_fisica": true,
-            "deficiencia_auditiva": true,
-            "baixa_visao": true,
-            "cegueira": true,
-            "surdocegueira": true,
-            "transtornos_globais_de_desenvolvimento": true,
-            "superdotacao": true,
-            "disturbio_de_aprendizagem": true,
-            "outros": "Algum outro tipo"
+          deficiencia_fisica: true,
+          deficiencia_auditiva: true,
+          baixa_visao: true,
+          cegueira: true,
+          surdocegueira: true,
+          transtornos_globais_de_desenvolvimento: true,
+          superdotacao: true,
+          disturbio_de_aprendizagem: true,
+          outros: 'Algum outro tipo',
         },
         special_service: true,
         physical_disability: {
-            "necessita_de_transcritor": true,
-            "acesso_para_cadeirante": true,
-            "outros": "Algum outro tipo"
+          necessita_de_transcritor: true,
+          acesso_para_cadeirante: true,
+          outros: 'Algum outro tipo',
         },
         visual_impairment: {
-            "necessita_de_braille": true,
-            "material_com_fonte_aumentada": true,
-            "necessita_de_transcritor": true,
-            "outros": "Algum outro tipo"
+          necessita_de_braille: true,
+          material_com_fonte_aumentada: true,
+          necessita_de_transcritor: true,
+          outros: 'Algum outro tipo',
         },
         hearing_impairment: {
-            "necessita_de_interprete_de_lingua_de_sinais": true,
-            "necessita_de_interprete_oralizador": true,
-            "outros": "Algum outro tipo"
+          necessita_de_interprete_de_lingua_de_sinais: true,
+          necessita_de_interprete_oralizador: true,
+          outros: 'Algum outro tipo',
         },
         global_disorder: {
-            "necessita_de_ledor": true,
-            "necessita_de_transcritor": true,
-            "outros": "Algum outro tipo"
+          necessita_de_ledor: true,
+          necessita_de_transcritor: true,
+          outros: 'Algum outro tipo',
         },
-        other_disabilities: "Descrição de outras deficiências não listadas",
-        created_at: new Date(), 
-        updated_at: new Date(), 
+        other_disabilities: 'Descrição de outras deficiências não listadas',
+        created_at: new Date(),
+        updated_at: new Date(),
         deleted_at: null,
       };
       jest.spyOn(prisma.screening, 'findUnique').mockResolvedValue(screening);

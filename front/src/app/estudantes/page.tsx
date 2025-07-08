@@ -1,10 +1,7 @@
-// app/estudantes/page.tsx
-
 "use client";
 
 import AppLayout from "@/components/AppLayout";
 import TabelaEstudantes from "@/components/TabelaEstudantes";
-import { Home } from "lucide-react";
 
 export default function EstudantesPage() {
   return (

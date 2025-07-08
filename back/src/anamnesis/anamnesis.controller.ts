@@ -8,6 +8,7 @@ import { LEVELS } from 'src/constants';
 export class AnamnesisController {
   constructor(private readonly anamnesisService: AnamnesisService) {}
 
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
   @Post()
   create(@Body() createAnamnesisDto: CreateAnamnesisDto) {
     return this.anamnesisService.create(createAnamnesisDto);

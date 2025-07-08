@@ -19,7 +19,7 @@ describe('AppService', () => {
   describe('getHello', () => {
     it('should return an object with ping pong', () => {
       const result = service.getHello();
-      
+
       expect(result).toBeDefined();
       expect(result).toEqual({ ping: 'pong' });
       expect(typeof result).toBe('object');
@@ -27,7 +27,7 @@ describe('AppService', () => {
 
     it('should have ping property with value pong', () => {
       const result = service.getHello();
-      
+
       expect(result).toHaveProperty('ping');
       expect(result.ping).toBe('pong');
     });

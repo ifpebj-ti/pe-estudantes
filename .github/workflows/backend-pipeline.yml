@@ -17,7 +17,7 @@ jobs:
 # 1) PREPARE TAG -----------------------------------------------------
 # --------------------------------------------------------------------
   prepare-tag:
-    name: 0. Preparar nova tag
+    name: 1. Preparar nova tag
     runs-on: ubuntu-latest
     outputs:
       new_tag: ${{ steps.nova_tag.outputs.nova_tag }}
@@ -71,65 +71,115 @@ jobs:
           echo "nova_tag=$nova_tag" >> "$GITHUB_OUTPUT"
 
 # --------------------------------------------------------------------
-# 2) BUILD & PUSH ----------------------------------------------------
+# 2) RUN TESTS -------------------------------------------------------
 # --------------------------------------------------------------------
-  docker-build-push:
-    name: 1. Build and Push Docker
+  run-tests:
+    name: 2. Rodar testes do backend
     runs-on: ubuntu-latest
     needs: prepare-tag
+  
+    steps:
+      - uses: actions/checkout@v4
+  
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+  
+      - name: Instalar dependências
+        working-directory: ./back
+        run: npm ci
+  
+      - name: Rodar testes com cobertura
+        working-directory: ./back
+        run: npx jest --coverage --coverageReporters=json-summary
+  
+      - name: Verificar se arquivo de cobertura existe
+        working-directory: ./back
+        run: |
+          if [ ! -f coverage/coverage-summary.json ]; then
+            echo "❌ Arquivo coverage-summary.json não encontrado!"
+            exit 1
+          fi
+  
+      - name: Extrair cobertura total
+        id: coverage
+        working-directory: ./back
+        run: |
+          COVERAGE=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+          echo "Cobertura total: $COVERAGE%"
+          echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
+  
+      - name: Atualizar badge no README
+        run: |
+          # Atualizar badge no README.md
+          BADGE="![Coverage](https://img.shields.io/badge/Coverage-${{ steps.coverage.outputs.coverage }}%25-brightgreen)"
+          sed -i '0,/<!-- COVERAGE_BADGE -->/s|.*<!-- COVERAGE_BADGE -->|'"$BADGE"' <!-- COVERAGE_BADGE -->|' README.md
+        
+          # Configurar autenticação com GitHub CLI
+          echo "${{ secrets.GHCR_PAT }}" | gh auth login --with-token
+        
+          # Fazer commit e push via GitHub API
+          gh api \
+            --method PUT \
+            -H "Accept: application/vnd.github.v3+json" \
+            /repos/${{ github.repository }}/contents/README.md \
+            -f message="ci: atualizar badge de cobertura para ${{ steps.coverage.outputs.coverage }}%" \
+            -f content="$(base64 -w0 README.md)" \
+            -f sha="$(gh api repos/${{ github.repository }}/contents/README.md --jq .sha)"
+
+
+# --------------------------------------------------------------------
+# 3) BUILD, SCAN & PUSH DOCKER IMAGE ---------------------------------
+# --------------------------------------------------------------------
+  docker-build-scan-push:
+    name: 3. Build, Scan and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: [prepare-tag, run-tests]
     env:
       TAG: ${{ needs.prepare-tag.outputs.new_tag }}
+      IMAGE_NAME: back-${{ github.event.repository.name }}
+      REGISTRY: ghcr.io
 
     steps:
       - uses: actions/checkout@v4
 
+      # Build Docker image
       - name: Injetar label de source no Dockerfile
         run: |
           echo "LABEL org.opencontainers.image.source=https://github.com/${{ github.repository }}" >> back/Dockerfile
 
-      - name: Login no GHCR
-        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: 1.1 Build Docker image
+      - name: Build Docker image
         run: |
           docker build ./back \
             -f back/Dockerfile \
-            -t $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG \
+            -t ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} \
             --build-arg REPO_URL="https://github.com/${{ github.repository }}"
 
-      - name: 1.2 Push Docker image
-        run: |
-          docker push $REGISTRY/${{ github.repository_owner }}/$IMAGE_NAME:$TAG
-
-# --------------------------------------------------------------------
-# 3) SCAN IMAGE ------------------------------------------------------
-# --------------------------------------------------------------------
-  scan-image:
-    name: 2. Scan Docker Image
-    runs-on: ubuntu-latest
-    needs: [docker-build-push, prepare-tag]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Login no GHCR
-        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: 2.1 Trivy Scan
+      # Scan Docker image
+      - name: Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/back-${{ github.event.repository.name }}:${{ needs.prepare-tag.outputs.new_tag }}
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
           format: table
-          exit-code: 0
+          exit-code: 1 # Falha se encontrar CRITICAL ou HIGH
           severity: CRITICAL,HIGH
+
+      # Push Docker image
+      - name: Login no GHCR
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
 
 # --------------------------------------------------------------------
 # 4) CREATE RELEASE --------------------------------------------------
 # --------------------------------------------------------------------
   create-release:
-    name: 3. Criar release
+    name: 4. Criar release
     runs-on: ubuntu-latest
-    needs: [scan-image, prepare-tag]
+    needs: [docker-build-scan-push, prepare-tag]
     env:
       NEW_TAG: ${{ needs.prepare-tag.outputs.new_tag }}
       TIPO:    ${{ needs.prepare-tag.outputs.tipo }}

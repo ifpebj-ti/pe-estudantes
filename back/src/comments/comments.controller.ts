@@ -21,8 +21,9 @@ export class CommentsController {
     @Request() request: AuthenticatedRequest,
   ) {
     const idUser = request.user.sub;
+    const userName = request.user.name;
 
-    return this.commentsService.create(createCommentDto, idUser);
+    return this.commentsService.create(createCommentDto, idUser, userName);
   }
 
   @Get(':id_user')

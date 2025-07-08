@@ -133,15 +133,18 @@ jobs:
 # --------------------------------------------------------------------
   build-and-analyze:
     runs-on: ubuntu-latest
-
+  
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0 # Shallow clones should be disabled for better analysis
+  
       - uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: back
 
 # --------------------------------------------------------------------
 # 4) BUILD, SCAN & PUSH DOCKER IMAGE ---------------------------------

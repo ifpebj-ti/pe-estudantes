@@ -4,7 +4,6 @@ import { UpdateLevelDto } from 'src/levels/dto/update-level.dto';
 import { LevelsController } from 'src/levels/levels.controller';
 import { LevelsService } from 'src/levels/levels.service';
 
-
 describe('LevelsController', () => {
   let controller: LevelsController;
   let service: LevelsService;
@@ -37,9 +36,13 @@ describe('LevelsController', () => {
   describe('create', () => {
     it('should create a level', async () => {
       const createLevelDto: CreateLevelDto = { name: 'Test Level' };
-      const result = { id: 1, created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, ...createLevelDto };
+      const result = {
+        id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        ...createLevelDto,
+      };
       jest.spyOn(service, 'create').mockResolvedValue(result);
 
       expect(await controller.create(createLevelDto)).toEqual(result);
@@ -49,11 +52,22 @@ describe('LevelsController', () => {
 
   describe('findAll', () => {
     it('should return an array of levels', async () => {
-      const result = [{ id: 1, name: 'Level 1', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, }, { id: 2, name: 'Level 2', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, }];
+      const result = [
+        {
+          id: 1,
+          name: 'Level 1',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        },
+        {
+          id: 2,
+          name: 'Level 2',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        },
+      ];
       jest.spyOn(service, 'findAll').mockResolvedValue(result);
 
       expect(await controller.findAll()).toEqual(result);
@@ -64,9 +78,13 @@ describe('LevelsController', () => {
   describe('findOne', () => {
     it('should return a single level by ID', async () => {
       const id = '1';
-      const result = { id: 1, name: 'Test Level', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, };
+      const result = {
+        id: 1,
+        name: 'Test Level',
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
       jest.spyOn(service, 'findOne').mockResolvedValue(result);
 
       expect(await controller.findOne(id)).toEqual(result);
@@ -78,9 +96,13 @@ describe('LevelsController', () => {
     it('should update a level', async () => {
       const id = '1';
       const updateLevelDto: UpdateLevelDto = { name: 'Updated Level' };
-      const result = { id: 1, created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, ...updateLevelDto };
+      const result = {
+        id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        ...updateLevelDto,
+      };
       jest.spyOn(service, 'update').mockResolvedValue(result);
 
       expect(await controller.update(id, updateLevelDto)).toEqual(result);
@@ -91,9 +113,13 @@ describe('LevelsController', () => {
   describe('remove', () => {
     it('should remove a level', async () => {
       const id = '1';
-      const result = { id: 1, name: 'Removed Level', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, };
+      const result = {
+        id: 1,
+        name: 'Removed Level',
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
       jest.spyOn(service, 'remove').mockResolvedValue(result);
 
       expect(await controller.remove(id)).toEqual(result);

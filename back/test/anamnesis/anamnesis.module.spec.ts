@@ -11,9 +11,9 @@ describe('AnamnesisModule', () => {
     module = await Test.createTestingModule({
       imports: [AnamnesisModule],
     })
-    .overrideProvider(PrismaService)
-    .useValue({})
-    .compile();
+      .overrideProvider(PrismaService)
+      .useValue({})
+      .compile();
   });
 
   it('should be defined', () => {
@@ -30,5 +30,3 @@ describe('AnamnesisModule', () => {
     expect(service).toBeDefined();
   });
 });
-
-

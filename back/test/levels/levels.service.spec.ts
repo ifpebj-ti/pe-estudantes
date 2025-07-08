@@ -36,7 +36,13 @@ describe('LevelsService', () => {
   describe('create', () => {
     it('should create a level', async () => {
       const createLevelDto = { name: 'Test Level' };
-      const createdLevel = { id: 1, created_at: new Date(), updated_at: new Date(), deleted_at: null, ...createLevelDto };
+      const createdLevel = {
+        id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        ...createLevelDto,
+      };
 
       jest.spyOn(prisma.level, 'create').mockResolvedValue(createdLevel);
 
@@ -51,11 +57,22 @@ describe('LevelsService', () => {
 
   describe('findAll', () => {
     it('should return an array of levels', async () => {
-      const levelsList = [{ id: 1, name: 'Level 1', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, }, { id: 2, name: 'Level 2', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, }];
+      const levelsList = [
+        {
+          id: 1,
+          name: 'Level 1',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        },
+        {
+          id: 2,
+          name: 'Level 2',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        },
+      ];
       jest.spyOn(prisma.level, 'findMany').mockResolvedValue(levelsList);
 
       const result = await service.findAll();
@@ -68,9 +85,13 @@ describe('LevelsService', () => {
   describe('findOne', () => {
     it('should return a single level by ID', async () => {
       const id = 1;
-      const level = { id: 1, name: 'Test Level', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, };
+      const level = {
+        id: 1,
+        name: 'Test Level',
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
       jest.spyOn(prisma.level, 'findUnique').mockResolvedValue(level);
 
       const result = await service.findOne(id);
@@ -86,9 +107,13 @@ describe('LevelsService', () => {
     it('should update a level', async () => {
       const id = 1;
       const updateLevelDto = { name: 'Updated Level' };
-      const updatedLevel = { id: 1, created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, ...updateLevelDto };
+      const updatedLevel = {
+        id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        ...updateLevelDto,
+      };
 
       jest.spyOn(prisma.level, 'update').mockResolvedValue(updatedLevel);
 
@@ -105,9 +130,13 @@ describe('LevelsService', () => {
   describe('remove', () => {
     it('should remove a level', async () => {
       const id = 1;
-      const removedLevel = { id: 1, name: 'Removed Level', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, };
+      const removedLevel = {
+        id: 1,
+        name: 'Removed Level',
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
 
       jest.spyOn(prisma.level, 'delete').mockResolvedValue(removedLevel);
 

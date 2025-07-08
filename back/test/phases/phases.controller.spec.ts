@@ -4,7 +4,6 @@ import { UpdatePhaseDto } from 'src/phases/dto/update-phase.dto';
 import { PhasesController } from 'src/phases/phases.controller';
 import { PhasesService } from 'src/phases/phases.service';
 
-
 describe('PhasesController', () => {
   let controller: PhasesController;
   let service: PhasesService;
@@ -36,10 +35,14 @@ describe('PhasesController', () => {
 
   describe('create', () => {
     it('should create a phase', async () => {
-      const createPhaseDto: CreatePhaseDto = { name: 'Test Phase'};
-      const result = { id: 1, created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, ...createPhaseDto };
+      const createPhaseDto: CreatePhaseDto = { name: 'Test Phase' };
+      const result = {
+        id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        ...createPhaseDto,
+      };
       jest.spyOn(service, 'create').mockResolvedValue(result);
 
       expect(await controller.create(createPhaseDto)).toEqual(result);
@@ -49,11 +52,22 @@ describe('PhasesController', () => {
 
   describe('findAll', () => {
     it('should return an array of phases', async () => {
-      const result = [{ id: 1, name: 'Phase 1', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null }, { id: 2, name: 'Phase 2', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null }];
+      const result = [
+        {
+          id: 1,
+          name: 'Phase 1',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        },
+        {
+          id: 2,
+          name: 'Phase 2',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        },
+      ];
       jest.spyOn(service, 'findAll').mockResolvedValue(result);
 
       expect(await controller.findAll()).toEqual(result);
@@ -64,9 +78,13 @@ describe('PhasesController', () => {
   describe('findOne', () => {
     it('should return a single phase by ID', async () => {
       const id = '1';
-      const result = { id: 1, name: 'Test Phase', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null };
+      const result = {
+        id: 1,
+        name: 'Test Phase',
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
       jest.spyOn(service, 'findOne').mockResolvedValue(result);
 
       expect(await controller.findOne(id)).toEqual(result);
@@ -78,9 +96,13 @@ describe('PhasesController', () => {
     it('should update a phase', async () => {
       const id = '1';
       const updatePhaseDto: UpdatePhaseDto = { name: 'Updated Phase' };
-      const result = { id: 1, created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null, ...updatePhaseDto };
+      const result = {
+        id: 1,
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+        ...updatePhaseDto,
+      };
       jest.spyOn(service, 'update').mockResolvedValue(result);
 
       expect(await controller.update(id, updatePhaseDto)).toEqual(result);
@@ -91,9 +113,13 @@ describe('PhasesController', () => {
   describe('remove', () => {
     it('should remove a phase', async () => {
       const id = '1';
-      const result = { id: 1, name: 'Removed Phase', created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null };
+      const result = {
+        id: 1,
+        name: 'Removed Phase',
+        created_at: new Date(),
+        updated_at: new Date(),
+        deleted_at: null,
+      };
       jest.spyOn(service, 'remove').mockResolvedValue(result);
 
       expect(await controller.remove(id)).toEqual(result);

@@ -61,12 +61,13 @@ model Screening {
 }
 
 model Comments {
-  id         Int       @id @default(autoincrement())
-  comment    String
-  id_author  Int
-  created_at DateTime  @default(now())
-  updated_at DateTime? @updatedAt
-  deleted_at DateTime?
+  id          Int       @id @default(autoincrement())
+  comment     String
+  id_author   Int
+  author_name String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @updatedAt
+  deleted_at  DateTime?
 
   id_user Int
   user    User @relation(fields: [id_user], references: [id])

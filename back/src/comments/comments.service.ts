@@ -8,11 +8,16 @@ import { AuthenticatedRequest } from './types/express';
 export class CommentsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createCommentDto: CreateCommentDto, idAuthor: number) {
+  async create(
+    createCommentDto: CreateCommentDto,
+    idAuthor: number,
+    userName: string,
+  ) {
     const commentCreated = await this.prisma.comments.create({
       data: {
         ...createCommentDto,
         id_author: idAuthor,
+        author_name: userName,
       },
     });
 

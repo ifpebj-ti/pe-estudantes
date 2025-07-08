@@ -11,9 +11,9 @@ describe('PlansEducationModule', () => {
     module = await Test.createTestingModule({
       imports: [PlansEducationModule],
     })
-    .overrideProvider(PrismaService)
-    .useValue({})
-    .compile();
+      .overrideProvider(PrismaService)
+      .useValue({})
+      .compile();
   });
 
   it('should be defined', () => {
@@ -21,7 +21,9 @@ describe('PlansEducationModule', () => {
   });
 
   it('should have PlansEducationController defined', () => {
-    const controller = module.get<PlansEducationController>(PlansEducationController);
+    const controller = module.get<PlansEducationController>(
+      PlansEducationController,
+    );
     expect(controller).toBeDefined();
   });
 
@@ -30,5 +32,3 @@ describe('PlansEducationModule', () => {
     expect(service).toBeDefined();
   });
 });
-
-

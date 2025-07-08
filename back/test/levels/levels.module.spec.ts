@@ -12,9 +12,9 @@ describe('LevelsModule', () => {
     module = await Test.createTestingModule({
       imports: [LevelsModule],
     })
-    .overrideProvider(PrismaService)
-    .useValue({})
-    .compile();
+      .overrideProvider(PrismaService)
+      .useValue({})
+      .compile();
   });
 
   it('should be defined', () => {

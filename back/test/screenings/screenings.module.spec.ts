@@ -11,9 +11,9 @@ describe('ScreeningsModule', () => {
     module = await Test.createTestingModule({
       imports: [ScreeningsModule],
     })
-    .overrideProvider(PrismaService)
-    .useValue({})
-    .compile();
+      .overrideProvider(PrismaService)
+      .useValue({})
+      .compile();
   });
 
   it('should be defined', () => {
@@ -30,5 +30,3 @@ describe('ScreeningsModule', () => {
     expect(service).toBeDefined();
   });
 });
-
-

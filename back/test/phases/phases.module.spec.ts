@@ -11,9 +11,9 @@ describe('PhasesModule', () => {
     module = await Test.createTestingModule({
       imports: [PhasesModule],
     })
-    .overrideProvider(PrismaService) // Mock PrismaService for module testing
-    .useValue({})
-    .compile();
+      .overrideProvider(PrismaService) // Mock PrismaService for module testing
+      .useValue({})
+      .compile();
   });
 
   it('should be defined', () => {

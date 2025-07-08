@@ -3,7 +3,7 @@ import { CommentData } from "@/interfaces/CommentData";
 export async function getAllCommentsByIdUser(id_user: number) {
   const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
 
-  const res = await fetch(`${API_URL}/anamnesis/${id_user}`, {
+  const res = await fetch(`${API_URL}/comments/${id_user}`, {
     method: 'GET',
     headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,

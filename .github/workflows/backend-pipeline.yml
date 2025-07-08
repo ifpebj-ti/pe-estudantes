@@ -131,34 +131,18 @@ jobs:
 # --------------------------------------------------------------------
 # 3) SONARQUBE ANALYSIS ----------------------------------------------
 # --------------------------------------------------------------------
-  sonarqube-analysis:
-    name: 3. Analisar código com SonarQube
+  sonarqube:
     runs-on: ubuntu-latest
-    needs: run-tests
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Instalar dependências
-        working-directory: ./back
-        run: npm ci
-
-      - name: Rodar análise SonarQube
-        working-directory: ./back
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
-        run: |
-          npm install -g sonarqube-scanner
-          npx sonar-scanner \
-            -Dsonar.projectKey=${{ github.repository }}-back \
-            -Dsonar.organization=${{ github.repository_owner }} \
-            -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+    - uses: actions/checkout@v4
+      with:
+        # Disabling shallow clones is recommended for improving the relevancy of reporting
+        fetch-depth: 0
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@<action version> # Ex: v4.1.0, See the latest version at https://github.com/marketplace/actions/official-sonarqube-scan
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
 
 # --------------------------------------------------------------------
 # 4) BUILD, SCAN & PUSH DOCKER IMAGE ---------------------------------

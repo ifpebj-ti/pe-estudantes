@@ -1,8 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreatePlansEducationDto } from 'src/plans-education/dto/create-plans-education.dto';
-import { PlansEducationController } from 'src/plans-education/plans-education.controller';
-import { PlansEducationService } from 'src/plans-education/plans-education.service';
-import { LEVELS } from 'src/constants';
 import { StudentsController } from 'src/students/students.controller';
 import { StudentsService } from 'src/students/students.service';
 
@@ -36,34 +32,34 @@ describe('PlansEducationController', () => {
   describe('findAll', () => {
     it('should return an array of students', async () => {
       const result = [
-         {
-            "id": 1,
-            "full_name": "Luizin",
-            "cpf": "12345678910",
-            "email": "luizin@hotmail.com",
-            "password": "senhaSegura123",
-            "affliation": "Filiação",
-            "pedagogical_manager": "Luizin",
-            created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null,
-            "id_level": 2,
-            "id_current_phase": 1,
+        {
+          id: 1,
+          full_name: 'Luizin',
+          cpf: '12345678910',
+          email: 'luizin@hotmail.com',
+          password: 'senhaSegura123',
+          affliation: 'Filiação',
+          pedagogical_manager: 'Luizin',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+          id_level: 2,
+          id_current_phase: 1,
         },
         {
-            "id": 2,
-            "full_name": "Luizin",
-            "cpf": "12345678910",
-            "email": "luizin@hotmail.com",
-            "password": "senhaSegura123",
-            "affliation": "Filiação",
-            "pedagogical_manager": "Luizin",
-            created_at: new Date(), 
-            updated_at: new Date(), 
-            deleted_at: null,
-            "id_level": 2,
-            "id_current_phase": 1,
-        }  
+          id: 2,
+          full_name: 'Luizin',
+          cpf: '12345678910',
+          email: 'luizin@hotmail.com',
+          password: 'senhaSegura123',
+          affliation: 'Filiação',
+          pedagogical_manager: 'Luizin',
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+          id_level: 2,
+          id_current_phase: 1,
+        },
       ];
       jest.spyOn(service, 'findAll').mockResolvedValue(result);
 

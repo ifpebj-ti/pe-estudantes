@@ -11,9 +11,9 @@ describe('StudentsModule', () => {
     module = await Test.createTestingModule({
       imports: [StudentsModule],
     })
-    .overrideProvider(PrismaService)
-    .useValue({})
-    .compile();
+      .overrideProvider(PrismaService)
+      .useValue({})
+      .compile();
   });
 
   it('should be defined', () => {

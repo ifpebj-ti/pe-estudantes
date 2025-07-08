@@ -11,9 +11,9 @@ describe('AppModule', () => {
     module = await Test.createTestingModule({
       imports: [AppModule],
     })
-    .overrideProvider(PrismaService)
-    .useValue({})
-    .compile();
+      .overrideProvider(PrismaService)
+      .useValue({})
+      .compile();
   });
 
   it('should be defined', () => {
@@ -30,5 +30,3 @@ describe('AppModule', () => {
     expect(service).toBeDefined();
   });
 });
-
-

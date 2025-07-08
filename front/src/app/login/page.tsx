@@ -40,8 +40,8 @@ export default function LoginPage() {
         <Image
           src="/login.svg"
           alt="Imagem login"
-          width={600}
-          height={400}
+          width={728}
+          height={562}
           priority
         />
       </section>
@@ -77,13 +77,6 @@ export default function LoginPage() {
           >
             <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone senha" />
           </BrInput>
-
-          <div className="flex items-center justify-end w-full">
-            <a className="text-sm" href="/forgot-password">
-              Esqueceu a senha?
-            </a>
-          </div>
-
           <BrButton
             type="submit"
             active

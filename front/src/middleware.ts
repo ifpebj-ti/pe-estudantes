@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { TokenPayload } from './services/auth/decodeToken'
+import { jwtDecode } from 'jwt-decode'
+import { ESTUDANTE } from './consts'
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value
@@ -13,6 +16,25 @@ export function middleware(request: NextRequest) {
 
   if (token && isLoginPage) {
     return NextResponse.redirect(new URL('/home', request.url))
+  }
+
+  if (token) {
+    try {
+      const payload = jwtDecode<TokenPayload>(token);
+      const isStudent = payload.id_level === ESTUDANTE;
+      
+      const restrictedPathsStudent = ['/estudantes', '/relatorio'];
+      const tryingToAccessRestricted = restrictedPathsStudent.some(path =>
+        pathname.startsWith(path)
+      );
+
+      if (isStudent && tryingToAccessRestricted) {
+        return NextResponse.redirect(new URL('/home', request.url));
+      }
+    } catch (error) {
+      console.error('Erro ao decodificar token no middleware:', error);
+      return NextResponse.redirect(new URL('/', request.url));
+    }
   }
 
   return NextResponse.next()

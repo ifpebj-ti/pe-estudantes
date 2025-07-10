@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "9443:9443" # Interface web HTTPS
+      - "9000:9000" # Interface web HTTP (opcional)
+      - "8000:8000" # Agente Portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Acesso ao Docker host
+      - portainer_data:/data
+    networks:
+      - management-net
+
+networks:
+  management-net:
+    name: management-net
+
+volumes:
+  portainer_data:

@@ -38,7 +38,6 @@ export default function VisualizarEstudante() {
   const cpf = searchParams.get("cpf");
   const email = searchParams.get("email");
   const responsavel = searchParams.get("responsavel");
-  const endereco = searchParams.get("endereco");
 
   return (
     <AppLayout
@@ -56,7 +55,6 @@ export default function VisualizarEstudante() {
                 <th className="p-3 text-left">CPF</th>
                 <th className="p-3 text-left">E-mail</th>
                 <th className="p-3 text-left">Responsável Pedagógico</th>
-                <th className="p-3 text-left">Endereço</th>
               </tr>
             </thead>
             <tbody>
@@ -64,8 +62,7 @@ export default function VisualizarEstudante() {
                 <td className="p-3">{nome}</td>
                 <td className="p-3">{cpf}</td>
                 <td className="p-3">{email}</td>
-                <td className="p-3">{responsavel}</td>
-                <td className="p-3">{endereco}</td>
+                <td className="p-3">{responsavel || "" }</td>
               </tr>
             </tbody>
           </table>

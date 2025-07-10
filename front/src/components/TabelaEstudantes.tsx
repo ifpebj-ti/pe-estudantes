@@ -2,9 +2,12 @@
 
 "use client";
 
+import { getAllStudents } from "@/api/students";
+import { useAuth } from "@/contexts/AuthContext";
+import { StudentData } from "@/interfaces/StudentData";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const estudantes = [
   {
@@ -33,15 +36,36 @@ const estudantes = [
 export default function TabelaEstudantes() {
   const [busca, setBusca] = useState("");
   const router = useRouter();
+  const [ students, setStudents ] = useState<StudentData[] | null>(null);
+  const { loading } = useAuth();
 
-  const filtrados = estudantes.filter(e =>
-    e.nome.toLowerCase().includes(busca.toLowerCase())
+  const filtrados = students?.filter(e =>
+    e.full_name.toLowerCase().includes(busca.toLowerCase())
   );
 
-  const handleVerEstudante = (estudante: typeof estudantes[0]) => {
-    const query = new URLSearchParams(estudante).toString();
-    router.push(`/estudantes/visualizar?${query}`);
+  const handleVerEstudante = (estudante: StudentData) => {
+    const nome = estudante.full_name;
+    const cpf = estudante.cpf;
+    const email = estudante.email;
+    const responsavel = estudante.pedagogical_manager;
+
+    router.push(`/estudantes/visualizar?nome=${nome}&cpf=${cpf}&email=${email}&responsavel=${responsavel}`);
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getAllStudents();
+        setStudents(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Erro ao buscar estudantes", error);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) return null; //ADICIONAR COMPONENTE DE LOADING
 
   return (
     <div className="bg-white rounded shadow-md">
@@ -66,12 +90,12 @@ export default function TabelaEstudantes() {
           </tr>
         </thead>
         <tbody>
-          {filtrados.map((estudante, index) => (
+          {filtrados?.map((estudante, index) => (
             <tr key={index} className="border-b hover:bg-gray-50">
-              <td className="p-3">{estudante.nome}</td>
+              <td className="p-3">{estudante.full_name}</td>
               <td className="p-3">{estudante.cpf}</td>
               <td className="p-3">{estudante.email}</td>
-              <td className="p-3">{estudante.responsavel}</td>
+              <td className="p-3">{estudante.pedagogical_manager}</td>
               <td className="p-3 text-center">
                 <Eye
                   className="w-5 h-5 text-gray-600 cursor-pointer"
@@ -84,11 +108,11 @@ export default function TabelaEstudantes() {
       </table>
 
       <div className="flex justify-between items-center px-4 py-3 text-sm text-gray-600 border-t">
-        <div>Exibir <span className="font-semibold">10</span> de 100 itens</div>
+        <div>Exibir <span className="font-semibold">{students?.length}</span> de 100 itens</div>
         <div className="flex items-center space-x-2">
           <span>Página</span>
           <select className="border rounded px-2 py-1">
-            <option>12</option>
+            <option>1</option>
             {/* outras opções aqui */}
           </select>
           <button>{"<"}</button>

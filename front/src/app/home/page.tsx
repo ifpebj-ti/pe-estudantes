@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import HomeCard from "@/components/HomeCard";
 import { useAuth } from "@/contexts/AuthContext";
-import { ESTUDANTE } from "@/consts";
+import { ESTUDANTE, PROFESSOR } from "@/consts";
 
 export default function HomePage() {
   const { user, loading } = useAuth();
@@ -37,7 +37,9 @@ export default function HomePage() {
           <HomeCard label="Triagem" icon={ClipboardPlus} href="/triagem" />
           <HomeCard label="Anamnese" icon={Stethoscope} href="/anamnese" />
           <HomeCard label="Comentários Multiprofissionais" icon={MessagesSquare} href="/comentarios" />
-          <HomeCard label="PEI" icon={BookOpenCheck} href="/pei" />
+          {(user?.id_level === ESTUDANTE || user?.id_level === PROFESSOR) && (
+            <HomeCard label="PEI" icon={BookOpenCheck} href="/pei" />
+          )}
         </div>
     </main>   
     </AppLayout>

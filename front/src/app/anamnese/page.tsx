@@ -149,7 +149,8 @@ export default function AnamnesePage() {
               label="Condição"
               class="w-full"
               value={anamnesis?.family_conditions.condicao_ambiente_familiar_aprendizagem_escolar || ''}
-disabled={isStudent}            />
+              disabled={isStudent}            
+            />
           </div>
         </section>
 

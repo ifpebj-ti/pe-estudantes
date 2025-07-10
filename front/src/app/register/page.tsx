@@ -62,8 +62,8 @@ export default function RegisterPage() {
         <Image
           src="/login.svg"
           alt="Imagem login"
-          width={600}
-          height={400}
+          width={728}
+          height={562}
           priority
         />
       </section>
@@ -147,11 +147,11 @@ export default function RegisterPage() {
           </BrButton>
         </form>
 
-        <div className="flex items-center justify-center w-full">
+        {/* <div className="flex items-center justify-center w-full">
           <a className="text-sm" href="/forgot-password">
             Precisa de Ajuda?
           </a>
-        </div>
+        </div> */}
       </section>
     </div>
   );

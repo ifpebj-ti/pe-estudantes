@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { CommentData } from '@/interfaces/CommentData';
 import { decodeToken } from '@/services/auth/decodeToken';
 import { formatarData } from '@/utils/formatDate';
+import { ESTUDANTE } from '@/consts';
 
 export default function ComentariosMultiprofissionais() {
   const [comentarios, setComentarios] = useState<CommentData[]>([]);
@@ -46,12 +47,14 @@ export default function ComentariosMultiprofissionais() {
       <div className="p-6 space-y-8 w-full">
         <div className="flex justify-between">
           <h1 className="text-4xl font-bold mb-4">Comentários Multiprofissionais</h1>
-          <button
-            className="bg-green-600 text-white px-4 py-2 rounded mb-4"
-            onClick={() => setMostrarModal(true)}
-          >
-            Adicionar Comentário
-          </button>
+          {user?.id_level !== ESTUDANTE && (
+           <button
+              className="bg-green-600 text-white px-4 py-2 rounded mb-4"
+              onClick={() => setMostrarModal(true)}
+            >
+              Adicionar Comentário
+            </button>     
+          )}
         </div>
 
         {/* Lista de Comentários */}

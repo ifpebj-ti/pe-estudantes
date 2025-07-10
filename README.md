@@ -7,9 +7,9 @@
 ![Open PRs](https://img.shields.io/github/issues-pr/ifpebj-ti/pe-estudantes)
 ![Forks](https://img.shields.io/github/forks/ifpebj-ti/pe-estudantes)
 ![Stars](https://img.shields.io/github/stars/ifpebj-ti/pe-estudantes)
-![Coverage](https://img.shields.io/badge/Coverage-84.17%25-brightgreen) <!-- COVERAGE_BADGE -->
+![Coverage](https://img.shields.io/badge/Coverage-83.99%25-brightgreen) <!-- COVERAGE_BADGE -->
 
-# 🏫 Prontuário Eletrônico para Estudantes NEE
+# 🏫 Edutrace - Prontuário Eletrônico para Estudantes NEE
 
 Sistema web para gerenciar prontuários eletrônicos de estudantes com necessidades educacionais específicas, permitindo o registro de informações acadêmicas, de saúde, crises e desempenho, com segurança, acessibilidade e suporte personalizado.
 
@@ -26,3 +26,6 @@ Acesse a Wiki do Projeto para mais detalhes sobre requisitos, arquitetura e flux
 
 ## 🎨 Protótipo
 Acesse o protótipo no [Figma](https://www.figma.com/design/94COnZtjY5Led94oQUzh6y/PEP?node-id=0-1&t=Xo5pCV3UAPm9EPUW-1).
+
+## Weekly
+Acesse nossa weekly no [Canva](https://www.canva.com/design/DAGiByfvEHs/WHHpdFuI2by9KzqRQHypkg/edit?utm_content=DAGiByfvEHs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)

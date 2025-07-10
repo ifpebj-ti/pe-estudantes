@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Edutrace",
+  icons: "/icon.png"
 };
 
 export default function RootLayout({

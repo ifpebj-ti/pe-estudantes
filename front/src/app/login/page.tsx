@@ -97,12 +97,12 @@ export default function LoginPage() {
             </a>
           </div>
         </form>
-
-        <div className="flex items-center justify-center w-full">
+        <div></div>
+        {/* <div className="flex items-center justify-center w-full">
           <a className="text-sm" href="/forgot-password">
             Precisa de Ajuda?
           </a>
-        </div>
+        </div> */}
       </section>
     </div>
   );

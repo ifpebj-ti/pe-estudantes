@@ -4,8 +4,10 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import "@govbr-ds/core/dist/core.min.css";
 import { useState } from "react";
+import { RegisterData } from "@/interfaces/RegisterData";
+import { register } from "@/services/auth/login";
+import { useRouter } from "next/navigation";
 
-// Importação dinâmica dos componentes BR
 const BrInput = dynamic(() =>
   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrInput), { ssr: false }
 );
@@ -22,9 +24,36 @@ export default function RegisterPage() {
     senha: "",
     confirmarSenha: ""
   });
+  const router = useRouter();
 
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (formData.senha !== formData.confirmarSenha) {
+      alert("As senhas não coincidem.");
+      return;
+    }
+
+    const cleanedCpf = formData.cpf.replace(/\D/g, ""); 
+
+    const registerData: RegisterData = {
+      full_name: formData.nome,
+      email: formData.email,
+      cpf: cleanedCpf,
+      password: formData.senha,
+    };
+
+    try {
+      const response = await register(registerData);
+      alert("Cadastro realizado com sucesso!");
+      router.push('/login');
+    } catch (error: any) {
+      alert(error.message || "Erro no cadastro.");
+    }
   };
 
   return (
@@ -33,8 +62,8 @@ export default function RegisterPage() {
         <Image
           src="/login.svg"
           alt="Imagem login"
-          width={600}
-          height={400}
+          width={728}
+          height={562}
           priority
         />
       </section>
@@ -43,7 +72,10 @@ export default function RegisterPage() {
         <div></div>
 
         {/* Formulário de cadastro */}
-        <form className="p-8 w-full max-w-md space-y-6 flex flex-col items-center justify-center">
+        <form
+          className="p-8 w-full max-w-md space-y-6 flex flex-col items-center justify-center"
+          onSubmit={handleSubmit}
+        >
           <h1 className="text-2xl font-bold text-center">Cadastro</h1>
 
           <BrInput
@@ -77,8 +109,7 @@ export default function RegisterPage() {
             icon
             class="w-full"
             onInput={handleChange}
-          >
-          </BrInput>
+          />
 
           <BrInput
             label="Senha"
@@ -116,11 +147,11 @@ export default function RegisterPage() {
           </BrButton>
         </form>
 
-        <div className="flex items-center justify-center w-full">
+        {/* <div className="flex items-center justify-center w-full">
           <a className="text-sm" href="/forgot-password">
             Precisa de Ajuda?
           </a>
-        </div>
+        </div> */}
       </section>
     </div>
   );

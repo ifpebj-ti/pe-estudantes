@@ -9,6 +9,7 @@ import { AnamnesisData } from "@/interfaces/AnamnesisData";
 import { decodeToken } from "@/services/auth/decodeToken";
 import { useAuth } from "@/contexts/AuthContext";
 import { ESTUDANTE } from "@/consts";
+import { useRouter } from "next/navigation";
 
 const BrInput = dynamic(() =>
   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrInput), { ssr: false }
@@ -21,7 +22,8 @@ export default function AnamnesePage() {
   const [ anamnesis, setAnamnesis ] = useState<AnamnesisData | null>(null);
   const [ isStudent, setStudent ] = useState<boolean>(true);
   const { user, loading } = useAuth();
-
+  const router = useRouter();
+  
   useEffect(() => {
     async function fetchData() {
       try {
@@ -153,7 +155,7 @@ disabled={isStudent}            />
 
         {/* Botões */}
         <div className="flex justify-center gap-4 mt-8">
-          <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full">
+          <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
             Voltar
           </button>
           <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" disabled={isStudent}>

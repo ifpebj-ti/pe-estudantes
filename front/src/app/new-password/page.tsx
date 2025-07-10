@@ -53,11 +53,11 @@ export default function NewPasswordPage() {
           )}
         </form>
 
-        <div className="flex items-center justify-center w-full" onClick={() => setMensagem("Senha alterada com sucesso!")}>
+        {/* <div className="flex items-center justify-center w-full" onClick={() => setMensagem("Senha alterada com sucesso!")}>
           <a className="text-sm" href="/forgot-password">
             Precisa de Ajuda?
           </a>
-        </div>
+        </div> */}
       </section>
     </div>
   );

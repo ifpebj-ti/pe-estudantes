@@ -2,8 +2,10 @@ version: '3.8'
 
 services:
   nest-app:
-    image: ghcr.io/ifpebj-ti/back-pe-estudantes:be7ab62fa0e00692edf2d93b79573241b534192a
+    image: ghcr.io/ifpebj-ti/back-pe-estudantes:1.1.0
     container_name: nest-backend
+    ports:
+      - "3001:3000" # expõe porta 3001 na VM
     environment:
       DATABASE_URL: "${DATABASE_URL}"
       NODE_ENV: "${NODE_ENV}"
@@ -16,6 +18,8 @@ services:
   postgres-db:
     image: postgres:15
     container_name: postgres-db
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -26,8 +30,10 @@ services:
       - app-net
 
   next-app:
-    image: ghcr.io/ifpebj-ti/front-pe-estudantes:ed42c7985c831f2b6631a6ab806a5b0b2d9f3588
+    image: ghcr.io/ifpebj-ti/front-pe-estudantes:0.3.1
     container_name: next-frontend
+    ports:
+      - "8080:3000" # expõe porta 8080 na VM
     networks:
       - app-net
       - proxy-net

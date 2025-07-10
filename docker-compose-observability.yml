@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  # Prometheus - Monitoramento
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090" # Prometheus UI
+    networks:
+      - observability-net
+    restart: unless-stopped
+
+  # Loki - Logs backend
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100" # Loki API
+    networks:
+      - observability-net
+    restart: unless-stopped
+
+  # Promtail - Envia logs do Docker para o Loki
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ../prometheus/promtail-config.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - observability-net
+    restart: unless-stopped
+
+  # Grafana - Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000" # Grafana UI
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - observability-net
+      - management-net
+    restart: unless-stopped
+
+volumes:
+  grafana_data:
+
+networks:
+  observability-net:
+    external: true
+  management-net:
+    external: true

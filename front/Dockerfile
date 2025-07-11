@@ -1,54 +1,38 @@
-# Etapa base
-FROM node:22-slim AS base
+# Stage 1: Build the Next.js application
+FROM node:24.4-alpine AS builder
 
+WORKDIR /app
+
+# Copy package.json and install dependencies
+COPY package.json package-lock.json* ./
+RUN npm install --frozen-lockfile
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the Next.js application for production
+RUN npm run build
+
+# Stage 2: Create the production-ready image
+FROM node:24.4-alpine AS runner
+
+WORKDIR /app
+
+# Set environment variables for production
 ARG PORT=3000
 ENV PORT=$PORT
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
 
-WORKDIR /app
+# Copy only the necessary files from the builder stage
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
 
-# Etapa de dependências
-FROM base AS dependencies
+# Expose the port Next.js runs on
+EXPOSE 3000
 
-# Evita problemas com binários nativos do Tailwind
-ENV TAILWINDCSS_SKIP_NATIVE=true
-
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
-
-# Etapa de build
-FROM base AS build
-
-ENV TAILWINDCSS_SKIP_NATIVE=true
-
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY . .
-
-# Variáveis de ambiente públicas (ex: Stripe key)
-ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-
-# Gera build do Next
-RUN npm run build
-
-# Etapa de execução
-FROM base AS run
-
-RUN addgroup --system --gid 1001 nodejs \
-    && adduser --system --uid 1001 nextjs
-
-# Copia artefatos de build
-COPY --from=build /app/public ./public
-COPY --from=build /app/.next/standalone ./
-COPY --from=build /app/.next/static ./.next/static
-
-# Ajusta permissões
-RUN chown -R nextjs:nodejs /app
-
-USER nextjs
-
-EXPOSE $PORT
-
-CMD ["node", "server.js"]
+# Start the Next.js application in production mode
+CMD ["npm", "start"]

@@ -19,6 +19,10 @@ export default function NewPasswordPage() {
 
   const [mensagem, setMensagem] = useState("");
 
+  React.useEffect(() => {
+    setMensagem("");
+  }, []);
+
 
   return (
     <div className="min-h-screen flex flex-row bg-gradient-to-r from-emerald-100 to-white">

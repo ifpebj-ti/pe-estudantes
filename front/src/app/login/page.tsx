@@ -61,7 +61,10 @@ export default function LoginPage() {
             pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
             icon
             class="w-full"
-            onInput={(e: any) => setEmail(e.target.value)}
+            onInput={(e: React.FormEvent<HTMLBrInputElement>) => {
+              const target = e.target as HTMLInputElement;
+              setEmail(target.value);
+            }}
           >
             <Image width={15} height={10} slot="icon" src="/user.svg" alt="Ícone usuário" />
           </BrInput>
@@ -73,10 +76,14 @@ export default function LoginPage() {
             pattern="[0-9]{8,11}"
             icon
             class="w-full"
-            onInput={(e: any) => setPassword(e.target.value)}
+            onInput={(e: React.FormEvent<HTMLBrInputElement>) => {
+              const target = e.target as HTMLInputElement;
+              setPassword(target.value);
+            }}
           >
             <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone senha" />
           </BrInput>
+
           <BrButton
             type="submit"
             active

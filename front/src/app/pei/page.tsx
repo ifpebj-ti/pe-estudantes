@@ -11,9 +11,9 @@ import { getPEIByEmail } from "@/api/plans-education";
 import { ESTUDANTE } from "@/consts";
 import { useRouter } from "next/navigation";
 
-const BrInput = dynamic(() =>
-  import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrInput), { ssr: false }
-);
+// const BrInput = dynamic(() =>
+//   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrInput), { ssr: false }
+// );
 
 const BrCheckbox = dynamic(() =>
   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrCheckbox), { ssr: false }

@@ -26,8 +26,9 @@ export default function RegisterPage() {
   });
   const router = useRouter();
 
-  const handleChange = (e: any) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e: React.FormEvent<HTMLBrInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    setFormData({ ...formData, [target.name]: target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,10 +50,17 @@ export default function RegisterPage() {
 
     try {
       const response = await register(registerData);
+      if (!response) {
+        throw new Error("Erro ao realizar o cadastro.");
+      }
       alert("Cadastro realizado com sucesso!");
       router.push('/login');
-    } catch (error: any) {
-      alert(error.message || "Erro no cadastro.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(error.message || "Erro no cadastro.");
+      } else {
+        alert("Erro desconhecido no cadastro.");
+      }
     }
   };
 

@@ -108,12 +108,12 @@ jobs:
       # Build Docker image
       - name: Injetar label de source no Dockerfile
         run: |
-          echo "LABEL org.opencontainers.image.source=https://github.com/${{ github.repository }}" >> back/Dockerfile
+          echo "LABEL org.opencontainers.image.source=https://github.com/${{ github.repository }}" >> front/Dockerfile
 
       - name: Build Docker image
         run: |
           docker build ./front \
-            -f back/Dockerfile \
+            -f front/Dockerfile \
             -t ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} \
             --build-arg REPO_URL="https://github.com/${{ github.repository }}"
 

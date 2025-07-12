@@ -126,6 +126,10 @@ jobs:
           exit-code: 1
           severity: CRITICAL,HIGH
 
+      - name: Tag image as latest
+        run: |
+          docker tag ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+
       # Push Docker image
       - name: Login no GHCR
         run: echo "${{ secrets.GHCR_PAT }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
@@ -133,6 +137,7 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+          docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
 
 # --------------------------------------------------------------------
 # 4) CREATE RELEASE --------------------------------------------------

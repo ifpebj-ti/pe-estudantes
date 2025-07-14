@@ -2,31 +2,14 @@
 
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
-import {
-  ClipboardPlus,
-  Stethoscope,
-  MessagesSquare,
-  BookOpenCheck,
-  FileText,
-  CheckCircle,
-  AlertTriangle,
-  Info,
-} from "lucide-react";
-import { JSX } from "react";
 
-function Card({ label, icon: Icon, status }: { label: string, icon: any, status?: 'ok' | 'warn' | 'info' }) {
-  const statusIcons: Record<'ok' | 'warn' | 'info', JSX.Element> = {
-    ok: <CheckCircle className="text-green-500 absolute top-2 right-2" />,
-    warn: <AlertTriangle className="text-yellow-500 absolute top-2 right-2" />,
-    info: <Info className="text-blue-500 absolute top-2 right-2" />,
-  };
+function Card({ label, url }: { label: string, url: string }) {
+  const router = useRouter();
 
   return (
-    <div className="relative bg-white rounded shadow p-6 flex flex-col items-center justify-center text-center hover:shadow-md">
-      {status && statusIcons[status]}
-      <Icon className="w-8 h-8 mb-2 text-green-800" />
+    <div className="relative bg-white rounded shadow p-6 flex flex-col items-center justify-center text-center hover:shadow-md" onClick={() => router.push(url)}>
       <span className="text-green-900 font-medium text-sm leading-tight">{label}</span>
     </div>
   );
@@ -38,6 +21,7 @@ export default function VisualizarEstudante() {
   const cpf = searchParams.get("cpf");
   const email = searchParams.get("email");
   const responsavel = searchParams.get("responsavel");
+  const id = searchParams.get("id");
 
   return (
     <AppLayout
@@ -62,18 +46,17 @@ export default function VisualizarEstudante() {
                 <td className="p-3">{nome}</td>
                 <td className="p-3">{cpf}</td>
                 <td className="p-3">{email}</td>
-                <td className="p-3">{responsavel || "" }</td>
+                <td className="p-3">{responsavel === "null" ? "Responsável não atribuído" : responsavel }</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-          <Card label="Triagem" icon={ClipboardPlus} status="ok" />
-          <Card label="Anamnese" icon={Stethoscope} status="warn" />
-          <Card label="Comentários Multiprofissionais" icon={MessagesSquare} status="info" />
-          <Card label="PEI" icon={BookOpenCheck} />
-          <Card label="Relatórios" icon={FileText} />
+          <Card label="Triagem" url={`/triagem?email=${email}&nome=${nome}`} />
+          <Card label="Anamnese" url={`/anamnese?email=${email}&nome=${nome}`} />
+          <Card label="Comentários Multiprofissionais" url={`/comentarios?id=${id}&nome=${nome}`}/>
+          <Card label="PEI" url={`/pei?email=${email}&nome=${nome}`} />
         </div>
       </div>
     </AppLayout>

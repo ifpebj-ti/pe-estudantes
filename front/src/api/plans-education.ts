@@ -40,7 +40,7 @@ export async function getAllPEIs() {
 export async function postPEI(plansEducationData: PlansEducationData): Promise<PlansEducationData> {
   const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
 
-  const res = await fetch(`${API_URL}/comments`, {
+  const res = await fetch(`${API_URL}/plans-education`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

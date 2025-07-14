@@ -48,8 +48,9 @@ export default function TabelaEstudantes() {
     const cpf = estudante.cpf;
     const email = estudante.email;
     const responsavel = estudante.pedagogical_manager;
-
-    router.push(`/estudantes/visualizar?nome=${nome}&cpf=${cpf}&email=${email}&responsavel=${responsavel}`);
+    const id = estudante.id; 
+    
+    router.push(`/estudantes/visualizar?id=${id}&nome=${nome}&cpf=${cpf}&email=${email}&responsavel=${responsavel}`);
   };
 
   useEffect(() => {
@@ -57,7 +58,6 @@ export default function TabelaEstudantes() {
       try {
         const data = await getAllStudents();
         setStudents(data);
-        console.log(data);
       } catch (error) {
         console.error("Erro ao buscar estudantes", error);
       }

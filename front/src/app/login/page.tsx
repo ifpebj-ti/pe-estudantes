@@ -29,7 +29,7 @@ export default function LoginPage() {
       await login(email, password);
       router.push("/home");
     } catch (error) {
-      setMensagem("Erro ao fazer login.");
+      setMensagem("Credenciais inválidas.");
       console.error(error);
     }
   };

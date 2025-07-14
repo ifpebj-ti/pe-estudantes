@@ -10,7 +10,9 @@ export async function getAnamneseByEmail(email: string) {
     }
   });
 
-  const data = await res.json();
+  const isJson = res.headers.get('content-type')?.includes('application/json');
+
+  const data = isJson ? await res.json() : null;
 
   if (!res.ok) {
     throw new Error(data.detail || 'Erro ao processar requisição');
@@ -28,8 +30,10 @@ export async function getAllAnamneses() {
     }
   });
 
-  const data = await res.json();
+  const isJson = res.headers.get('content-type')?.includes('application/json');
 
+  const data = isJson ? await res.json() : null;
+  
   if (!res.ok) {
     throw new Error(data.detail || 'Erro ao processar requisição');
   }

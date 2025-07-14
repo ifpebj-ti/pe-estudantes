@@ -20,10 +20,13 @@ WORKDIR /app
 
 # Set environment variables for production
 ARG PORT=3000
+ARG NEXT_PUBLIC_API_EDU_TRACE
+
 ENV PORT=$PORT
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 ENV HOSTNAME="0.0.0.0"
+ENV NEXT_PUBLIC_API_EDU_TRACE=$NEXT_PUBLIC_API_EDU_TRACE
 
 # Copy only the necessary files from the builder stage
 COPY --from=builder /app/.next ./.next

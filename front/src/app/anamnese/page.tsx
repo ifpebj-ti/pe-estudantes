@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import dynamic from "next/dynamic";
 import "@govbr-ds/core/dist/core.min.css";
 import AppLayout from "@/components/AppLayout";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { getAnamneseByEmail, postAnamneses } from "@/api/anamnesis"; 
 import { AnamnesisData } from "@/interfaces/AnamnesisData";
 import { decodeToken } from "@/services/auth/decodeToken";
@@ -32,17 +33,23 @@ const initialAnamnesisState: AnamnesisData = {
   student_development: { funcao_cognitiva: { percepcao: '', atencao: '', memoria: '', linguagem: '', raciocinio_logico: '' }, funcao_motora: { desenvolvimento_e_capacidade_motora: '' }, funcao_pressoal_social: { area_emocional_afetiva_social: '' } }
 };
 
+export default function AnamnesePageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <AnamnesePage />
+    </Suspense>
+  );
+}
 
-export default function AnamnesePage() {
+function AnamnesePage() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const nome = searchParams.get("nome");
 
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   const router = useRouter();
 
   const [anamnesis, setAnamnesis] = useState<AnamnesisData | null>(null);
-  const [isStudent, setStudent] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState(true); 
   
   const [formData, setFormData] = useState<AnamnesisData>(initialAnamnesisState);
@@ -56,9 +63,6 @@ export default function AnamnesePage() {
           router.push('/login'); 
           return;
         }
-
-        setStudent(token.id_level === ESTUDANTE);
-
         const targetEmail = token.id_level === ESTUDANTE ? token.email : email;
 
         if (targetEmail) {

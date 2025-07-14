@@ -1,19 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import dynamic from "next/dynamic";
 import "@govbr-ds/core/dist/core.min.css";
 import AppLayout from "@/components/AppLayout";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { PlansEducationData } from "@/interfaces/PlansEducationData";
 import { useAuth } from "@/contexts/AuthContext";
+
 import { decodeToken } from "@/services/auth/decodeToken";
 import { getPEIByEmail, postPEI } from "@/api/plans-education";
 import { ESTUDANTE } from "@/consts";
 import { useRouter, useSearchParams } from "next/navigation";
 
-// const BrInput = dynamic(() =>
-//   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrInput), { ssr: false }
-// );
+const BrInput = dynamic(() =>
+  import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrInput), { ssr: false }
+);
 
 const BrCheckbox = dynamic(() =>
   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrCheckbox), { ssr: false }
@@ -40,13 +42,20 @@ const initialPEIState: PlansEducationData = {
   evaluation_criteria: { participacao_coletiva: false, observacao_interacoes: false, atividades_paralelas: false, participacao_individual: false, uso_ferramentas_tecnologicas: false, fotos_videos_relatos: false, outro: '' },
 };
 
-export default function PEIPage() {
+export default function PEIPageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <PEIPage />
+    </Suspense>
+  );
+}
+
+function PEIPage() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const nome = searchParams.get("nome");
 
   const [pei, setPei] = useState<PlansEducationData | null>(null);
-  const [isStudent, setStudent] = useState<boolean>(true);
   const { user, loading } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -63,7 +72,6 @@ export default function PEIPage() {
           return;
         }
         const userIsStudent = token.id_level === ESTUDANTE;
-        setStudent(userIsStudent);
         const targetEmail = userIsStudent ? token.email : email;
         if (targetEmail) {
           const data = await getPEIByEmail(targetEmail);

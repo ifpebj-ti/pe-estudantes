@@ -2,8 +2,17 @@
 
 import AppLayout from "@/components/AppLayout";
 import TabelaEstudantes from "@/components/TabelaEstudantes";
+import { Suspense } from "react";
 
-export default function EstudantesPage() {
+export default function EstudantesPageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <EstudantesPage />
+    </Suspense>
+  );
+}
+
+function EstudantesPage() {
   return (
     <AppLayout
       breadcrumbs={[

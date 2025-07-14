@@ -1,11 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Image from "next/image";
 import "@govbr-ds/core/dist/core.min.css";
 import { login } from "@/services/auth/login";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { decodeToken } from "@/services/auth/decodeToken";
 
 // Importação dinâmica para evitar erro de hydration
 const BrInput = dynamic(() =>
@@ -16,17 +18,28 @@ const BrButton = dynamic(() =>
   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrButton), { ssr: false }
 );
 
-export default function LoginPage() {
+export default function LoginPageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <LoginPage />
+    </Suspense>
+  );
+}
+
+function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mensagem, setMensagem] = useState("");
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       await login(email, password);
+
+      setUser(decodeToken());
       router.push("/home");
     } catch (error) {
       setMensagem("Credenciais inválidas.");

@@ -21,9 +21,22 @@ export function middleware(request: NextRequest) {
   if (token) {
     try {
       const payload = jwtDecode<TokenPayload>(token);
+
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      if (payload.exp && payload.exp < currentTime) {
+        const response = NextResponse.redirect(new URL('/', request.url));
+
+        response.cookies.set('token', '', {
+          path: '/',
+          expires: new Date(0),
+        });
+
+        return response;
+      }
+
       const isStudent = payload.id_level === ESTUDANTE;
-      
-      const restrictedPathsStudent = ['/estudantes', '/relatorio'];
+      const restrictedPathsStudent = ['/estudantes', '/relatorio', '/visualizar'];
       const tryingToAccessRestricted = restrictedPathsStudent.some(path =>
         pathname.startsWith(path)
       );
@@ -31,9 +44,15 @@ export function middleware(request: NextRequest) {
       if (isStudent && tryingToAccessRestricted) {
         return NextResponse.redirect(new URL('/home', request.url));
       }
+
     } catch (error) {
       console.error('Erro ao decodificar token no middleware:', error);
-      return NextResponse.redirect(new URL('/', request.url));
+        const response = NextResponse.redirect(new URL('/', request.url));
+        response.cookies.set('token', '', {
+          path: '/',
+          expires: new Date(0),
+        });
+        return response;
     }
   }
 

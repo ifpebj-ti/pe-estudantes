@@ -36,7 +36,6 @@ export async function register(registerData: RegisterData) {
   });
 
   const data = await res.json();
-  console.log(data)
   if (!res.ok) {
     throw new Error(data.detail || 'Erro ao processar requisição');
   }

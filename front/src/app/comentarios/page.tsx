@@ -2,54 +2,111 @@
 
 import { useEffect, useState } from 'react';
 import AppLayout from '@/components/AppLayout';
-import { getAllCommentsByIdUser } from '@/api/comments';
+// Importe a função de POST junto com a de GET
+import { getAllCommentsByIdUser, postComment } from '@/api/comments'; 
 import { useAuth } from '@/contexts/AuthContext';
 import { CommentData } from '@/interfaces/CommentData';
 import { decodeToken } from '@/services/auth/decodeToken';
 import { formatarData } from '@/utils/formatDate';
 import { ESTUDANTE } from '@/consts';
+import { useSearchParams, useRouter } from 'next/navigation'; // Importe useRouter
 
 export default function ComentariosMultiprofissionais() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+  const nome = searchParams.get("nome");
+  const router = useRouter(); // Adicione o router para navegação
+
   const [comentarios, setComentarios] = useState<CommentData[]>([]);
   const [novoComentario, setNovoComentario] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
   const { user, loading } = useAuth();
+  const [isStudent, setIsStudent] = useState(true);
+
+  async function carregarComentarios() {
+    try {
+      const token = decodeToken();
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      const userIsStudent = token.id_level === ESTUDANTE;
+      setIsStudent(userIsStudent);
+
+      // O ID do usuário alvo é o do estudante (seja pelo 'id' da URL ou pelo token do próprio estudante)
+      const targetId = userIsStudent ? token.sub : (id ? +id : null);
+
+      if (targetId) {
+        const data = await getAllCommentsByIdUser(targetId);
+        const ordenado = data.sort((a: CommentData, b: CommentData) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        setComentarios(ordenado);
+      }
+    } catch (err) {
+      console.error("Erro ao buscar comentários:", err);
+      setComentarios([]); // Garante que a lista fique vazia em caso de erro
+    }
+  }
 
   useEffect(() => {
-    async function carregarComentarios() {
-      try {
-        const token = decodeToken();
-        if (token) {
-          const data = await getAllCommentsByIdUser(token.sub);
-          const ordenado = data.sort((a: CommentData, b: CommentData) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          );
-          setComentarios(ordenado);
-        }
-      } catch (err) {
-        console.error("Erro ao buscar comentários:", err);
-      }
+    carregarComentarios();
+  }, [id]); // Adicione 'id' como dependência para recarregar se o ID na URL mudar
+
+  // Função para lidar com a submissão do novo comentário
+  const handleAdicionarComentario = async () => {
+    // Validação dos dados necessários
+    if (!novoComentario.trim()) {
+      alert('O comentário não pode estar vazio.');
+      return;
+    }
+    if (!user || !id) {
+      alert('Não foi possível identificar o autor ou o destinatário do comentário.');
+      return;
     }
 
-    carregarComentarios();
-  }, []);
+    // Monta o payload de acordo com a interface CommentData
+    const commentData: Omit<CommentData, 'created_at'> = {
+      comment: novoComentario,
+      id_user: +id, // ID do estudante (alvo do comentário)
+      id_author: user.sub, // ID do professor/profissional que está escrevendo
+      author_name: user.name, // Nome do autor
+    };
 
-  if (loading) return null; //ADICIONAR COMPONENTE DE LOADING
+    try {
+      const comentarioSalvo = await postComment(commentData as CommentData); // Envia para a API
+      
+      // Atualiza a UI de forma otimista
+      setComentarios([comentarioSalvo, ...comentarios]);
+      
+      // Limpa o formulário e fecha o modal
+      setNovoComentario('');
+      setMostrarModal(false);
+      alert('Comentário adicionado com sucesso!');
+
+    } catch (error) {
+      console.error("Erro ao postar comentário:", error);
+      alert("Falha ao adicionar o comentário. Verifique o console para mais detalhes.");
+    }
+  };
+
+  if (loading) return <h1>Carregando...</h1>;
 
   return (
     <AppLayout
       breadcrumbs={[
         { href: '/home', label: 'Página Inicial' },
-        { href: '#', label: user?.name || 'Estudante' },
+        { href: '#', label: nome || 'Estudante' },
         { href: '/comentarios', label: 'Comentários Multiprofissionais' },
       ]}
     >
       <div className="p-6 space-y-8 w-full">
-        <div className="flex justify-between">
-          <h1 className="text-4xl font-bold mb-4">Comentários Multiprofissionais</h1>
-          {user?.id_level !== ESTUDANTE && (
+        <div className="flex justify-between items-center">
+          <h1 className="text-4xl font-bold">Comentários Multiprofissionais</h1>
+          {!isStudent && (
            <button
-              className="bg-green-600 text-white px-4 py-2 rounded mb-4"
+              className="bg-green-600 text-white px-4 py-2 rounded"
               onClick={() => setMostrarModal(true)}
             >
               Adicionar Comentário
@@ -59,15 +116,23 @@ export default function ComentariosMultiprofissionais() {
 
         {/* Lista de Comentários */}
         <div className="space-y-4">
-          {comentarios.map((c, i) => (
-            <div key={i} className="bg-white rounded shadow p-4">
-              <p className="text-sm font-semibold">
-                {c.author_name}
-              </p>
-              <p className="text-sm text-right text-gray-500">{formatarData(c.created_at)}</p>
-              <p className="mt-2">{c.comment}</p>
+          {comentarios.length > 0 ? (
+            comentarios.map((c, i) => (
+              <div key={i} className="bg-white rounded shadow p-4">
+                <div className="flex justify-between items-start">
+                  <p className="text-sm font-semibold text-gray-800">
+                    {c.author_name}
+                  </p>
+                  <p className="text-xs text-gray-500">{formatarData(c.created_at)}</p>
+                </div>
+                <p className="mt-2 text-gray-700">{c.comment}</p>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-500 py-10">
+              <p>Nenhum comentário encontrado para este estudante.</p>
             </div>
-          ))}
+          )}
         </div>
 
         {/* Modal */}
@@ -79,20 +144,21 @@ export default function ComentariosMultiprofissionais() {
               onClick={(e) => e.stopPropagation()}>
               <h2 className="text-lg font-semibold mb-4">Adicionar comentário</h2>
               <textarea
-                className="w-full h-24 border border-gray-300 rounded p-2 resize-none"
-                placeholder="Adicione um comentário"
+                className="w-full h-24 border border-gray-300 rounded p-2 resize-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Escreva seu comentário aqui..."
                 value={novoComentario}
                 onChange={(e) => setNovoComentario(e.target.value)}
               />
               <div className="mt-4 flex justify-end gap-2">
                 <button
-                  className="px-4 py-2 border rounded text-gray-600"
+                  className="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
                   onClick={() => setMostrarModal(false)}
                 >
                   Cancelar
                 </button>
                 <button
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  onClick={handleAdicionarComentario} // Chama a função de submissão
                 >
                   Adicionar
                 </button>

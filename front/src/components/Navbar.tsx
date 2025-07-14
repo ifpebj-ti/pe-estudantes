@@ -1,11 +1,13 @@
 'use client';
 
-import { Menu, LogOut } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { LogOut } from 'lucide-react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const router = useRouter();
-
+  const { setUser } = useAuth();
   // Função para limpar todos os cookies acessíveis pelo cliente
   const clearAllCookies = () => {
     // 1. Pega todos os cookies como uma única string
@@ -35,6 +37,7 @@ export default function Navbar() {
     // 3. Redireciona o usuário para a página de login
     //    Usar replace: true é melhor para logout, pois impede o usuário
     //    de clicar no botão "voltar" do navegador e retornar a uma página protegida.
+    setUser(null);
     router.replace('/login'); 
   };
 
@@ -44,7 +47,7 @@ export default function Navbar() {
         
         <div className="flex flex-col">
           <div className="w-44 h-16 -ml-2">
-            <img src="/logo.svg" alt="logo" className="w-full h-full object-contain"/>
+            <Image src="/logo.svg" width="100" height="100" alt="logo" className="w-full h-full object-contain"/>
           </div>
           <div className="hidden md:block text-lg font-semibold text-white mt-2">
             <span>Prontuário Eletrônico para Estudantes com Necessidades Educacionais Específicas</span>

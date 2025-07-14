@@ -4,6 +4,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
+import { Suspense } from "react";
 
 function Card({ label, url }: { label: string, url: string }) {
   const router = useRouter();
@@ -15,7 +16,15 @@ function Card({ label, url }: { label: string, url: string }) {
   );
 }
 
-export default function VisualizarEstudante() {
+export default function VisualizarPageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <VisualizarEstudante />
+    </Suspense>
+  );
+}
+
+function VisualizarEstudante() {
   const searchParams = useSearchParams();
   const nome = searchParams.get("nome");
   const cpf = searchParams.get("cpf");

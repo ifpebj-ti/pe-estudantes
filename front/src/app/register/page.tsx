@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import "@govbr-ds/core/dist/core.min.css";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { RegisterData } from "@/interfaces/RegisterData";
 import { register } from "@/services/auth/login";
 import { useRouter } from "next/navigation";
@@ -16,7 +16,15 @@ const BrButton = dynamic(() =>
   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrButton), { ssr: false }
 );
 
-export default function RegisterPage() {
+export default function RegisterPageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <RegisterPage />
+    </Suspense>
+  );
+}
+
+function RegisterPage() {
   const [formData, setFormData] = useState({
     nome: "",
     email: "",

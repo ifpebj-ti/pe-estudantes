@@ -9,30 +9,6 @@ import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const estudantes = [
-  {
-    nome: "João Bosco de Siqueira Filho",
-    cpf: "072.923.064-38",
-    email: "jbsf3@discente.ifpe.edu.br",
-    responsavel: "Francisca de Paula da Silva Araújo",
-    endereco: "Rua São Lourenço, 2B, Centro, Belo Jardim",
-  },
-  {
-    nome: "Luiz Carlos Oliveira Maciel",
-    cpf: "072.923.064-38",
-    email: "jbsf3@discente.ifpe.edu.br",
-    responsavel: "Francisca de Paula da Silva Araújo",
-    endereco: "Rua São Lourenço, 2B, Centro, Belo Jardim",
-  },
-  {
-    nome: "Guilherme Lyare W. da Silva",
-    cpf: "072.923.064-38",
-    email: "jbsf3@discente.ifpe.edu.br",
-    responsavel: "Francisca de Paula da Silva Araújo",
-    endereco: "Rua São Lourenço, 2B, Centro, Belo Jardim",
-  },
-];
-
 export default function TabelaEstudantes() {
   const [busca, setBusca] = useState("");
   const router = useRouter();

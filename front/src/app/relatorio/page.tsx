@@ -3,13 +3,22 @@
 import dynamic from "next/dynamic";
 import "@govbr-ds/core/dist/core.min.css";
 import AppLayout from "@/components/AppLayout";
+import { Suspense } from "react";
 
 const BrCheckbox = dynamic(() =>
   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrCheckbox),
   { ssr: false }
 );
 
-export default function RelatorioPage() {
+export default function RelatorioPageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <RelatorioPage />
+    </Suspense>
+  );
+}
+
+function RelatorioPage() {
   return (
     <AppLayout
       breadcrumbs={[

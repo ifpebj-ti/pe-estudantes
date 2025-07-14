@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 import AppLayout from '@/components/AppLayout';
 // Importe a função de POST junto com a de GET
 import { getAllCommentsByIdUser, postComment } from '@/api/comments'; 
@@ -11,7 +11,15 @@ import { formatarData } from '@/utils/formatDate';
 import { ESTUDANTE } from '@/consts';
 import { useSearchParams, useRouter } from 'next/navigation'; // Importe useRouter
 
-export default function ComentariosMultiprofissionais() {
+export default function ComentariosMultiprofissionaisPageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <ComentariosMultiprofissionais />
+    </Suspense>
+  );
+}
+
+function ComentariosMultiprofissionais() {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const nome = searchParams.get("nome");
@@ -23,7 +31,7 @@ export default function ComentariosMultiprofissionais() {
   const { user, loading } = useAuth();
   const [isStudent, setIsStudent] = useState(true);
 
-  async function carregarComentarios() {
+  const carregarComentarios = useCallback(async () => {
     try {
       const token = decodeToken();
       if (!token) {
@@ -48,12 +56,11 @@ export default function ComentariosMultiprofissionais() {
       console.error("Erro ao buscar comentários:", err);
       setComentarios([]); // Garante que a lista fique vazia em caso de erro
     }
-  }
+  }, [id, router]); // Add all dependencies used inside the function
 
   useEffect(() => {
     carregarComentarios();
-  }, [id]); // Adicione 'id' como dependência para recarregar se o ID na URL mudar
-
+  }, [carregarComentarios]); // Now we can safely add it to dependencies
   // Função para lidar com a submissão do novo comentário
   const handleAdicionarComentario = async () => {
     // Validação dos dados necessários

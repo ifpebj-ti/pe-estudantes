@@ -7,12 +7,14 @@ type AuthContextType = {
   user: TokenPayload | null;
   isAuthenticated: boolean;
   loading: boolean;
+  setUser: React.Dispatch<React.SetStateAction<TokenPayload | null>>; 
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isAuthenticated: false,
   loading: true,
+  setUser: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -31,6 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         user,
         isAuthenticated: !!user,
         loading,
+        setUser,
       }}
     >
       {children}

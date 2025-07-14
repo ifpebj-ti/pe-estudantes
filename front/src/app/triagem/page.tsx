@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import dynamic from "next/dynamic";
 import "@govbr-ds/core/dist/core.min.css";
 import AppLayout from "@/components/AppLayout";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { decodeToken } from "@/services/auth/decodeToken";
 import { useAuth } from "@/contexts/AuthContext";
 import { ESTUDANTE } from "@/consts";
@@ -59,7 +60,15 @@ const initialScreeningState: ScreeningData = {
   other_disabilities: '',
 };
 
-export default function TriagemPage() {
+export default function TriagemPageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <TriagemPage />
+    </Suspense>
+  );
+}
+
+function TriagemPage() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const nome = searchParams.get("nome");
@@ -68,7 +77,6 @@ export default function TriagemPage() {
   const router = useRouter();
 
   const [screening, setScreening] = useState<ScreeningData | null>(null);
-  const [isStudent, setIsStudent] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   
   // Estado para o formulário de criação
@@ -85,7 +93,6 @@ export default function TriagemPage() {
         }
 
         const userIsStudent = token.id_level === ESTUDANTE;
-        setIsStudent(userIsStudent);
 
         const targetEmail = userIsStudent ? token.email : email;
 

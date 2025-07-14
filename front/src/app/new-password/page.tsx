@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Image from "next/image";
 import React from "react";
 import "@govbr-ds/core/dist/core.min.css";
@@ -11,7 +11,15 @@ const BrButton = dynamic(() =>
   import("@govbr-ds-testing/webcomponents-react").then((mod) => mod.BrButton), { ssr: false }
 );
 
-export default function NewPasswordPage() {
+export default function NewPasswordPageWrapper() {
+  return (
+    <Suspense fallback={<div>Carregando...</div>}>
+      <NewPasswordPage />
+    </Suspense>
+  );
+}
+
+function NewPasswordPage() {
 //   const [formData, setFormData] = useState({
 //     senha: "",
 //     confirmarSenha: ""

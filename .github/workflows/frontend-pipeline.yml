@@ -126,6 +126,10 @@ jobs:
           exit-code: 1
           severity: CRITICAL,HIGH
 
+      - name: Tag image as latest
+        run: |
+          docker tag ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+
       # Push Docker image
       - name: Login no GHCR
         run: echo "${{ secrets.GHCR_PAT }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
@@ -133,6 +137,7 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+          docker push ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
 
 # --------------------------------------------------------------------
 # 4) CREATE RELEASE --------------------------------------------------
@@ -158,3 +163,15 @@ jobs:
             Tipo de mudança: ${{ env.TIPO }}
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_PAT }}
+
+# --------------------------------------------------------------------
+# 5) DEPLOY APP --------------------------------------------------
+# --------------------------------------------------------------------
+  deploy-app:
+    name: 5. Deploy
+    runs-on: ubuntu-latest
+    needs: [docker-build-scan-push, create-release]
+    
+    steps:
+      - name: Trigger Portainer webhook to update Frontend service
+        run: curl -X POST ${{ secrets.PORTAINER_WEBHOOK_FRONTEND }}

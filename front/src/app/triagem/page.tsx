@@ -73,12 +73,13 @@ function TriagemPage() {
   const email = searchParams.get("email");
   const nome = searchParams.get("nome");
 
-  const { loading } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [screening, setScreening] = useState<ScreeningData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+  const [userIsStudent, setUserIsStudent] = useState(true);
+
   // Estado para o formulário de criação
   const [formData, setFormData] = useState<ScreeningData>(initialScreeningState);
 
@@ -92,8 +93,9 @@ function TriagemPage() {
           return;
         }
 
-        const userIsStudent = token.id_level === ESTUDANTE;
-
+        const isStudent = token.id_level === ESTUDANTE;
+        setUserIsStudent(isStudent);
+        
         const targetEmail = userIsStudent ? token.email : email;
 
         if (targetEmail) {
@@ -167,7 +169,7 @@ function TriagemPage() {
   }
 
   // Se a triagem NÃO EXISTE, renderiza o formulário de CRIAÇÃO
-  if (screening === null) {
+  if (screening === null && !userIsStudent) {
     return (
       <AppLayout
         breadcrumbs={[
@@ -260,7 +262,7 @@ function TriagemPage() {
     <AppLayout
       breadcrumbs={[
         { href: "/home", label: "Página Inicial" },
-        { href: "#", label: nome || "Estudante" },
+        { href: "#", label: user?.name || "Estudante" },
         { href: "/triagem", label: "Triagem" },
       ]}
     >
@@ -268,66 +270,66 @@ function TriagemPage() {
         <h1 className="text-2xl font-bold text-green-800">Triagem</h1>
 
         <div className="grid md:grid-cols-4 gap-4">
-          <BrInput label="Nome completo" class="w-full" value={screening.full_name || ""} disabled />
-          <BrInput label="E-mail" class="w-full" value={screening.email || ""} disabled />
-          <BrInput label="Relatório médico" class="w-full" value={screening.report || ""} disabled />
+          <BrInput label="Nome completo" class="w-full" value={screening?.full_name || ""} disabled />
+          <BrInput label="E-mail" class="w-full" value={screening?.email || ""} disabled />
+          <BrInput label="Relatório médico" class="w-full" value={screening?.report || ""} disabled />
         </div>
 
         <section className="border-t pt-4">
           <h2>Necessidade Específica</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            <BrCheckbox name="" label="Deficiência Física" checked={screening.specific_need.deficiencia_fisica} disabled />
-            <BrCheckbox name="" label="Deficiência Auditiva/Surdez" checked={screening.specific_need.deficiencia_auditiva} disabled />
-            <BrCheckbox name="" label="Baixa Visão" checked={screening.specific_need.baixa_visao} disabled />
-            <BrCheckbox name="" label="Surdocegueira" checked={screening.specific_need.surdocegueira} disabled />
-            <BrCheckbox name="" label="Cegueira" checked={screening.specific_need.cegueira} disabled />
-            <BrCheckbox name="" label="Altas habilidades/superdotação" checked={screening.specific_need.superdotacao} disabled />
-            <BrCheckbox name="" label="Transtornos globais do desenvolvimento" checked={screening.specific_need.transtornos_globais_de_desenvolvimento} disabled />
-            <BrCheckbox name="" label="Distúrbios de aprendizagem" checked={screening.specific_need.disturbio_de_aprendizagem} disabled />
-            <BrInput label="Outro" class="w-full" value={screening.specific_need.outros || ""} disabled />
+            <BrCheckbox name="" label="Deficiência Física" checked={screening?.specific_need.deficiencia_fisica} disabled />
+            <BrCheckbox name="" label="Deficiência Auditiva/Surdez" checked={screening?.specific_need.deficiencia_auditiva} disabled />
+            <BrCheckbox name="" label="Baixa Visão" checked={screening?.specific_need.baixa_visao} disabled />
+            <BrCheckbox name="" label="Surdocegueira" checked={screening?.specific_need.surdocegueira} disabled />
+            <BrCheckbox name="" label="Cegueira" checked={screening?.specific_need.cegueira} disabled />
+            <BrCheckbox name="" label="Altas habilidades/superdotação" checked={screening?.specific_need.superdotacao} disabled />
+            <BrCheckbox name="" label="Transtornos globais do desenvolvimento" checked={screening?.specific_need.transtornos_globais_de_desenvolvimento} disabled />
+            <BrCheckbox name="" label="Distúrbios de aprendizagem" checked={screening?.specific_need.disturbio_de_aprendizagem} disabled />
+            <BrInput label="Outro" class="w-full" value={screening?.specific_need.outros || ""} disabled />
           </div>
         </section>
 
         <section className="border-t pt-4">
           <h2>Deficiência Física</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            <BrCheckbox name="" label="Necessita de transcritor" checked={screening.physical_disability.necessita_de_transcritor} disabled />
-            <BrCheckbox name="" label="Necessita de acesso para cadeirante" checked={screening.physical_disability.acesso_para_cadeirante} disabled />
-            <BrInput label="Outro" class="w-full" value={screening.physical_disability.outros || ""} disabled />
+            <BrCheckbox name="" label="Necessita de transcritor" checked={screening?.physical_disability.necessita_de_transcritor} disabled />
+            <BrCheckbox name="" label="Necessita de acesso para cadeirante" checked={screening?.physical_disability.acesso_para_cadeirante} disabled />
+            <BrInput label="Outro" class="w-full" value={screening?.physical_disability.outros || ""} disabled />
           </div>
         </section>
 
         <section className="border-t pt-4">
           <h2>Deficiência Visual</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            <BrCheckbox name="" label="Necessita de material didático em Braille" checked={screening.visual_impairment.necessita_de_braille} disabled />
-            <BrCheckbox name="" label="Material com fonte aumentada" checked={screening.visual_impairment.material_com_fonte_aumentada} disabled />
-            <BrCheckbox name="" label="Necessita de transcritor" checked={screening.visual_impairment.necessita_de_transcritor} disabled />
-            <BrInput label="Outro" class="w-full" value={screening.visual_impairment.outros || ""} disabled />
+            <BrCheckbox name="" label="Necessita de material didático em Braille" checked={screening?.visual_impairment.necessita_de_braille} disabled />
+            <BrCheckbox name="" label="Material com fonte aumentada" checked={screening?.visual_impairment.material_com_fonte_aumentada} disabled />
+            <BrCheckbox name="" label="Necessita de transcritor" checked={screening?.visual_impairment.necessita_de_transcritor} disabled />
+            <BrInput label="Outro" class="w-full" value={screening?.visual_impairment.outros || ""} disabled />
           </div>
         </section>
 
         <section className="border-t pt-4">
           <h2>Deficiência Auditiva</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            <BrCheckbox name="" label="Necessita de intérprete de língua de sinais" checked={screening.hearing_impairment.necessita_de_interprete_de_lingua_de_sinais} disabled />
-            <BrCheckbox name="" label="Necessita de intérprete oralizador" checked={screening.hearing_impairment.necessita_de_interprete_oralizador} disabled />
-            <BrInput label="Outro" class="w-full" value={screening.hearing_impairment.outros || ""} disabled />
+            <BrCheckbox name="" label="Necessita de intérprete de língua de sinais" checked={screening?.hearing_impairment.necessita_de_interprete_de_lingua_de_sinais} disabled />
+            <BrCheckbox name="" label="Necessita de intérprete oralizador" checked={screening?.hearing_impairment.necessita_de_interprete_oralizador} disabled />
+            <BrInput label="Outro" class="w-full" value={screening?.hearing_impairment.outros || ""} disabled />
           </div>
         </section>
 
         <section className="border-t pt-4">
           <h2>Transtornos Globais / Altas Habilidades</h2>
           <div className="grid md:grid-cols-2 gap-4">
-            <BrCheckbox name="" label="Necessita de ledor" checked={screening.global_disorder.necessita_de_ledor} disabled />
-            <BrCheckbox name="" label="Necessita de transcritor" checked={screening.global_disorder.necessita_de_transcritor} disabled />
-            <BrInput label="Outro" class="w-full" value={screening.global_disorder.outros || ""} disabled />
+            <BrCheckbox name="" label="Necessita de ledor" checked={screening?.global_disorder.necessita_de_ledor} disabled />
+            <BrCheckbox name="" label="Necessita de transcritor" checked={screening?.global_disorder.necessita_de_transcritor} disabled />
+            <BrInput label="Outro" class="w-full" value={screening?.global_disorder.outros || ""} disabled />
           </div>
         </section>
 
         <section className="border-t pt-4">
           <h2>Outros casos de deficiência</h2>
-          <BrInput label="Descrição" class="w-full" value={screening.other_disabilities || ""} disabled />
+          <BrInput label="Descrição" class="w-full" value={screening?.other_disabilities || ""} disabled />
         </section>
 
         <div className="flex justify-center gap-4 mt-8">

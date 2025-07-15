@@ -59,6 +59,7 @@ function PEIPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const [userIsStudent, setUserIsStudent] = useState(true);
 
   const [formData, setFormData] = useState<PlansEducationData>(initialPEIState);
 
@@ -71,7 +72,9 @@ function PEIPage() {
           router.push('/login');
           return;
         }
-        const userIsStudent = token.id_level === ESTUDANTE;
+        const isStudent = token.id_level === ESTUDANTE;
+        setUserIsStudent(isStudent);
+
         const targetEmail = userIsStudent ? token.email : email;
         if (targetEmail) {
           const data = await getPEIByEmail(targetEmail);
@@ -141,7 +144,7 @@ function PEIPage() {
   }
 
   // Se o PEI NÃO EXISTE, renderiza o formulário de CRIAÇÃO
-  if (pei === null) {
+  if (pei === null && !userIsStudent) {
     return (
       <AppLayout
         breadcrumbs={[
@@ -250,7 +253,7 @@ function PEIPage() {
     <AppLayout
       breadcrumbs={[
         { href: '/home', label: 'Página Inicial' },
-        { href: '#', label: nome || 'Estudante' },
+        { href: '#', label: user?.name || 'Estudante' },
         { href: '/pei', label: 'PEI' },
       ]}
     >
@@ -260,17 +263,17 @@ function PEIPage() {
         {/* Adicione aqui a visualização dos campos que faltavam se desejar */}
         <section className="border-t pt-6">
             <h2 className="text-xl font-semibold mb-2">Conteúdo Escolar</h2>
-            <BrInput label="Descrição" value={pei.school_content} disabled />
+            <BrInput label="Descrição" value={pei?.school_content || ""} disabled />
         </section>
         <section className="border-t pt-6">
             <h2 className="text-xl font-semibold mb-2">Objetivos</h2>
-            <BrInput label="Descrição" value={pei.objectives} disabled />
+            <BrInput label="Descrição" value={pei?.objectives || ""} disabled />
         </section>
 
         <section className="border-t pt-6">
           <h2 className="text-xl font-semibold mb-2">Serviço de Apoio</h2>
           <div className="flex flex-wrap gap-4">
-            {Object.entries(pei.support_service).map(([key, value]) =>
+            {pei?.support_service && Object.entries(pei.support_service).map(([key, value]) =>
               key !== 'outro' ? (
                 <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
               ) : (
@@ -283,7 +286,7 @@ function PEIPage() {
         <section className="border-t pt-6">
           <h2 className="text-xl font-semibold mb-2">Habilidades e Potencialidades</h2>
           <div className="grid md:grid-cols-3 gap-3">
-            {Object.entries(pei.skills).map(([key, value]) => (
+            {pei?.skills && Object.entries(pei.skills).map(([key, value]) => (
               <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={value} disabled />
             ))}
           </div>
@@ -292,7 +295,7 @@ function PEIPage() {
         <section className="border-t pt-6">
           <h2 className="text-xl font-semibold mb-2">Recursos/Equipamentos já utilizados</h2>
           <div className="grid md:grid-cols-2 gap-3">
-            {Object.entries(pei.resource_equipment_used).map(([key, value]) =>
+            {pei?.resource_equipment_used && Object.entries(pei.resource_equipment_used).map(([key, value]) =>
               key !== "outro" ? (
                 <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
               ) : (
@@ -305,7 +308,7 @@ function PEIPage() {
         <section className="border-t pt-6">
           <h2 className="text-xl font-semibold mb-2">Recursos/Equipamentos a providenciar</h2>
           <div className="flex flex-wrap gap-4">
-            {Object.entries(pei.resource_equipment_needs).map(([key, value]) =>
+            {pei?.resource_equipment_needs && Object.entries(pei.resource_equipment_needs).map(([key, value]) =>
               key !== "outro" ? (
                 <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
               ) : (

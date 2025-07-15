@@ -46,12 +46,13 @@ function AnamnesePage() {
   const email = searchParams.get("email");
   const nome = searchParams.get("nome");
 
-  const { loading } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   const [anamnesis, setAnamnesis] = useState<AnamnesisData | null>(null);
   const [isLoading, setIsLoading] = useState(true); 
-  
+  const [userIsStudent, setUserIsStudent] = useState(true);
+
   const [formData, setFormData] = useState<AnamnesisData>(initialAnamnesisState);
   
   useEffect(() => {
@@ -63,7 +64,11 @@ function AnamnesePage() {
           router.push('/login'); 
           return;
         }
-        const targetEmail = token.id_level === ESTUDANTE ? token.email : email;
+
+        const isStudent = token.id_level === ESTUDANTE;
+        setUserIsStudent(isStudent);
+
+        const targetEmail = userIsStudent ? token.email : email;
 
         if (targetEmail) {
           const data = await getAnamneseByEmail(targetEmail);
@@ -137,7 +142,7 @@ function AnamnesePage() {
       return <h1>Carregando...</h1>; //ADICIONAR COMPONENTE DE LOADING
   }
 
-  if (anamnesis === null) {
+  if (anamnesis === null  && !userIsStudent) {
     return (
         <AppLayout
           breadcrumbs={[
@@ -252,7 +257,7 @@ function AnamnesePage() {
     <AppLayout
       breadcrumbs={[
         { href: '/home', label: 'Página Inicial' },
-        { href: '#', label: nome || 'Estudante' },
+        { href: '#', label: user?.name || 'Estudante' },
         { href: '/anamnese', label: 'Anamnese' },
       ]}
     >

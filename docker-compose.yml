@@ -2,24 +2,27 @@ version: '3.8'
 
 services:
   nest-app:
-    image: ghcr.io/ifpebj-ti/back-pe-estudantes:1.1.0
+    image: ghcr.io/ifpebj-ti/back-pe-estudantes:latest
     container_name: nest-backend
     ports:
-      - "3001:3000" # expõe porta 3001 na VM
+      - "${PORT_MACHINE_BACKEND}:3000" # Ex: 3001:3000
     environment:
       DATABASE_URL: "${DATABASE_URL}"
       NODE_ENV: "${NODE_ENV}"
+      SECRET_KEY: "${SECRET_KEY}"
     networks:
       - app-net
       - proxy-net
     depends_on:
-      - postgres-db
+      postgres-db:
+        condition: service_healthy
+    restart: unless-stopped
 
   postgres-db:
     image: postgres:15
     container_name: postgres-db
     ports:
-      - "5432:5432"
+      - "${PORT_MACHINE_DB}:5432" # Ex: 5432:5432
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -28,17 +31,25 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - app-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   next-app:
-    image: ghcr.io/ifpebj-ti/front-pe-estudantes:0.3.1
+    image: ghcr.io/ifpebj-ti/front-pe-estudantes:latest
     container_name: next-frontend
     ports:
-      - "8080:3000" # expõe porta 8080 na VM
+      - "${PORT_MACHINE_FRONTEND}:3000"
     networks:
       - app-net
       - proxy-net
     depends_on:
       - nest-app
+    restart: unless-stopped
 
 networks:
   app-net:
@@ -49,3 +60,5 @@ networks:
 
 volumes:
   pgdata:
+    external: true
+    name: pe-estudantes_pgdata

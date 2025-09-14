@@ -76,6 +76,7 @@ function TriagemPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
+  const [targetEmail, setTargetEmail] = useState<string | null>(null);
   const [screening, setScreening] = useState<ScreeningData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userIsStudent, setUserIsStudent] = useState(true);
@@ -96,8 +97,12 @@ function TriagemPage() {
         const isStudent = token.id_level === ESTUDANTE;
         setUserIsStudent(isStudent);
         
-        const targetEmail = userIsStudent ? token.email : email;
-
+        if (userIsStudent) {
+          setTargetEmail(token.email);
+        } else {
+          setTargetEmail(email);
+        }
+        
         if (targetEmail) {
           const data = await getScreeningByEmail(targetEmail);
           setScreening(data);
@@ -111,7 +116,7 @@ function TriagemPage() {
     }
 
     fetchData();
-  }, [email, router]);
+  }, [email, targetEmail, router]);
 
   // Manipulador para inputs de texto (BrInput)
   const handleInputChange = (name: string, value: string) => {

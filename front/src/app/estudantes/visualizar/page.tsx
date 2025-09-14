@@ -66,6 +66,7 @@ function VisualizarEstudante() {
           <Card label="Anamnese" url={`/anamnese?email=${email}&nome=${nome}`} />
           <Card label="Comentários Multiprofissionais" url={`/comentarios?id=${id}&nome=${nome}`}/>
           <Card label="PEI" url={`/pei?email=${email}&nome=${nome}`} />
+          <Card label="Exportar Relatório" url={`/relatorio?email=${email}&nome=${nome}`} />
         </div>
       </div>
     </AppLayout>

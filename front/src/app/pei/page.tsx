@@ -58,6 +58,8 @@ function PEIPage() {
   const [pei, setPei] = useState<PlansEducationData | null>(null);
   const { user, loading } = useAuth();
   const router = useRouter();
+
+  const [targetEmail, setTargetEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userIsStudent, setUserIsStudent] = useState(true);
 
@@ -75,7 +77,12 @@ function PEIPage() {
         const isStudent = token.id_level === ESTUDANTE;
         setUserIsStudent(isStudent);
 
-        const targetEmail = userIsStudent ? token.email : email;
+        if (userIsStudent) {
+          setTargetEmail(token.email);
+        } else {
+          setTargetEmail(email);
+        }
+        
         if (targetEmail) {
           const data = await getPEIByEmail(targetEmail);
           setPei(data);
@@ -88,7 +95,7 @@ function PEIPage() {
       }
     }
     fetchData();
-  }, [email, router]);
+  }, [email,targetEmail, router]);
 
   const handleInputChange = (name: string, value: string) => {
     const keys = name.split('.');
@@ -143,7 +150,6 @@ function PEIPage() {
     return <h1>Carregando...</h1>;
   }
 
-  // Se o PEI NÃO EXISTE, renderiza o formulário de CRIAÇÃO
   if (pei === null && !userIsStudent) {
     return (
       <AppLayout
@@ -156,20 +162,39 @@ function PEIPage() {
         <div className="p-6 space-y-8 w-full">
           <h1 className="text-3xl font-bold text-gray-800">PEI - Criar Plano de Ensino Individualizado</h1>
 
-          {/* Campos adicionados para completar o payload */}
-          <section className="border-t pt-6">
-            <h2 className="text-xl font-semibold mb-2">Conteúdo Escolar</h2>
-            <BrInput label="Descreva o conteúdo escolar" value={formData.school_content} onInput={(e: any) => handleInputChange('school_content', e.target.value)} />
+          {/* Informações do Professor e Estudante */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4">Informações Gerais</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <BrInput label="Email do Professor" value={formData.professor_email} onInput={(e: any) => handleInputChange('professor_email', e.target.value)} />
+              <BrInput label="Nome do Professor" value={formData.professor_name} onInput={(e: any) => handleInputChange('professor_name', e.target.value)} />
+              <BrInput label="Email do Estudante" value={formData.student_email} onInput={(e: any) => handleInputChange('student_email', e.target.value)} />
+              <BrInput label="Nome do Estudante" value={formData.student_name} onInput={(e: any) => handleInputChange('student_name', e.target.value)} />
+            </div>
           </section>
 
-          <section className="border-t pt-6">
-            <h2 className="text-xl font-semibold mb-2">Objetivos</h2>
-            <BrInput label="Descreva os objetivos" value={formData.objectives} onInput={(e: any) => handleInputChange('objectives', e.target.value)} />
+          {/* Semestre Acadêmico */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Semestre Acadêmico</h2>
+            <div className="flex flex-wrap gap-4">
+              <BrCheckbox name="" label="Primeiro Semestre" checked={formData.academic_semester.primeiro_semestre} onClick={() => handleCheckboxClick('academic_semester.primeiro_semestre')} />
+              <BrCheckbox name="" label="Segundo Semestre" checked={formData.academic_semester.segundo_semestre} onClick={() => handleCheckboxClick('academic_semester.segundo_semestre')} />
+            </div>
           </section>
 
-          {/* Seções com campos mistos (boolean e string) */}
-          <section className="border-t pt-6">
-            <h2 className="text-xl font-semibold mb-2">Serviço de Apoio</h2>
+          {/* Modalidade de Serviço */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Modalidade de Serviço</h2>
+            <div className="flex flex-wrap gap-4">
+              <BrCheckbox name="" label="Turma Regular" checked={formData.service_modality.turma_regular} onClick={() => handleCheckboxClick('service_modality.turma_regular')} />
+              <BrCheckbox name="" label="Atendimento Pedagógico Domiciliar" checked={formData.service_modality.atendimento_pedagogico_domiciliar} onClick={() => handleCheckboxClick('service_modality.atendimento_pedagogico_domiciliar')} />
+              <BrCheckbox name="" label="Atendimento Pedagógico Hospitalar" checked={formData.service_modality.atendimento_pedagogico_hospitalar} onClick={() => handleCheckboxClick('service_modality.atendimento_pedagogico_hospitalar')} />
+            </div>
+          </section>
+
+          {/* Serviço de Apoio */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Serviço de Apoio</h2>
             <div className="flex flex-wrap gap-4">
               {Object.keys(formData.support_service).map((key) =>
                 key !== 'outro' ? (
@@ -185,8 +210,9 @@ function PEIPage() {
             </div>
           </section>
 
-          <section className="border-t pt-6">
-            <h2 className="text-xl font-semibold mb-2">Habilidades e Potencialidades</h2>
+          {/* Habilidades e Potencialidades */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Habilidades e Potencialidades</h2>
             <div className="grid md:grid-cols-3 gap-3">
               {Object.keys(formData.skills).map((key) => (
                 <BrCheckbox name=""
@@ -199,8 +225,9 @@ function PEIPage() {
             </div>
           </section>
 
-          <section className="border-t pt-6">
-            <h2 className="text-xl font-semibold mb-2">Recursos/Equipamentos já utilizados</h2>
+          {/* Recursos/Equipamentos já utilizados */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Recursos/Equipamentos já utilizados</h2>
             <div className="grid md:grid-cols-2 gap-3">
               {Object.keys(formData.resource_equipment_used).map((key) =>
                 key !== 'outro' ? (
@@ -216,8 +243,9 @@ function PEIPage() {
             </div>
           </section>
 
-          <section className="border-t pt-6">
-            <h2 className="text-xl font-semibold mb-2">Recursos/Equipamentos a providenciar</h2>
+          {/* Recursos/Equipamentos a providenciar */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Recursos/Equipamentos a providenciar</h2>
             <div className="flex flex-wrap gap-4">
               {Object.keys(formData.resource_equipment_needs).map((key) =>
                 key !== 'outro' ? (
@@ -232,8 +260,105 @@ function PEIPage() {
               <BrInput label="Outro" value={formData.resource_equipment_needs.outro} onInput={(e: any) => handleInputChange('resource_equipment_needs.outro', e.target.value)} />
             </div>
           </section>
-          
-          {/* Adicione as outras seções que faltam aqui, seguindo o mesmo padrão */}
+
+          {/* Acessibilidade Curricular */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Acessibilidade Curricular</h2>
+            <div className="grid md:grid-cols-2 gap-3">
+              {Object.keys(formData.curriculum_accessibility).map((key) =>
+                key !== 'outro' ? (
+                  <BrCheckbox name=""
+                    key={key}
+                    label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    checked={formData.curriculum_accessibility[key as keyof Omit<typeof formData.curriculum_accessibility, 'outro'>]}
+                    onClick={() => handleCheckboxClick(`curriculum_accessibility.${key}`)}
+                  />
+                ) : null
+              )}
+              <BrInput label="Outro" value={formData.curriculum_accessibility.outro} onInput={(e: any) => handleInputChange('curriculum_accessibility.outro', e.target.value)} />
+            </div>
+          </section>
+
+          {/* Conteúdo Escolar */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Conteúdo Escolar</h2>
+            <BrInput label="Descreva o conteúdo escolar" value={formData.school_content} onInput={(e: any) => handleInputChange('school_content', e.target.value)} />
+          </section>
+
+          {/* Atividades a serem desenvolvidas */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Atividades a serem desenvolvidas</h2>
+            <div className="grid md:grid-cols-2 gap-3">
+              {Object.keys(formData.activities_to_be_developed).map((key) =>
+                key !== 'outro' ? (
+                  <BrCheckbox name=""
+                    key={key}
+                    label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    checked={formData.activities_to_be_developed[key as keyof Omit<typeof formData.activities_to_be_developed, 'outro'>]}
+                    onClick={() => handleCheckboxClick(`activities_to_be_developed.${key}`)}
+                  />
+                ) : null
+              )}
+              <BrInput label="Outro" value={formData.activities_to_be_developed.outro} onInput={(e: any) => handleInputChange('activities_to_be_developed.outro', e.target.value)} />
+            </div>
+          </section>
+
+          {/* Objetivos */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Objetivos</h2>
+            <BrInput label="Descreva os objetivos" value={formData.objectives} onInput={(e: any) => handleInputChange('objectives', e.target.value)} />
+          </section>
+
+          {/* Metodologia de Trabalho */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Metodologia de Trabalho</h2>
+            <div className="grid md:grid-cols-2 gap-3">
+              {Object.keys(formData.work_methodology).map((key) => (
+                <BrCheckbox name=""
+                  key={key}
+                  label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  checked={formData.work_methodology[key as keyof typeof formData.work_methodology]}
+                  onClick={() => handleCheckboxClick(`work_methodology.${key}`)}
+                />
+              ))}
+            </div>
+          </section>
+
+          {/* Materiais Utilizados */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Materiais Utilizados</h2>
+            <div className="grid md:grid-cols-2 gap-3">
+              {Object.keys(formData.materials_used).map((key) =>
+                key !== 'outro' ? (
+                  <BrCheckbox name=""
+                    key={key}
+                    label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    checked={formData.materials_used[key as keyof Omit<typeof formData.materials_used, 'outro'>]}
+                    onClick={() => handleCheckboxClick(`materials_used.${key}`)}
+                  />
+                ) : null
+              )}
+              <BrInput label="Outro" value={formData.materials_used.outro} onInput={(e: any) => handleInputChange('materials_used.outro', e.target.value)} />
+            </div>
+          </section>
+
+          {/* Critérios de Avaliação */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Critérios de Avaliação</h2>
+            <div className="grid md:grid-cols-2 gap-3">
+              {Object.keys(formData.evaluation_criteria).map((key) =>
+                key !== 'outro' ? (
+                  <BrCheckbox name=""
+                    key={key}
+                    label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    checked={formData.evaluation_criteria[key as keyof Omit<typeof formData.evaluation_criteria, 'outro'>]}
+                    onClick={() => handleCheckboxClick(`evaluation_criteria.${key}`)}
+                  />
+                ) : null
+              )}
+              <BrInput label="Outro" value={formData.evaluation_criteria.outro} onInput={(e: any) => handleInputChange('evaluation_criteria.outro', e.target.value)} />
+            </div>
+          </section>
 
           <div className="flex justify-center gap-4 mt-8">
             <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
@@ -249,7 +374,7 @@ function PEIPage() {
   }
 
   // Se o PEI EXISTE, renderiza o formulário de VISUALIZAÇÃO (sem alterações)
-  return (
+   return (
     <AppLayout
       breadcrumbs={[
         { href: '/home', label: 'Página Inicial' },
@@ -260,31 +385,53 @@ function PEIPage() {
       <div className="p-6 space-y-8 w-full">
         <h1 className="text-3xl font-bold text-gray-800">PEI - Plano de Ensino Individualizado</h1>
         
-        {/* Adicione aqui a visualização dos campos que faltavam se desejar */}
-        <section className="border-t pt-6">
-            <h2 className="text-xl font-semibold mb-2">Conteúdo Escolar</h2>
-            <BrInput label="Descrição" value={pei?.school_content || ""} disabled />
-        </section>
-        <section className="border-t pt-6">
-            <h2 className="text-xl font-semibold mb-2">Objetivos</h2>
-            <BrInput label="Descrição" value={pei?.objectives || ""} disabled />
+        {/* Informações Gerais */}
+        <section>
+          <h2 className="text-xl font-semibold mb-4">Informações Gerais</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            <BrInput label="Email do Professor" class="w-full" value={pei?.professor_email || ''} disabled />
+            <BrInput label="Nome do Professor" class="w-full" value={pei?.professor_name || ''} disabled />
+            <BrInput label="Email do Estudante" class="w-full" value={pei?.student_email || ''} disabled />
+            <BrInput label="Nome do Estudante" class="w-full" value={pei?.student_name || ''} disabled />
+          </div>
         </section>
 
-        <section className="border-t pt-6">
-          <h2 className="text-xl font-semibold mb-2">Serviço de Apoio</h2>
+        {/* Semestre Acadêmico */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Semestre Acadêmico</h2>
+          <div className="flex flex-wrap gap-4">
+            <BrCheckbox label="Primeiro Semestre" name="semestre" checked={pei?.academic_semester?.primeiro_semestre || false} disabled />
+            <BrCheckbox label="Segundo Semestre" name="semestre" checked={pei?.academic_semester?.segundo_semestre || false} disabled />
+          </div>
+        </section>
+
+        {/* Modalidade de Serviço */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Modalidade de Serviço</h2>
+          <div className="flex flex-wrap gap-4">
+            <BrCheckbox label="Turma Regular" name="modalidade" checked={pei?.service_modality?.turma_regular || false} disabled />
+            <BrCheckbox label="Atendimento Pedagógico Domiciliar" name="modalidade" checked={pei?.service_modality?.atendimento_pedagogico_domiciliar || false} disabled />
+            <BrCheckbox label="Atendimento Pedagógico Hospitalar" name="modalidade" checked={pei?.service_modality?.atendimento_pedagogico_hospitalar || false} disabled />
+          </div>
+        </section>
+
+        {/* Serviço de Apoio */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Serviço de Apoio</h2>
           <div className="flex flex-wrap gap-4">
             {pei?.support_service && Object.entries(pei.support_service).map(([key, value]) =>
               key !== 'outro' ? (
                 <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
               ) : (
-                <BrInput key={key} label="Outro" value={String(value)} disabled />
+                <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
               )
             )}
           </div>
         </section>
 
-        <section className="border-t pt-6">
-          <h2 className="text-xl font-semibold mb-2">Habilidades e Potencialidades</h2>
+        {/* Habilidades e Potencialidades */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Habilidades e Potencialidades</h2>
           <div className="grid md:grid-cols-3 gap-3">
             {pei?.skills && Object.entries(pei.skills).map(([key, value]) => (
               <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={value} disabled />
@@ -292,27 +439,107 @@ function PEIPage() {
           </div>
         </section>
 
-        <section className="border-t pt-6">
-          <h2 className="text-xl font-semibold mb-2">Recursos/Equipamentos já utilizados</h2>
+        {/* Recursos/Equipamentos já utilizados */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Recursos/Equipamentos já utilizados</h2>
           <div className="grid md:grid-cols-2 gap-3">
             {pei?.resource_equipment_used && Object.entries(pei.resource_equipment_used).map(([key, value]) =>
               key !== "outro" ? (
                 <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
               ) : (
-                <BrInput key={key} label="Outro" value={String(value)} disabled />
+                <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
               )
             )}
           </div>
         </section>
 
-        <section className="border-t pt-6">
-          <h2 className="text-xl font-semibold mb-2">Recursos/Equipamentos a providenciar</h2>
+        {/* Recursos/Equipamentos a providenciar */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Recursos/Equipamentos a providenciar</h2>
           <div className="flex flex-wrap gap-4">
             {pei?.resource_equipment_needs && Object.entries(pei.resource_equipment_needs).map(([key, value]) =>
               key !== "outro" ? (
                 <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
               ) : (
-                <BrInput key={key} label="Outro" value={String(value)} disabled />
+                <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+              )
+            )}
+          </div>
+        </section>
+
+        {/* Acessibilidade Curricular */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Acessibilidade Curricular</h2>
+          <div className="grid md:grid-cols-2 gap-3">
+            {pei?.curriculum_accessibility && Object.entries(pei.curriculum_accessibility).map(([key, value]) =>
+              key !== "outro" ? (
+                <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+              ) : (
+                <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+              )
+            )}
+          </div>
+        </section>
+
+        {/* Conteúdo Escolar */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Conteúdo Escolar</h2>
+          <BrInput label="Descrição" class="w-full" value={pei?.school_content || ""} disabled />
+        </section>
+
+        {/* Atividades a serem desenvolvidas */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Atividades a serem desenvolvidas</h2>
+          <div className="grid md:grid-cols-2 gap-3">
+            {pei?.activities_to_be_developed && Object.entries(pei.activities_to_be_developed).map(([key, value]) =>
+              key !== "outro" ? (
+                <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+              ) : (
+                <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+              )
+            )}
+          </div>
+        </section>
+
+        {/* Objetivos */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Objetivos</h2>
+          <BrInput label="Descrição" class="w-full" value={pei?.objectives || ""} disabled />
+        </section>
+
+        {/* Metodologia de Trabalho */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Metodologia de Trabalho</h2>
+          <div className="grid md:grid-cols-2 gap-3">
+            {pei?.work_methodology && Object.entries(pei.work_methodology).map(([key, value]) => (
+              <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+            ))}
+          </div>
+        </section>
+
+        {/* Materiais Utilizados */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Materiais Utilizados</h2>
+          <div className="grid md:grid-cols-2 gap-3">
+            {pei?.materials_used && Object.entries(pei.materials_used).map(([key, value]) =>
+              key !== "outro" ? (
+                <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+              ) : (
+                <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+              )
+            )}
+          </div>
+        </section>
+
+        {/* Critérios de Avaliação */}
+        <section className="border-t pt-6 mt-6">
+          <h2 className="text-xl font-semibold mb-4">Critérios de Avaliação</h2>
+          <div className="grid md:grid-cols-2 gap-3">
+            {pei?.evaluation_criteria && Object.entries(pei.evaluation_criteria).map(([key, value]) =>
+              key !== "outro" ? (
+                <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+              ) : (
+                <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
               )
             )}
           </div>

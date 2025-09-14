@@ -14,6 +14,7 @@ import { PhasesModule } from './phases/phases.module';
 import { AnamnesisModule } from './anamnesis/anamnesis.module';
 import { CommentsModule } from './comments/comments.module';
 import { PlansEducationModule } from './plans-education/plans-education.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PlansEducationModule } from './plans-education/plans-education.module';
     AnamnesisModule,
     CommentsModule,
     PlansEducationModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -13,6 +13,7 @@ import HomeCard from "@/components/HomeCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { ESTUDANTE } from "@/consts";
 import { Suspense } from "react";
+import Home from "../page";
 
 export default function HomePageWrapper() {
   return (

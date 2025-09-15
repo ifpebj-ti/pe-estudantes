@@ -35,10 +35,13 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(email: string, updateUserDto: UpdateUserDto) {
     return this.prisma.user.update({
-      where: { id: id },
-      data: { full_name: updateUserDto.full_name },
+      where: { email: email },
+      data: { 
+        full_name: updateUserDto.full_name,
+        id_level: updateUserDto.id_level,
+      },
     });
   }
 

@@ -142,7 +142,7 @@ function PEIPage() {
       router.push(`/home`);
     } catch (error) {
       console.error("Erro ao criar PEI:", error);
-      alert("Falha ao criar o PEI. Verifique o console para mais detalhes.");
+      alert(`Falha ao criar o PEI. ${error}, você deve ser professor para fazer isso.`);
     }
   };
 

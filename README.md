@@ -7,7 +7,7 @@
 ![Open PRs](https://img.shields.io/github/issues-pr/ifpebj-ti/pe-estudantes)
 ![Forks](https://img.shields.io/github/forks/ifpebj-ti/pe-estudantes)
 ![Stars](https://img.shields.io/github/stars/ifpebj-ti/pe-estudantes)
-![Coverage](https://img.shields.io/badge/Coverage-83.99%25-brightgreen) <!-- COVERAGE_BADGE -->
+![Coverage](https://img.shields.io/badge/Coverage-84.24%25-brightgreen) <!-- COVERAGE_BADGE -->
 
 # 🏫 Edutrace - Prontuário Eletrônico para Estudantes NEE
 

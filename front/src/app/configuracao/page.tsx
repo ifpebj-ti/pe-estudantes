@@ -1,42 +1,30 @@
-// app/estudantes/visualizar/page.tsx
+// app/configuracao/page.tsx
 
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
 import { Suspense } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-
-function Card({ label, url }: { label: string, url: string }) {
-  const router = useRouter();
-
-  return (
-    <div className="relative bg-white rounded shadow p-6 flex flex-col items-center justify-center text-center hover:shadow-md" onClick={() => router.push(url)}>
-      <span className="text-green-900 font-medium text-sm leading-tight">{label}</span>
-    </div>
-  );
-}
+import { updateUser } from "@/api/user";
 
 export default function VisualizarPageWrapper() {
   return (
     <Suspense fallback={<div>Carregando...</div>}>
-      <VisualizarEstudante />
+      <VisualizarEstudanteConfig />
     </Suspense>
   );
 }
 
-function VisualizarEstudante() {
+function VisualizarEstudanteConfig() {
   const searchParams = useSearchParams();
   const nome = searchParams.get("nome");
   const cpf = searchParams.get("cpf");
   const email = searchParams.get("email");
   const responsavel = searchParams.get("responsavel");
-  const id = searchParams.get("id");
   const nivelAcesso = searchParams.get("nivelAcesso")
-
-  const { user, loading } = useAuth();
+  const router = useRouter();
   
-  function getLevelName(id_level: string | null) {
+  function getLevelName(id_level: string) {
     switch(id_level) {
       case '1':
         return "Admin";
@@ -52,12 +40,6 @@ function VisualizarEstudante() {
         return "Nível desconhecido";
     }
   }
-
-  const telaConfiguracao = (
-    <>
-      <Card label="Configuracao" url={`/configuracao?id=${id}&nome=${nome}&cpf=${cpf}&email=${email}&responsavel=${responsavel}&nivelAcesso=${nivelAcesso}`} />
-    </>
-  )
 
   return (
     <AppLayout
@@ -84,19 +66,41 @@ function VisualizarEstudante() {
                 <td className="p-3">{cpf}</td>
                 <td className="p-3">{email}</td>
                 <td className="p-3">{responsavel === "null" ? "Responsável não atribuído" : responsavel }</td>
-                <td className="p-3">{getLevelName(nivelAcesso)}</td>
+                <td className="p-3">
+                    <select
+                        className="border rounded px-2 py-1"
+                        value={nivelAcesso ? nivelAcesso: undefined}
+                        onChange={async (e) => {
+                        const novoNivel = e.target.value;
+
+                        const confirmUpdate = window.confirm(
+                            `Tem certeza que deseja alterar o nível de acesso para "${getLevelName(novoNivel)}"?`
+                        );
+                        
+                        if (!confirmUpdate) return;
+
+                        try {
+                            if (email) {
+                              await updateUser(email, novoNivel)
+                            }
+                            router.push('/estudantes')
+                            alert("Nível de acesso atualizado com sucesso!");
+                        } catch (err) {
+                            console.error(err);
+                            alert("Falha ao atualizar o nível de acesso");
+                        }
+                        }}
+                    >
+                        <option value="1">Admin</option>
+                        <option value="2">Estudante/Família</option>
+                        <option value="3">Profissional da Educação</option>
+                        <option value="4">Profissional da Saúde</option>
+                        <option value="5">Professor</option>
+                    </select>
+                </td>
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-          <Card label="Triagem" url={`/triagem?email=${email}&nome=${nome}`} />
-          <Card label="Anamnese" url={`/anamnese?email=${email}&nome=${nome}`} />
-          <Card label="Comentários Multiprofissionais" url={`/comentarios?id=${id}&nome=${nome}`}/>
-          <Card label="PEI" url={`/pei?email=${email}&nome=${nome}`} />
-          <Card label="Exportar Relatório" url={`/relatorio?email=${email}&nome=${nome}`} />
-          {!loading && user?.id_level === 1 ? telaConfiguracao : null}
         </div>
       </div>
     </AppLayout>

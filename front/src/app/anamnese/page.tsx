@@ -88,7 +88,7 @@ function AnamnesePage() {
     }
 
     fetchData();
-  }, [email,targetEmail, router]);
+  }, [email,targetEmail, router, userIsStudent]);
 
   const handleInputChange = (name: string, value: string) => {
     const keys = name.split('.');

@@ -42,17 +42,27 @@ export class UsersController {
     return this.usersService.findOne(email);
   }
 
-  @Levels(LEVELS.ALUNO_ESTUDANTE)
+  @Levels(
+    LEVELS.ALUNO_ESTUDANTE,
+    LEVELS.PROFESSOR,
+    LEVELS.PROFISSIONAL_EDUCACAO,
+    LEVELS.PROFISSIONAL_SAUDE,
+  )
   @ApiBody({
     type: UpdateUserDto,
     description: 'Obejto para atualização de informações de um usuário.',
   })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Patch(':email')
+  update(@Param('email') email: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(email, updateUserDto);
   }
 
-  @Levels(LEVELS.ALUNO_ESTUDANTE)
+  @Levels(
+    LEVELS.ALUNO_ESTUDANTE,
+    LEVELS.PROFESSOR,
+    LEVELS.PROFISSIONAL_EDUCACAO,
+    LEVELS.PROFISSIONAL_SAUDE,
+  ) 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);

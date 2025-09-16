@@ -62,7 +62,7 @@ function ComentariosMultiprofissionais() {
       console.error("Erro ao buscar comentários:", err);
       setComentarios([]); // Garante que a lista fique vazia em caso de erro
     }
-  }, [targetId, router]); // Add all dependencies used inside the function
+  }, [id, targetId, router]); // Add all dependencies used inside the function
 
   useEffect(() => {
     carregarComentarios();

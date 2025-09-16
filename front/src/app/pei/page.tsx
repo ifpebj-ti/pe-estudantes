@@ -95,7 +95,7 @@ function PEIPage() {
       }
     }
     fetchData();
-  }, [email,targetEmail, router]);
+  }, [email,targetEmail, router, userIsStudent]);
 
   const handleInputChange = (name: string, value: string) => {
     const keys = name.split('.');
@@ -142,7 +142,7 @@ function PEIPage() {
       router.push(`/home`);
     } catch (error) {
       console.error("Erro ao criar PEI:", error);
-      alert("Falha ao criar o PEI. Verifique o console para mais detalhes.");
+      alert(`Falha ao criar o PEI. ${error}, você deve ser professor para fazer isso.`);
     }
   };
 

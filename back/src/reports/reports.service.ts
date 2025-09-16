@@ -9,8 +9,8 @@ export class ReportsService {
     return this.prisma.$queryRaw<any[]>`
       SELECT a.*, p.*, s.*
       FROM "Anamnesis" a
-      LEFT JOIN "PlansEducation" p ON p."id" = a.id
-      LEFT JOIN "Screening" s ON s."id" = a.id
+      LEFT JOIN "PlansEducation" p ON p."student_email" = a.email
+      LEFT JOIN "Screening" s ON s."email" = a.email
       WHERE a.email = ${email}
     `;
   }

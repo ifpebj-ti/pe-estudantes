@@ -83,6 +83,7 @@ export default function ExportReport({ email, nome }: ExportReportProps) {
                     return;
                 }
 
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const objectToKeyValue = (obj: any, prefix = ''): { Chave: string; Valor: string }[] => {
                     return Object.entries(obj).reduce((acc, [key, value]) => {
                         if (['id', 'created_at', 'updated_at', 'deleted_at'].includes(key)) return acc;
@@ -103,6 +104,7 @@ export default function ExportReport({ email, nome }: ExportReportProps) {
                 };
 
                 const workbook = XLSX.utils.book_new();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const createSheet = (data: any, sheetName: string) => {
                     if (data && Object.keys(data).length > 0) {
                         const worksheetData = objectToKeyValue(data);

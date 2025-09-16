@@ -36,7 +36,7 @@ function VisualizarEstudante() {
 
   const { user, loading } = useAuth();
   
-  function getLevelName(id_level: any) {
+  function getLevelName(id_level: string | null) {
     switch(id_level) {
       case '1':
         return "Admin";

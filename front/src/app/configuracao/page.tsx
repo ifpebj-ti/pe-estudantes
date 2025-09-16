@@ -5,7 +5,6 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
 import { Suspense } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import { updateUser } from "@/api/user";
 
 export default function VisualizarPageWrapper() {
@@ -22,11 +21,10 @@ function VisualizarEstudanteConfig() {
   const cpf = searchParams.get("cpf");
   const email = searchParams.get("email");
   const responsavel = searchParams.get("responsavel");
-  const id = searchParams.get("id");
   const nivelAcesso = searchParams.get("nivelAcesso")
   const router = useRouter();
   
-  function getLevelName(id_level: any) {
+  function getLevelName(id_level: string) {
     switch(id_level) {
       case '1':
         return "Admin";

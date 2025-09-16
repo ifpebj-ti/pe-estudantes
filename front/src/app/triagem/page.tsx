@@ -116,7 +116,7 @@ function TriagemPage() {
     }
 
     fetchData();
-  }, [email, targetEmail, router]);
+  }, [email, targetEmail, router, userIsStudent]);
 
   // Manipulador para inputs de texto (BrInput)
   const handleInputChange = (name: string, value: string) => {

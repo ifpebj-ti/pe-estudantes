@@ -25,6 +25,7 @@ function ComentariosMultiprofissionais() {
   const nome = searchParams.get("nome");
   const router = useRouter(); // Adicione o router para navegação
 
+  const [targetId, setTargetId] = useState<number | null>(null);
   const [comentarios, setComentarios] = useState<CommentData[]>([]);
   const [novoComentario, setNovoComentario] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -43,7 +44,12 @@ function ComentariosMultiprofissionais() {
       setIsStudent(userIsStudent);
 
       // O ID do usuário alvo é o do estudante (seja pelo 'id' da URL ou pelo token do próprio estudante)
-      const targetId = userIsStudent ? token.sub : (id ? +id : null);
+
+      if (userIsStudent) {
+        setTargetId(token.sub);
+      } else {
+        setTargetId((id ? +id : null));
+      }
 
       if (targetId) {
         const data = await getAllCommentsByIdUser(targetId);
@@ -56,7 +62,7 @@ function ComentariosMultiprofissionais() {
       console.error("Erro ao buscar comentários:", err);
       setComentarios([]); // Garante que a lista fique vazia em caso de erro
     }
-  }, [id, router]); // Add all dependencies used inside the function
+  }, [id, targetId, router]); // Add all dependencies used inside the function
 
   useEffect(() => {
     carregarComentarios();

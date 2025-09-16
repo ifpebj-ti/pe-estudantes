@@ -24,7 +24,24 @@ export class UsersService {
   }
 
   async findAll() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        full_name: true,
+        affliation: true,
+        cpf: true,
+        pedagogical_manager: true,
+        comments: true,
+        current_phase: true,
+        created_at: true,
+        deleted_at: true,
+        email: true,
+        id_current_phase: true,
+        id_level: true,
+        level: true,
+        updated_at: true,
+      }
+    });
   }
 
   async findOne(email: string) {
@@ -35,10 +52,13 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(email: string, updateUserDto: UpdateUserDto) {
     return this.prisma.user.update({
-      where: { id: id },
-      data: { full_name: updateUserDto.full_name },
+      where: { email: email },
+      data: { 
+        full_name: updateUserDto.full_name,
+        id_level: updateUserDto.id_level,
+      },
     });
   }
 

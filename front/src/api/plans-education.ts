@@ -52,7 +52,7 @@ export async function postPEI(plansEducationData: PlansEducationData): Promise<P
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.detail || 'Erro ao processar requisição');
+    throw new Error(data.message || 'Erro ao processar requisição');
   }
 
   return data;

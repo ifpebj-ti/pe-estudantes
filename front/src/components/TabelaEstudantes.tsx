@@ -25,8 +25,9 @@ export default function TabelaEstudantes() {
     const email = estudante.email;
     const responsavel = estudante.pedagogical_manager;
     const id = estudante.id; 
-    
-    router.push(`/estudantes/visualizar?id=${id}&nome=${nome}&cpf=${cpf}&email=${email}&responsavel=${responsavel}`);
+    const id_level = estudante.id_level
+
+    router.push(`/estudantes/visualizar?id=${id}&nome=${nome}&cpf=${cpf}&email=${email}&responsavel=${responsavel}&nivelAcesso=${id_level}`);
   };
 
   useEffect(() => {
@@ -40,6 +41,23 @@ export default function TabelaEstudantes() {
     }
     fetchData();
   }, []);
+
+  function getLevelName(id_level: number) {
+    switch(id_level) {
+      case 1:
+        return "Admin";
+      case 2:
+        return "Estudante/Família";
+      case 3:
+        return "Profissional da Educação";
+      case 4:
+        return "Profissional da Saúde";
+      case 5:
+        return "Professor";
+      default:
+        return "Nível desconhecido";
+    }
+  }
 
   if (loading) return null; //ADICIONAR COMPONENTE DE LOADING
 
@@ -62,6 +80,7 @@ export default function TabelaEstudantes() {
             <th className="p-3">CPF</th>
             <th className="p-3">E-mail</th>
             <th className="p-3">Responsável Pedagógico</th>
+            <th className="p-3">Nível de Acesso</th>
             <th className="p-3"></th>
           </tr>
         </thead>
@@ -72,6 +91,7 @@ export default function TabelaEstudantes() {
               <td className="p-3">{estudante.cpf}</td>
               <td className="p-3">{estudante.email}</td>
               <td className="p-3">{estudante.pedagogical_manager}</td>
+              <td className="p-3">{getLevelName(estudante.id_level)}</td>
               <td className="p-3 text-center">
                 <Eye
                   className="w-5 h-5 text-gray-600 cursor-pointer"

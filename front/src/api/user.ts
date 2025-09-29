@@ -1,4 +1,4 @@
-// vai dar certo
+// vai dar certo 2
 export async function updateUser(email: string, id_level: string) {
   const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
 

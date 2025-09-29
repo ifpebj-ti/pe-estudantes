@@ -1,3 +1,4 @@
+// vai dar certo
 export async function updateUser(email: string, id_level: string) {
   const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
 

@@ -3,9 +3,10 @@ version: '3.8'
 services:
   nest-app:
     image: ghcr.io/ifpebj-ti/back-pe-estudantes:latest
+    pull_policy: always 
     container_name: nest-backend
     ports:
-      - "${PORT_MACHINE_BACKEND}:3000" # Ex: 3001:3000
+      - "${PORT_MACHINE_BACKEND}:3000"
     environment:
       DATABASE_URL: "${DATABASE_URL}"
       NODE_ENV: "${NODE_ENV}"
@@ -22,7 +23,7 @@ services:
     image: postgres:15
     container_name: postgres-db
     ports:
-      - "${PORT_MACHINE_DB}:5432" # Ex: 5432:5432
+      - "${PORT_MACHINE_DB}:5432"
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -41,6 +42,8 @@ services:
 
   next-app:
     image: ghcr.io/ifpebj-ti/front-pe-estudantes:latest
+    pull_policy: always
+
     container_name: next-frontend
     ports:
       - "${PORT_MACHINE_FRONTEND}:3000"
@@ -54,11 +57,8 @@ services:
 networks:
   app-net:
     driver: bridge
-
   proxy-net:
-    external: true
+    external: true 
 
 volumes:
   pgdata:
-    external: true
-    name: pe-estudantes_pgdata

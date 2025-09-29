@@ -12,14 +12,14 @@ services:
       - "9000:9000" # Interface web HTTP (opcional)
       - "8000:8000" # Agente Portainer
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # Acesso ao Docker host
+      - /var/run/docker.sock:/var/run/docker.sock 
       - portainer_data:/data
     networks:
-      - management-net
+      - proxy-net 
 
 networks:
-  management-net:
-    name: management-net
+  proxy-net:
+    external: true
 
 volumes:
   portainer_data:

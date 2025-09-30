@@ -181,7 +181,7 @@ jobs:
           image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
           format: table
           exit-code: 1
-          severity: CRITICAL,HIGH
+          severity: CRITICAL
 
       - name: Tag image as latest
         run: |

@@ -23,6 +23,7 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3001);
 }
 
+// Start application
 bootstrap().catch((err) => {
   console.error('Erro ao iniciar a aplicação:', err);
   process.exit(1);

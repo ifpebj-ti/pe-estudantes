@@ -13,6 +13,8 @@
 
 Sistema web para gerenciar prontuários eletrônicos de estudantes com necessidades educacionais específicas, permitindo o registro de informações acadêmicas, de saúde, crises e desempenho, com segurança, acessibilidade e suporte personalizado.
 
+Acesse agora pelo [Link](https://front.edutrace.site/)
+
 ## 🛠 Tecnologias Utilizadas
 - **Front-end:** Next.js e estilizado com Tailwind CSS
 - **Back-end:** NestJS, utilizando Prisma ORM para interação com o banco de dados

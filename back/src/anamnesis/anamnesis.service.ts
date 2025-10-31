@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAnamnesisDto } from './dto/create-anamnesis.dto';
 import { PrismaService } from 'src/database/prisma.service';
 import { PHASES } from 'src/constants';
@@ -12,7 +12,7 @@ export class AnamnesisService {
       data: createAnamnesisDto,
     });
 
-    // Atualiza fase do User para Anamnese
+    // Atualiza fase do usuário
     await this.prisma.user.update({
       where: { email: createAnamnesisDto.email },
       data: { id_current_phase: PHASES.ANAMNESE },
@@ -27,9 +27,29 @@ export class AnamnesisService {
 
   findOne(email: string) {
     return this.prisma.anamnesis.findUnique({
-      where: {
-        email: email,
-      },
+      where: { email },
     });
+  }
+
+  async update(email: string, updateAnamnesisDto: Partial<CreateAnamnesisDto>) {
+    const existing = await this.prisma.anamnesis.findUnique({ where: { email } });
+    if (!existing) {
+      throw new NotFoundException(`Anamnese com email ${email} não encontrada`);
+    }
+
+    return this.prisma.anamnesis.update({
+      where: { email },
+      data: updateAnamnesisDto,
+    });
+  }
+
+  async remove(email: string) {
+    const existing = await this.prisma.anamnesis.findUnique({ where: { email } });
+    if (!existing) {
+      throw new NotFoundException(`Anamnese com email ${email} não encontrada`);
+    }
+
+    await this.prisma.anamnesis.delete({ where: { email } });
+    return { message: `Anamnese com email ${email} foi removida com sucesso` };
   }
 }

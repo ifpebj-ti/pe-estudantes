@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Param, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Request,
+} from '@nestjs/common';
 import { PlansEducationService } from './plans-education.service';
 import { CreatePlansEducationDto } from './dto/create-plans-education.dto';
 import { Levels } from 'src/auth/decorators/levels.decorator';
@@ -9,13 +18,7 @@ import { AuthenticatedRequest } from 'src/comments/types/express';
 export class PlansEducationController {
   constructor(private readonly plansEducationService: PlansEducationService) {}
 
-  // Só o professor pode criar o PEI
-  @Levels(
-    LEVELS.ADMIN,
-    LEVELS.ALUNO_ESTUDANTE,
-    LEVELS.PROFISSIONAL_EDUCACAO,
-    LEVELS.PROFISSIONAL_SAUDE,
-  )
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
   @Post()
   create(@Body() createPlansEducationDto: CreatePlansEducationDto) {
     return this.plansEducationService.create(createPlansEducationDto);
@@ -33,5 +36,18 @@ export class PlansEducationController {
     @Request() request: AuthenticatedRequest,
   ) {
     return this.plansEducationService.findOne(email, request);
+  }
+
+  @Patch(':email')
+  update(
+    @Param('email') email: string,
+    @Body() data: Partial<CreatePlansEducationDto>,
+  ) {
+    return this.plansEducationService.update(email, data);
+  }
+
+  @Delete(':email')
+  remove(@Param('email') email: string) {
+    return this.plansEducationService.remove(email);
   }
 }

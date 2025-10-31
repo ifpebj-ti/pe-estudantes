@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
 import { AnamnesisService } from './anamnesis.service';
 import { CreateAnamnesisDto } from './dto/create-anamnesis.dto';
 import { Levels } from 'src/auth/decorators/levels.decorator';
@@ -23,5 +23,20 @@ export class AnamnesisController {
   @Get(':email')
   findOne(@Param('email') email: string) {
     return this.anamnesisService.findOne(email);
+  }
+
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
+  @Patch(':email')
+  update(
+    @Param('email') email: string,
+    @Body() updateAnamnesisDto: Partial<CreateAnamnesisDto>,
+  ) {
+    return this.anamnesisService.update(email, updateAnamnesisDto);
+  }
+
+  @Levels(LEVELS.ALUNO_ESTUDANTE)
+  @Delete(':email')
+  remove(@Param('email') email: string) {
+    return this.anamnesisService.remove(email);
   }
 }

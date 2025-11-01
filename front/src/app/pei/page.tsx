@@ -9,7 +9,7 @@ import { PlansEducationData } from "@/interfaces/PlansEducationData";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { decodeToken } from "@/services/auth/decodeToken";
-import { getPEIByEmail, postPEI } from "@/api/plans-education";
+import { getPEIByEmail, postPEI, deletePEI } from "@/api/plans-education";
 import { ESTUDANTE } from "@/consts";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -59,7 +59,6 @@ function PEIPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  const [targetEmail, setTargetEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userIsStudent, setUserIsStudent] = useState(true);
 
@@ -74,19 +73,15 @@ function PEIPage() {
           router.push('/login');
           return;
         }
+
         const isStudent = token.id_level === ESTUDANTE;
         setUserIsStudent(isStudent);
 
-        if (userIsStudent) {
-          setTargetEmail(token.email);
-        } else {
-          setTargetEmail(email);
-        }
-        
-        if (targetEmail) {
-          const data = await getPEIByEmail(targetEmail);
+        const target = isStudent ? token.email : email;
+        if (target) {
+          const data = await getPEIByEmail(target);
           setPei(data);
-        }
+        } 
       } catch (error) {
         console.error("PEI não encontrado, iniciando modo de criação.", error);
         setPei(null);
@@ -95,7 +90,8 @@ function PEIPage() {
       }
     }
     fetchData();
-  }, [email,targetEmail, router, userIsStudent]);
+  }, [email, router]);
+
 
   const handleInputChange = (name: string, value: string) => {
     const keys = name.split('.');
@@ -146,6 +142,27 @@ function PEIPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!email) {
+      alert("Email do estudante não encontrado para deletar o PEI.");
+      return;
+    }
+
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar este PEI?");
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      await deletePEI(email);
+      alert("PEI deletado com sucesso!");
+      router.push("/home");
+    } catch (error) {
+      console.error("Erro ao deletar PEI: ", error);
+      alert("Falha ao deletar PEI. Verifique o console para mais detalhes.");
+    }
+  };
+
   if (loading || isLoading) {
     return <h1>Carregando...</h1>;
   }
@@ -166,10 +183,10 @@ function PEIPage() {
           <section>
             <h2 className="text-xl font-semibold mb-4">Informações Gerais</h2>
             <div className="grid md:grid-cols-2 gap-4">
-              <BrInput label="Email do Professor" value={formData.professor_email} onInput={(e: any) => handleInputChange('professor_email', e.target.value)} />
-              <BrInput label="Nome do Professor" value={formData.professor_name} onInput={(e: any) => handleInputChange('professor_name', e.target.value)} />
-              <BrInput label="Email do Estudante" value={formData.student_email} onInput={(e: any) => handleInputChange('student_email', e.target.value)} />
-              <BrInput label="Nome do Estudante" value={formData.student_name} onInput={(e: any) => handleInputChange('student_name', e.target.value)} />
+              <BrInput label="Email do Professor" placeholder={"Este campo é preenchido automaticamente"} value={formData.professor_email} onInput={(e: any) => handleInputChange('professor_email', e.target.value)} disabled/>
+              <BrInput label="Nome do Professor" placeholder={"Este campo é preenchido automaticamente"} value={formData.professor_name} onInput={(e: any) => handleInputChange('professor_name', e.target.value)} disabled/>
+              <BrInput label="Email do Estudante" placeholder={"Este campo é preenchido automaticamente"} value={formData.student_email} onInput={(e: any) => handleInputChange('student_email', e.target.value)} disabled/>
+              <BrInput label="Nome do Estudante" placeholder={"Este campo é preenchido automaticamente"} value={formData.student_name} onInput={(e: any) => handleInputChange('student_name', e.target.value)} disabled/>
             </div>
           </section>
 
@@ -371,7 +388,207 @@ function PEIPage() {
         </div>
       </AppLayout>
     );
-  }
+    } else if ( pei && !userIsStudent ) {
+      return (
+        <AppLayout
+          breadcrumbs={[
+            { href: '/home', label: 'Página Inicial' },
+            { href: '#', label: user?.name || 'Estudante' },
+            { href: '/pei', label: 'PEI' },
+          ]}
+        >
+          <div className="p-6 space-y-8 w-full">
+            <h1 className="text-3xl font-bold text-gray-800">PEI - Plano de Ensino Individualizado</h1>
+            
+            {/* Informações Gerais */}
+            <section>
+              <h2 className="text-xl font-semibold mb-4">Informações Gerais</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <BrInput label="Email do Professor" class="w-full" value={pei?.professor_email || ''} disabled />
+                <BrInput label="Nome do Professor" class="w-full" value={pei?.professor_name || ''} disabled />
+                <BrInput label="Email do Estudante" class="w-full" value={pei?.student_email || ''} disabled />
+                <BrInput label="Nome do Estudante" class="w-full" value={pei?.student_name || ''} disabled />
+              </div>
+            </section>
+
+            {/* Semestre Acadêmico */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Semestre Acadêmico</h2>
+              <div className="flex flex-wrap gap-4">
+                <BrCheckbox label="Primeiro Semestre" name="semestre" checked={pei?.academic_semester?.primeiro_semestre || false} disabled />
+                <BrCheckbox label="Segundo Semestre" name="semestre" checked={pei?.academic_semester?.segundo_semestre || false} disabled />
+              </div>
+            </section>
+
+            {/* Modalidade de Serviço */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Modalidade de Serviço</h2>
+              <div className="flex flex-wrap gap-4">
+                <BrCheckbox label="Turma Regular" name="modalidade" checked={pei?.service_modality?.turma_regular || false} disabled />
+                <BrCheckbox label="Atendimento Pedagógico Domiciliar" name="modalidade" checked={pei?.service_modality?.atendimento_pedagogico_domiciliar || false} disabled />
+                <BrCheckbox label="Atendimento Pedagógico Hospitalar" name="modalidade" checked={pei?.service_modality?.atendimento_pedagogico_hospitalar || false} disabled />
+              </div>
+            </section>
+
+            {/* Serviço de Apoio */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Serviço de Apoio</h2>
+              <div className="flex flex-wrap gap-4">
+                {pei?.support_service && Object.entries(pei.support_service).map(([key, value]) =>
+                  key !== 'outro' ? (
+                    <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+                  ) : (
+                    <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+                  )
+                )}
+              </div>
+            </section>
+
+            {/* Habilidades e Potencialidades */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Habilidades e Potencialidades</h2>
+              <div className="grid md:grid-cols-3 gap-3">
+                {pei?.skills && Object.entries(pei.skills).map(([key, value]) => (
+                  <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={value} disabled />
+                ))}
+              </div>
+            </section>
+
+            {/* Recursos/Equipamentos já utilizados */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Recursos/Equipamentos já utilizados</h2>
+              <div className="grid md:grid-cols-2 gap-3">
+                {pei?.resource_equipment_used && Object.entries(pei.resource_equipment_used).map(([key, value]) =>
+                  key !== "outro" ? (
+                    <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+                  ) : (
+                    <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+                  )
+                )}
+              </div>
+            </section>
+
+            {/* Recursos/Equipamentos a providenciar */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Recursos/Equipamentos a providenciar</h2>
+              <div className="flex flex-wrap gap-4">
+                {pei?.resource_equipment_needs && Object.entries(pei.resource_equipment_needs).map(([key, value]) =>
+                  key !== "outro" ? (
+                    <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+                  ) : (
+                    <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+                  )
+                )}
+              </div>
+            </section>
+
+            {/* Acessibilidade Curricular */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Acessibilidade Curricular</h2>
+              <div className="grid md:grid-cols-2 gap-3">
+                {pei?.curriculum_accessibility && Object.entries(pei.curriculum_accessibility).map(([key, value]) =>
+                  key !== "outro" ? (
+                    <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+                  ) : (
+                    <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+                  )
+                )}
+              </div>
+            </section>
+
+            {/* Conteúdo Escolar */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Conteúdo Escolar</h2>
+              <BrInput label="Descrição" class="w-full" value={pei?.school_content || ""} disabled />
+            </section>
+
+            {/* Atividades a serem desenvolvidas */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Atividades a serem desenvolvidas</h2>
+              <div className="grid md:grid-cols-2 gap-3">
+                {pei?.activities_to_be_developed && Object.entries(pei.activities_to_be_developed).map(([key, value]) =>
+                  key !== "outro" ? (
+                    <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+                  ) : (
+                    <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+                  )
+                )}
+              </div>
+            </section>
+
+            {/* Objetivos */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Objetivos</h2>
+              <BrInput label="Descrição" class="w-full" value={pei?.objectives || ""} disabled />
+            </section>
+
+            {/* Metodologia de Trabalho */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Metodologia de Trabalho</h2>
+              <div className="grid md:grid-cols-2 gap-3">
+                {pei?.work_methodology && Object.entries(pei.work_methodology).map(([key, value]) => (
+                  <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+                ))}
+              </div>
+            </section>
+
+            {/* Materiais Utilizados */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Materiais Utilizados</h2>
+              <div className="grid md:grid-cols-2 gap-3">
+                {pei?.materials_used && Object.entries(pei.materials_used).map(([key, value]) =>
+                  key !== "outro" ? (
+                    <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+                  ) : (
+                    <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+                  )
+                )}
+              </div>
+            </section>
+
+            {/* Critérios de Avaliação */}
+            <section className="border-t pt-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">Critérios de Avaliação</h2>
+              <div className="grid md:grid-cols-2 gap-3">
+                {pei?.evaluation_criteria && Object.entries(pei.evaluation_criteria).map(([key, value]) =>
+                  key !== "outro" ? (
+                    <BrCheckbox name="" key={key} label={key.replaceAll('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} checked={!!value} disabled />
+                  ) : (
+                    <BrInput key={key} label="Outro" class="w-full" value={String(value)} disabled />
+                  )
+                )}
+              </div>
+            </section>
+
+            <div className="flex justify-center gap-4 mt-8">
+              <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+                Voltar
+              </button>
+              <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/editar-pei?email=${email}&nome=${nome}`)}>
+                Editar PEI
+              </button>
+              <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={handleDelete}>
+                Deletar PEI
+              </button>
+            </div>
+          </div>
+        </AppLayout>
+      );
+    } else if (pei === null && userIsStudent) {
+      return (
+        <AppLayout
+          breadcrumbs={[
+            { href: '/home', label: 'Página Inicial' },
+            { href: '#', label: nome || 'Estudante' },
+            { href: '/pei', label: 'Criar PEI' },
+          ]}
+        >
+          <div className="p-6 text-center">
+                <h2 className="text-xl font-bold text-green-700">O estudante ainda não possui um PEI cadastrado</h2>
+        </div>
+        </AppLayout>
+      )
+    }
 
   // Se o PEI EXISTE, renderiza o formulário de VISUALIZAÇÃO (sem alterações)
    return (

@@ -58,3 +58,44 @@ export async function postScreening(screeningData: ScreeningData): Promise<Scree
 
   return data;
 }
+
+export async function deleteScreening(email: string) {
+  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+
+  const res = await fetch(`${API_URL}/screenings/${email}`, {
+    method: 'DELETE',
+    headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+    }
+  });  
+
+  const isJson = res.headers.get('content-type')?.includes('application/json');
+
+  const data = isJson ? await res.json() : null;
+
+  if (!res.ok) {
+    throw new Error(data.detail || 'Erro ao processar requisição');
+  }
+  return data;
+}
+
+export async function patchScreening(screeningData: ScreeningData, email: string): Promise<ScreeningData> {
+  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+
+  const res = await fetch(`${API_URL}/screenings/${email}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify(screeningData),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.detail || 'Erro ao processar requisição');
+  }
+
+  return data;
+}

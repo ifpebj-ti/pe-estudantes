@@ -36,7 +36,7 @@ export function middleware(request: NextRequest) {
       }
 
       const isStudent = payload.id_level === ESTUDANTE;
-      const restrictedPathsStudent = ['/estudantes', '/relatorio', '/visualizar', '/configuracao'];
+      const restrictedPathsStudent = ['/estudantes', '/relatorio', '/visualizar', '/configuracao', '/editar-anamnese', '/editar-pei', '/editar-triagem'];
       const tryingToAccessRestricted = restrictedPathsStudent.some(path =>
         pathname.startsWith(path)
       );

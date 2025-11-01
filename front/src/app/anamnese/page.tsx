@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import "@govbr-ds/core/dist/core.min.css";
 import AppLayout from "@/components/AppLayout";
 import { Suspense, useEffect, useState } from "react";
-import { getAnamneseByEmail, postAnamneses } from "@/api/anamnesis"; 
+import { getAnamneseByEmail, postAnamneses, deleteAnamnesis } from "@/api/anamnesis"; 
 import { AnamnesisData } from "@/interfaces/AnamnesisData";
 import { decodeToken } from "@/services/auth/decodeToken";
 import { useAuth } from "@/contexts/AuthContext";
@@ -49,7 +49,6 @@ function AnamnesePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  const [targetEmail, setTargetEmail] = useState<string | null>(null);
   const [anamnesis, setAnamnesis] = useState<AnamnesisData | null>(null);
   const [isLoading, setIsLoading] = useState(true); 
   const [userIsStudent, setUserIsStudent] = useState(true);
@@ -69,14 +68,10 @@ function AnamnesePage() {
         const isStudent = token.id_level === ESTUDANTE;
         setUserIsStudent(isStudent);
 
-        if (userIsStudent) {
-          setTargetEmail(token.email);
-        } else {
-          setTargetEmail(email);
-        }
-        
-        if (targetEmail) {
-          const data = await getAnamneseByEmail(targetEmail);
+        const target = isStudent ? token.email : email;
+
+        if (target) {
+          const data = await getAnamneseByEmail(target);
           setAnamnesis(data);
         }
       } catch (error) {
@@ -88,7 +83,8 @@ function AnamnesePage() {
     }
 
     fetchData();
-  }, [email,targetEmail, router, userIsStudent]);
+  }, [email, router]);
+
 
   const handleInputChange = (name: string, value: string) => {
     const keys = name.split('.');
@@ -140,6 +136,27 @@ function AnamnesePage() {
     } catch (error) {
       console.error("Erro ao criar anamnese:", error);
       alert("Falha ao criar a anamnese. Verifique o console para mais detalhes.");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!email) {
+      alert("Email do estudante não encontrado para deletar anamnese.");
+      return;
+    }
+
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar esta anamnese?");
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      await deleteAnamnesis(email);
+      alert("Anamnese deletada com sucesso!");
+      router.push("/home");
+    } catch (error) {
+      console.error("Erro ao deletar Anamnese: ", error);
+      alert("Falha ao deletar Anamnese. Verifique o console para mais detalhes.");
     }
   };
 
@@ -457,6 +474,345 @@ function AnamnesePage() {
           </div>
         </AppLayout>
       );
+  } else if ( anamnesis && !userIsStudent ) {
+    return (
+      <AppLayout
+        breadcrumbs={[
+          { href: '/home', label: 'Página Inicial' },
+          { href: '#', label: user?.name || 'Estudante' },
+          { href: '/anamnese', label: 'Anamnese' },
+        ]}
+      >
+        <div className="p-6 space-y-8 w-full">
+          <h1 className="text-3xl font-bold text-gray-800">Anamnese</h1>
+
+          {/* Identificação */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4">Identificação</h2>
+            <div className="grid md:grid-cols-4 gap-4">
+              <BrInput label="Nome da unidade plena" class="w-full" value={anamnesis?.identification.nome_unidade_plena || ''} disabled/>
+              <BrInput label="Nome completo" class="w-full" value={anamnesis?.identification.nome_completo || ''} disabled/>
+              <BrInput label="Data de Nascimento" class="w-full" value={anamnesis?.identification.data_de_nascimento || ''} disabled/>
+              <BrInput label="Endereço" class="w-full" value={anamnesis?.identification.endereco || ''} disabled/>
+              <BrInput label="Bairro" class="w-full" value={anamnesis?.identification.bairo || ''} disabled/>
+              <BrInput label="CEP" class="w-full" value={anamnesis?.identification.cep || ''} disabled/>
+              <BrInput label="Município" class="w-full" value={anamnesis?.identification.municipio || ''} disabled/>
+              <BrInput label="Curso" class="w-full" value={anamnesis?.identification.curso || ''} disabled/>
+              <BrInput label="Série de escolaridade atual" class="w-full" value={anamnesis?.identification.serie_de_escolaridade_atual || ''} disabled/>
+              <BrInput label="Turma" class="w-full" value={anamnesis?.identification.turma || ''} disabled/>
+              <BrInput label="Idade que iniciou os estudos" class="w-full" value={anamnesis?.identification.idade_iniciou_estudos || ''} disabled/>
+            </div>
+          </section>
+
+          {/* Dados Familiares */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Dados familiares</h2>
+            <div className="grid md:grid-cols-4 gap-4">
+              <BrInput label="Nome do pai" class="w-full" value={anamnesis?.family_data.nome_pai || ''} disabled/>
+              <BrInput label="Profissão do pai" class="w-full" value={anamnesis?.family_data.profissao_pai || ''} disabled/>
+              <BrInput label="Escolaridade do pai" class="w-full" value={anamnesis?.family_data.escolaridade_pai || ''} disabled/>
+              <BrInput label="Idade do pai" class="w-full" value={anamnesis?.family_data.idade_pai || ''} disabled/>
+              <BrInput label="Nome da mãe" class="w-full" value={anamnesis?.family_data.nome_mae || ''} disabled/>
+              <BrInput label="Profissão da mãe" class="w-full" value={anamnesis?.family_data.profissao_mae || ''} disabled/>
+              <BrInput label="Escolaridade da mãe" class="w-full" value={anamnesis?.family_data.escolaridade_mae || ''} disabled/>
+              <BrInput label="Idade da mãe" class="w-full" value={anamnesis?.family_data.idade_mae || ''} disabled/>
+              <BrInput label="Outros filhos" class="w-full" value={anamnesis?.family_data.outros_filhos || ''} disabled/>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              <label className="text-sm font-medium text-black">União dos Pais</label>
+              <div className="flex flex-wrap gap-4">
+                <BrCheckbox label="Casados" name="estado-pais" checked={anamnesis?.family_data.uniao_pais.casados || false} disabled />
+                <BrCheckbox label="Separados" name="estado-pais" checked={anamnesis?.family_data.uniao_pais.separados || false} disabled />
+                <BrCheckbox label="Separados como uma nova estrutura familiar" name="estado-pais" checked={anamnesis?.family_data.uniao_pais.separados_como_nova_estrutura_familia || false} disabled />
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-2">
+              <label className="text-sm font-medium text-black">Pais</label>
+              <div className="flex flex-wrap gap-4">
+                <BrCheckbox label="Biológico" name="tipo-pais" checked={anamnesis?.family_data.pais.biologico || false} disabled />
+                <BrCheckbox label="Adotivo" name="tipo-pais" checked={anamnesis?.family_data.pais.adotivo || false} disabled />
+              </div>
+            </div>
+
+            <div className="mt-4 grid md:grid-cols-2 gap-4">
+              <BrInput label="Em caso de separação, o estudante vive com quem?" class="w-full" value={anamnesis?.family_data.estudante_reside_com_quem || ''} disabled/>
+              <BrInput label="Reação do estudante à situação" class="w-full" value={anamnesis?.family_data.reacao_estudante_situacao || ''} disabled/>
+            </div>
+          </section>
+
+          {/* Condições familiares do estudante */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Condições familiares do estudante</h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm font-medium mb-2">Condições de moradia</p>
+                <div className="flex space-x-3">
+                  <BrCheckbox label="Taipa" name="Taipa" checked={anamnesis?.family_conditions.moradia.taipa || false} disabled />
+                  <BrCheckbox label="Alvenaria" name="Alvenaria" checked={anamnesis?.family_conditions.moradia.alvenaria || false} disabled />
+                  <BrCheckbox label="Palafita" name="Palafita" checked={anamnesis?.family_conditions.moradia.palafita || false} disabled />
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium mb-2">Convívio familiar</p>
+                <div className="flex space-x-3">
+                  <BrCheckbox label="Excelente" name="Excelente" checked={anamnesis?.family_conditions.convivio_familiar.excelente || false} disabled />
+                  <BrCheckbox label="Bom" name="Bom" checked={anamnesis?.family_conditions.convivio_familiar.bom || false} disabled />
+                  <BrCheckbox label="Problemático" name="Problemático" checked={anamnesis?.family_conditions.convivio_familiar.problematico || false} disabled />
+                  <BrCheckbox label="Precário" name="Precário" checked={anamnesis?.family_conditions.convivio_familiar.precario || false} disabled />
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-medium mb-2">Qualidade de comunicação</p>
+                <div className="flex space-x-3">
+                  <BrCheckbox label="Excelente" name="Excelente" checked={anamnesis?.family_conditions.qualidade_comunicacao_com_estudante.execelente || false} disabled />
+                  <BrCheckbox label="Boa" name="Boa" checked={anamnesis?.family_conditions.qualidade_comunicacao_com_estudante.boa || false} disabled />
+                  <BrCheckbox label="Ruim" name="Ruim" checked={anamnesis?.family_conditions.qualidade_comunicacao_com_estudante.ruim || false} disabled />
+                  <BrCheckbox label="Péssima" name="Péssima" checked={anamnesis?.family_conditions.qualidade_comunicacao_com_estudante.pessima || false} disabled />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4 mt-6">
+              <BrInput label="Que medidas disciplinares normalmente são usadas com o estudante" class="w-full" value={anamnesis?.family_conditions.medidas_disciplinares_com_estudante || ''} disabled/>
+              <BrInput label="Quem as usa" class="w-full" value={anamnesis?.family_conditions.quem_usa_medidas_disciplinares || ''} disabled/>
+              <BrInput label="Quais as reações do estudante frente a essas medidas" class="w-full" value={anamnesis?.family_conditions.reacao_estudante_frente_medidas || ''} disabled/>
+              <BrInput label="Como reage quando contrariado" class="w-full" value={anamnesis?.family_conditions.reacao_contrariado || ''} disabled/>
+            </div>
+
+            <div className="mt-6">
+              <p className="text-sm font-medium mb-2">Condições do ambiente familiar para a aprendizagem escolar</p>
+              <BrInput
+                label="Condição"
+                class="w-full"
+                value={anamnesis?.family_conditions.condicao_ambiente_familiar_aprendizagem_escolar || ''}
+                disabled            
+              />
+            </div>
+          </section>
+
+          {/* Histórico da Mãe */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Histórico da Mãe</h2>
+            
+            {/* Gestação */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Gestação</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <BrInput label="Transfusão sanguínea na gravidez" class="w-full" value={anamnesis?.mother_background.gestacao.transfusao_sanguinea_gravidez || ''} disabled/>
+                <BrInput label="Quando sentiu movimento da criança" class="w-full" value={anamnesis?.mother_background.gestacao.quando_sentiu_movimento_da_crianca || ''} disabled/>
+                <BrInput label="Levou tombo durante a gravidez" class="w-full" value={anamnesis?.mother_background.gestacao.levou_tombo_durante_gravidez || ''} disabled/>
+                <BrInput label="Doença na gestação" class="w-full" value={anamnesis?.mother_background.gestacao.doenca_na_gestacao || ''} disabled/>
+                <BrInput label="Condição de saúde da mãe na gravidez" class="w-full" value={anamnesis?.mother_background.gestacao.condicao_saude_da_mae_na_gravidez || ''} disabled/>
+                <BrInput label="Episódio marcante na gravidez" class="w-full" value={anamnesis?.mother_background.gestacao.episodio_marcante_gravidez || ''} disabled/>
+              </div>
+            </div>
+
+            {/* Condições de Nascimento */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Condições de Nascimento</h3>
+              <div className="grid md:grid-cols-4 gap-4">
+                <BrInput label="Nasceu com quantos meses" class="w-full" value={anamnesis?.mother_background.condicoes_nascimento.nasceu_quantos_meses || ''} disabled/>
+                <BrInput label="Nasceu com quantos quilos" class="w-full" value={anamnesis?.mother_background.condicoes_nascimento.nasceu_quantos_quilos || ''} disabled/>
+                <BrInput label="Nasceu com qual comprimento" class="w-full" value={anamnesis?.mother_background.condicoes_nascimento.nasceu_com_qual_comprimento || ''} disabled/>
+                <BrInput label="Desenvolvimento do parto" class="w-full" value={anamnesis?.mother_background.condicoes_nascimento.desenvolvimento_parto || ''} disabled/>
+              </div>
+            </div>
+
+            {/* Primeiras Reações */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Primeiras Reações</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                <BrInput label="Chorou" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.chorou || ''} disabled/>
+                <BrInput label="Ficou vermelho demais" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.ficou_vermelho_demais || ''} disabled/>
+                <BrInput label="Ficou vermelho por quanto tempo" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.ficou_vermelho_por_quanto_tempo || ''} disabled/>
+                <BrInput label="Precisou de oxigênio" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.precisou_de_oxigenio || ''} disabled/>
+                <BrInput label="Ficou ictérico" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.ficou_icterico || ''} disabled/>
+                <BrInput label="Como era quando bebê" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.como_era_quando_bebe || ''} disabled/>
+                <BrInput label="Qual idade afirmou a cabeça" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.qual_idade_afirmou_cabeca || ''} disabled/>
+                <BrInput label="Qual idade sentou sem apoio" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.qual_idade_sentou_sem_apoio || ''} disabled/>
+                <BrInput label="Qual idade engatinhou" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.qual_idade_engatinhou || ''} disabled/>
+                <BrInput label="Qual idade ficou de pé" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.qual_idade_ficou_de_pe || ''} disabled/>
+                <BrInput label="Qual idade andou" class="w-full" value={anamnesis?.mother_background.primeiras_reacoes.qual_idade_andou || ''} disabled/>
+              </div>
+            </div>
+          </section>
+
+          {/* Linguagem Verbal (3 anos) */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Linguagem Verbal (3 anos)</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <BrCheckbox label="Balbuciou" name="linguagem" checked={anamnesis?.verbal_language_three_years.balbuciou || false} disabled />
+                <BrCheckbox label="Trocou letras" name="linguagem" checked={anamnesis?.verbal_language_three_years.trocou_letras || false} disabled />
+                <BrCheckbox label="Gaguejou" name="linguagem" checked={anamnesis?.verbal_language_three_years.gaguejou || false} disabled />
+              </div>
+              <BrInput label="Primeiras expressões" class="w-full" value={anamnesis?.verbal_language_three_years.primeiras_expressoes || ''} disabled/>
+            </div>
+          </section>
+
+          {/* Desenvolvimento */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Desenvolvimento</h2>
+            
+            {/* Saúde */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Saúde</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <BrInput label="Sofreu acidente ou fez cirurgia" class="w-full" value={anamnesis?.development.saude.sofreu_acidente_ou_fez_cirurgia || ''} disabled/>
+                <BrInput label="Possui alergia" class="w-full" value={anamnesis?.development.saude.possui_alergia || ''} disabled/>
+                <BrInput label="Possui bronquite ou asma" class="w-full" value={anamnesis?.development.saude.possui_bronquite_ou_asma || ''} disabled/>
+                <BrInput label="Possui problema de visão ou audição" class="w-full" value={anamnesis?.development.saude.possui_problema_visao_audicao || ''} disabled/>
+                <BrInput label="Já desmaiou" class="w-full" value={anamnesis?.development.saude.ja_desmaiou || ''} disabled/>
+                <BrInput label="Quando desmaiou" class="w-full" value={anamnesis?.development.saude.quando_desmaiou || ''} disabled/>
+                <BrInput label="Teve ou tem convulsões" class="w-full" value={anamnesis?.development.saude.teve_ou_tem_convulsoes || ''} disabled/>
+              </div>
+            </div>
+
+            {/* Alimentação */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Alimentação</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <BrInput label="Foi amamentada" class="w-full" value={anamnesis?.development.alimentacao.foi_amamentada || ''} disabled/>
+                <BrInput label="Foi amamentada até quando" class="w-full" value={anamnesis?.development.alimentacao.foi_amementada_ate_quando || ''} disabled/>
+                <BrInput label="Como é sua alimentação" class="w-full" value={anamnesis?.development.alimentacao.como_e_sua_alimentacao || ''} disabled/>
+                <BrInput label="Foi forçado a se alimentar" class="w-full" value={anamnesis?.development.alimentacao.foi_forcado_se_alimentar || ''} disabled/>
+                <BrInput label="Recebe ajuda na alimentação" class="w-full" value={anamnesis?.development.alimentacao.recebe_ajuda_na_alimentacao || ''} disabled/>
+              </div>
+            </div>
+
+            {/* Sono */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Sono</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <BrCheckbox label="Dorme bem" name="sono" checked={anamnesis?.development.sono.dorme_bem || false} disabled />
+                  <BrCheckbox label="Dorme separado dos pais" name="sono" checked={anamnesis?.development.sono.dorme_separado_dos_pais || false} disabled />
+                </div>
+                <BrInput label="Com quem dorme" class="w-full" value={anamnesis?.development.sono.com_quem_dorme || ''} disabled/>
+              </div>
+              <div className="mt-4">
+                <p className="text-sm font-medium mb-2">Tipo de sono</p>
+                <div className="flex flex-wrap gap-4">
+                  <BrCheckbox label="Agitado" name="tipo-sono" checked={anamnesis?.development.sono.sono.agitado || false} disabled />
+                  <BrCheckbox label="Tranquilo" name="tipo-sono" checked={anamnesis?.development.sono.sono.tranquilo || false} disabled />
+                  <BrCheckbox label="Fala dormindo" name="tipo-sono" checked={anamnesis?.development.sono.sono.fala_dormindo || false} disabled />
+                  <BrCheckbox label="Sonâmbulo" name="tipo-sono" checked={anamnesis?.development.sono.sono.sonambulo || false} disabled />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Informações Escolares */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Informações Escolares</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <BrInput label="Histórico escolar comum - antecedentes relevantes" class="w-full" value={anamnesis?.school_information.historico_escolar_comum_antecedentes_relevantes || ''} disabled/>
+              <BrInput label="Histórico escolar especial - antecedentes relevantes" class="w-full" value={anamnesis?.school_information.historico_escolar_especial_antecedentes_relevantes || ''} disabled/>
+              <BrInput label="Deficiência apresentada pelo estudante" class="w-full" value={anamnesis?.school_information.deficiencia_apresentada_estudante || ''} disabled/>
+              <BrInput label="Foi retido alguma vez" class="w-full" value={anamnesis?.school_information.retido_alguma_vez || ''} disabled/>
+              <BrInput label="Gosta de ir à escola" class="w-full" value={anamnesis?.school_information.gosta_de_ir_escola || ''} disabled/>
+              <BrInput label="É bem aceito pelos amigos" class="w-full" value={anamnesis?.school_information.bem_aceito_pelos_amigous || ''} disabled/>
+            </div>
+          </section>
+
+          {/* Sexualidade */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Sexualidade</h2>
+            <div className="flex flex-wrap gap-4">
+              <BrCheckbox label="Explanação sexual" name="sexualidade" checked={anamnesis?.sexuality.explanacao_sexual || false} disabled />
+              <BrCheckbox label="Curiosidade sexual" name="sexualidade" checked={anamnesis?.sexuality.curiosidade_sexual || false} disabled />
+              <BrCheckbox label="Conversa com pais sobre sexualidade" name="sexualidade" checked={anamnesis?.sexuality.conversa_com_pais_sobre_sexualidade || false} disabled />
+            </div>
+          </section>
+
+          {/* Avaliação do Estudante */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Avaliação do Estudante</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <BrInput label="Estudante apresenta outro tipo de deficiência" class="w-full" value={anamnesis?.student_assessment.estudante_apresenta_outro_tipo_deficiencia || ''} disabled/>
+              <div className="space-y-2">
+                <BrCheckbox label="Apresenta DA/DF/DI/PC/TGD" name="deficiencia" checked={anamnesis?.student_assessment.apresenta_da_df_di_pc_tgd || false} disabled />
+              </div>
+              <BrInput label="Se sim, data e resultado do diagnóstico" class="w-full" value={anamnesis?.student_assessment.se_sim_data_e_resultado_diagnostico || ''} disabled/>
+              <BrInput label="Se não, situação quanto ao diagnóstico - tem outras dificuldades" class="w-full" value={anamnesis?.student_assessment.se_não_situacao_quanto_diagnostico_tem_outras_dificuldades || ''} disabled/>
+              <BrInput label="Se tem outras dificuldades" class="w-full" value={anamnesis?.student_assessment.se_tem_outras_dificuldades || ''} disabled/>
+              <div className="space-y-2">
+                <BrCheckbox label="Usa medicamentos controlados" name="medicamentos" checked={anamnesis?.student_assessment.usa_medicamentos_controlados || false} disabled />
+              </div>
+              <BrInput label="Usa quais medicamentos" class="w-full" value={anamnesis?.student_assessment.usa_quais_medicamentos || ''} disabled/>
+              <div className="space-y-2">
+                <BrCheckbox label="Medicamento interfere na aprendizagem" name="interferencia" checked={anamnesis?.student_assessment.medicamento_interfere_aprendizagem || false} disabled />
+              </div>
+              <BrInput label="Se interfere na aprendizagem" class="w-full" value={anamnesis?.student_assessment.se_intefere_aprendizagem || ''} disabled/>
+              <div className="space-y-2">
+                <BrCheckbox label="Existem recomendações da saúde" name="recomendacoes" checked={anamnesis?.student_assessment.existem_recomendacoes_da_saude || false} disabled />
+              </div>
+              <BrInput label="Se possui recomendações da saúde" class="w-full" value={anamnesis?.student_assessment.se_possui_recomendacoes_da_saude || ''} disabled/>
+            </div>
+          </section>
+
+          {/* Desenvolvimento do Estudante */}
+          <section className="border-t pt-6 mt-6">
+            <h2 className="text-xl font-semibold mb-4">Desenvolvimento do Estudante</h2>
+            
+            {/* Função Cognitiva */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Função Cognitiva</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <BrInput label="Percepção" class="w-full" value={anamnesis?.student_development.funcao_cognitiva.percepcao || ''} disabled/>
+                <BrInput label="Atenção" class="w-full" value={anamnesis?.student_development.funcao_cognitiva.atencao || ''} disabled/>
+                <BrInput label="Memória" class="w-full" value={anamnesis?.student_development.funcao_cognitiva.memoria || ''} disabled/>
+                <BrInput label="Linguagem" class="w-full" value={anamnesis?.student_development.funcao_cognitiva.linguagem || ''} disabled/>
+                <BrInput label="Raciocínio lógico" class="w-full" value={anamnesis?.student_development.funcao_cognitiva.raciocinio_logico || ''} disabled/>
+              </div>
+            </div>
+
+            {/* Função Motora */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Função Motora</h3>
+              <BrInput label="Desenvolvimento e capacidade motora" class="w-full" value={anamnesis?.student_development.funcao_motora.desenvolvimento_e_capacidade_motora || ''} disabled/>
+            </div>
+
+            {/* Função Pessoal Social */}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">Função Pessoal Social</h3>
+              <BrInput label="Área emocional, afetiva e social" class="w-full" value={anamnesis?.student_development.funcao_pressoal_social.area_emocional_afetiva_social || ''} disabled/>
+            </div>
+          </section>
+
+          {/* Botões */}
+          <div className="flex justify-center gap-4 mt-8">
+            <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+              Voltar
+            </button>
+            <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/editar-anamnese?email=${email}&nome=${nome}`)}>
+              Editar Anamnese
+            </button>
+            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={handleDelete}>
+              Deletar Anamnese
+            </button>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  } else if (anamnesis === null && userIsStudent) {
+    return (
+      <AppLayout
+          breadcrumbs={[
+            { href: '/home', label: 'Página Inicial' },
+            { href: '#', label: nome || 'Estudante' },
+            { href: '/anamnese', label: 'Criar Anamnese' },
+          ]}
+        >
+          <div className="p-6 text-center">
+                <h2 className="text-xl font-bold text-green-700">O estudante ainda não possui uma Anamnese cadastrada</h2>
+        </div>
+        </AppLayout>
+    )
   }
 
   return (

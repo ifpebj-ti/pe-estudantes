@@ -9,7 +9,7 @@ import { decodeToken } from "@/services/auth/decodeToken";
 import { useAuth } from "@/contexts/AuthContext";
 import { ESTUDANTE } from "@/consts";
 import { ScreeningData } from "@/interfaces/ScreeningData";
-import { getScreeningByEmail, postScreening } from "@/api/screenings"; // Importe o postScreening
+import { getScreeningByEmail, postScreening, deleteScreening } from "@/api/screenings"; // Importe o postScreening
 import { useRouter, useSearchParams } from "next/navigation";
 
 const BrInput = dynamic(() =>
@@ -76,7 +76,6 @@ function TriagemPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  const [targetEmail, setTargetEmail] = useState<string | null>(null);
   const [screening, setScreening] = useState<ScreeningData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [userIsStudent, setUserIsStudent] = useState(true);
@@ -96,15 +95,11 @@ function TriagemPage() {
 
         const isStudent = token.id_level === ESTUDANTE;
         setUserIsStudent(isStudent);
+
+        const target = isStudent ? token.email : email;
         
-        if (userIsStudent) {
-          setTargetEmail(token.email);
-        } else {
-          setTargetEmail(email);
-        }
-        
-        if (targetEmail) {
-          const data = await getScreeningByEmail(targetEmail);
+        if (target) {
+          const data = await getScreeningByEmail(target);
           setScreening(data);
         }
       } catch (error) {
@@ -116,7 +111,7 @@ function TriagemPage() {
     }
 
     fetchData();
-  }, [email, targetEmail, router, userIsStudent]);
+  }, [email, router]);
 
   // Manipulador para inputs de texto (BrInput)
   const handleInputChange = (name: string, value: string) => {
@@ -168,6 +163,28 @@ function TriagemPage() {
       alert("Falha ao criar a triagem. Verifique o console para mais detalhes.");
     }
   };
+
+  const handleDelete = async () => {
+    if (!email) {
+      alert("Email do estudante não encontrado para criar a triagem.");
+      return;
+    }
+
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar esta triagem?");
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+      await deleteScreening(email);
+      alert("Triagem deletada com sucesso!");
+      router.push("/home");
+    } catch (error) {
+      console.error("Erro ao deletar triagem: ", error);
+      alert("Falha ao deletar triagem. Verifique o console para mais detalhes.");
+    }
+  };
+
 
   if (loading || isLoading) {
     return <h1>Carregando...</h1>; // Adicionar componente de loading
@@ -260,6 +277,109 @@ function TriagemPage() {
         </div>
       </AppLayout>
     );
+  } else if (screening && !userIsStudent ) {
+    return (
+      <AppLayout
+        breadcrumbs={[
+          { href: "/home", label: "Página Inicial" },
+          { href: "#", label: user?.name || "Estudante" },
+          { href: "/triagem", label: "Triagem" },
+        ]}
+      >
+        <div className="p-6 space-y-8 w-full">
+          <h1 className="text-2xl font-bold text-green-800">Triagem</h1>
+
+          <div className="grid md:grid-cols-4 gap-4">
+            <BrInput label="Nome completo" class="w-full" value={screening?.full_name || ""} disabled />
+            <BrInput label="E-mail" class="w-full" value={screening?.email || ""} disabled />
+            <BrInput label="Relatório médico" class="w-full" value={screening?.report || ""} disabled />
+          </div>
+
+          <section className="border-t pt-4">
+            <h2>Necessidade Específica</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <BrCheckbox name="" label="Deficiência Física" checked={screening?.specific_need.deficiencia_fisica} disabled />
+              <BrCheckbox name="" label="Deficiência Auditiva/Surdez" checked={screening?.specific_need.deficiencia_auditiva} disabled />
+              <BrCheckbox name="" label="Baixa Visão" checked={screening?.specific_need.baixa_visao} disabled />
+              <BrCheckbox name="" label="Surdocegueira" checked={screening?.specific_need.surdocegueira} disabled />
+              <BrCheckbox name="" label="Cegueira" checked={screening?.specific_need.cegueira} disabled />
+              <BrCheckbox name="" label="Altas habilidades/superdotação" checked={screening?.specific_need.superdotacao} disabled />
+              <BrCheckbox name="" label="Transtornos globais do desenvolvimento" checked={screening?.specific_need.transtornos_globais_de_desenvolvimento} disabled />
+              <BrCheckbox name="" label="Distúrbios de aprendizagem" checked={screening?.specific_need.disturbio_de_aprendizagem} disabled />
+              <BrInput label="Outro" class="w-full" value={screening?.specific_need.outros || ""} disabled />
+            </div>
+          </section>
+
+          <section className="border-t pt-4">
+            <h2>Deficiência Física</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <BrCheckbox name="" label="Necessita de transcritor" checked={screening?.physical_disability.necessita_de_transcritor} disabled />
+              <BrCheckbox name="" label="Necessita de acesso para cadeirante" checked={screening?.physical_disability.acesso_para_cadeirante} disabled />
+              <BrInput label="Outro" class="w-full" value={screening?.physical_disability.outros || ""} disabled />
+            </div>
+          </section>
+
+          <section className="border-t pt-4">
+            <h2>Deficiência Visual</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <BrCheckbox name="" label="Necessita de material didático em Braille" checked={screening?.visual_impairment.necessita_de_braille} disabled />
+              <BrCheckbox name="" label="Material com fonte aumentada" checked={screening?.visual_impairment.material_com_fonte_aumentada} disabled />
+              <BrCheckbox name="" label="Necessita de transcritor" checked={screening?.visual_impairment.necessita_de_transcritor} disabled />
+              <BrInput label="Outro" class="w-full" value={screening?.visual_impairment.outros || ""} disabled />
+            </div>
+          </section>
+
+          <section className="border-t pt-4">
+            <h2>Deficiência Auditiva</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <BrCheckbox name="" label="Necessita de intérprete de língua de sinais" checked={screening?.hearing_impairment.necessita_de_interprete_de_lingua_de_sinais} disabled />
+              <BrCheckbox name="" label="Necessita de intérprete oralizador" checked={screening?.hearing_impairment.necessita_de_interprete_oralizador} disabled />
+              <BrInput label="Outro" class="w-full" value={screening?.hearing_impairment.outros || ""} disabled />
+            </div>
+          </section>
+
+          <section className="border-t pt-4">
+            <h2>Transtornos Globais / Altas Habilidades</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              <BrCheckbox name="" label="Necessita de ledor" checked={screening?.global_disorder.necessita_de_ledor} disabled />
+              <BrCheckbox name="" label="Necessita de transcritor" checked={screening?.global_disorder.necessita_de_transcritor} disabled />
+              <BrInput label="Outro" class="w-full" value={screening?.global_disorder.outros || ""} disabled />
+            </div>
+          </section>
+
+          <section className="border-t pt-4">
+            <h2>Outros casos de deficiência</h2>
+            <BrInput label="Descrição" class="w-full" value={screening?.other_disabilities || ""} disabled />
+          </section>
+
+          <div className="flex justify-center gap-4 mt-8">
+            <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+              Voltar
+            </button>
+            <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/editar-triagem?email=${email}&nome=${nome}`)}>
+              Editar Triagem
+            </button>
+            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={handleDelete}>
+              Deletar Triagem
+            </button>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  } else if (screening === null && userIsStudent) {
+    return (
+      <AppLayout
+        breadcrumbs={[
+          { href: "/home", label: "Página Inicial" },
+          { href: "#", label: user?.name || "Estudante" },
+          { href: "/triagem", label: "Triagem" },
+        ]}
+      >
+        <div className="p-6 text-center">
+                <h2 className="text-xl font-bold text-green-700">O estudante ainda não possui uma Triagem cadastrada</h2>
+        </div>
+      </AppLayout>
+    )
   }
 
   // Se a triagem EXISTE, renderiza o formulário de VISUALIZAÇÃO

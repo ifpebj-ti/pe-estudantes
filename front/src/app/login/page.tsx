@@ -135,6 +135,7 @@ function LoginPage() {
         <div>
           <p className="text-sm ">Versão {version}</p>
         </div>
+        
         {/* <div className="flex items-center justify-center w-full">
           <a className="text-sm" href="/forgot-password">
             Precisa de Ajuda?

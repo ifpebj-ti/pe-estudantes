@@ -1,4 +1,4 @@
-FROM node:alpine3.20
+FROM node:alpine3.22
 
 WORKDIR /usr/src/api
 

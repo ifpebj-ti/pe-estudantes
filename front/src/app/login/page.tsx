@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Image from "next/image";
 import "@govbr-ds/core/dist/core.min.css";
 import { login } from "@/services/auth/login";
@@ -32,6 +32,21 @@ function LoginPage() {
   const [mensagem, setMensagem] = useState("");
   const router = useRouter();
   const { setUser } = useAuth();
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    fetch("https://api.github.com/repos/ifpebj-ti/pe-estudantes/releases/latest")
+      .then((res) => res.json())
+      .then((data) => {
+        const tag = data.tag_name;
+        const date = new Date(data.published_at).toLocaleDateString("en-US", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        });
+        setVersion(`${tag} (${date})`);
+      });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -117,7 +132,9 @@ function LoginPage() {
             </a>
           </div>
         </form>
-        <div></div>
+        <div>
+          <p className="text-sm ">Versão {version}</p>
+        </div>
         {/* <div className="flex items-center justify-center w-full">
           <a className="text-sm" href="/forgot-password">
             Precisa de Ajuda?

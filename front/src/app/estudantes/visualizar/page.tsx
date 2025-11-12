@@ -33,7 +33,8 @@ function VisualizarEstudante() {
   const responsavel = searchParams.get("responsavel");
   const id = searchParams.get("id");
   const nivelAcesso = searchParams.get("nivelAcesso")
-
+  
+  const router = useRouter();
   const { user, loading } = useAuth();
   
   function getLevelName(id_level: string | null) {
@@ -67,6 +68,12 @@ function VisualizarEstudante() {
       ]}
     >
       <div className="p-6">
+        <button
+          onClick={() => router.push("/home")}
+          className="mb-6 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition-colors"
+        >
+          ← Voltar para Home
+        </button>
         <div className="overflow-auto rounded shadow">
           <table className="min-w-full table-auto text-sm">
             <thead className="bg-gray-100">

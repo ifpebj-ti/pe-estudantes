@@ -8,6 +8,7 @@ import { login } from "@/services/auth/login";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { decodeToken } from "@/services/auth/decodeToken";
+import Swal from "sweetalert2"; // 🟢 importação adicionada
 
 // Importação dinâmica para evitar erro de hydration
 const BrInput = dynamic(() =>
@@ -57,7 +58,13 @@ function LoginPage() {
       setUser(decodeToken());
       router.push("/home");
     } catch (error) {
-      setMensagem("Credenciais inválidas.");
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao entrar",
+        text: String(error),
+        confirmButtonColor: "#047857", // verde gov.br
+        confirmButtonText: "Entendi",
+      });
       console.error(error);
     }
   };

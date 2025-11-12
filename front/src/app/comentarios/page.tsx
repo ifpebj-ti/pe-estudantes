@@ -115,6 +115,12 @@ function ComentariosMultiprofissionais() {
       ]}
     >
       <div className="p-6 space-y-8 w-full">
+        <button
+          onClick={() => router.push('/home')}
+          className="mb-6 bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition-colors"
+        >
+          ← Voltar para Home
+        </button>
         <div className="flex justify-between items-center">
           <h1 className="text-4xl font-bold">Comentários Multiprofissionais</h1>
           {!isStudent && (

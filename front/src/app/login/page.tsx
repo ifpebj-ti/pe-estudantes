@@ -30,7 +30,6 @@ export default function LoginPageWrapper() {
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mensagem, setMensagem] = useState("");
   const router = useRouter();
   const { setUser } = useAuth();
   const [version, setVersion] = useState("");
@@ -127,12 +126,6 @@ function LoginPage() {
           >
             Entrar
           </BrButton>
-
-          {/* Exibição da resposta da API */}
-          {mensagem && (
-            <p className="text-center text-sm text-green-700">{mensagem}</p>
-          )}
-
           <div className="flex items-center justify-center w-full">
             <a className="text-lg" href="/register">
               Primeiro Acesso?

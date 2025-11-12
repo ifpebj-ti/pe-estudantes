@@ -14,7 +14,7 @@ export async function login(email: string, password: string) {
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.detail || 'Erro ao fazer login');
+    throw new Error(data.message || 'Erro ao fazer login');
   }
 
   localStorage.setItem('token', data.access_token);

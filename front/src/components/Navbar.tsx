@@ -6,8 +6,18 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
+  const levelNames: Record<number, string> = {
+    1: "Admin",
+    2: "Aluno/Estudante",
+    3: "Profissional Educação",
+    4: "Profissional Saúde",
+    5: "Professor",
+  };
+
   const router = useRouter();
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
+  const levelLabel = user?.id_level ? levelNames[user.id_level] : "Não informado";
+
   // Função para limpar todos os cookies acessíveis pelo cliente
   const clearAllCookies = () => {
     // 1. Pega todos os cookies como uma única string
@@ -54,16 +64,20 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div>
+        <div className="flex flex-col items-end text-right">
+          <span className="text-lg font-semibold text-white mt-1">
+            Perfil: {levelLabel}
+          </span>
+
           <button 
             onClick={handleLogout} 
-            className="flex items-center px-4 py-2 rounded-md text-white font-semibold hover:bg-emerald-600 transition-colors"
-            aria-label="Sair da conta"
+            className="flex items-center px-4 py-2 rounded-md text-white font-semibold hover:bg-emerald-600 transition-colors mt-2"
           >
             <LogOut className="mr-2 h-5 w-5" />
             Sair
           </button>
         </div>
+
 
       </div>  
     </div>

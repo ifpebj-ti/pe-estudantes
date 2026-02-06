@@ -32,7 +32,9 @@ function RegisterPage() {
     senha: "",
     confirmarSenha: ""
   });
-  const router = useRouter();
+  const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
 
   const handleChange = (e: React.FormEvent<HTMLBrInputElement>) => {
     const target = e.target as HTMLInputElement;
@@ -99,6 +101,7 @@ function RegisterPage() {
             name="nome"
             required
             class="w-full"
+            icon
             onInput={handleChange}
           >
             <Image width={15} height={10} slot="icon" src="/user.svg" alt="Ícone nome" />
@@ -114,7 +117,7 @@ function RegisterPage() {
             class="w-full"
             onInput={handleChange}
           >
-            <Image width={15} height={10} slot="icon" src="/user.svg" alt="Ícone email" />
+            <Image width={15} height={10} slot="icon" src="/email.svg" alt="Ícone email" />
           </BrInput>
 
           <BrInput
@@ -125,11 +128,15 @@ function RegisterPage() {
             icon
             class="w-full"
             onInput={handleChange}
-          />
+          >
+            <Image width={15} height={10} slot="icon" src="/cpf.svg" alt="Ícone CPF" />
+          </BrInput>
+          
 
+          <div className="relative w-full">
           <BrInput
             label="Senha"
-            type="password"
+            type={showPassword ? "text" : "password"}
             name="senha"
             required
             pattern=".{8,}"
@@ -139,10 +146,27 @@ function RegisterPage() {
           >
             <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone senha" />
           </BrInput>
+          <button
+              type="button"
+              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-2 top-1/2 -translate-y-1/5 h-8 w-8"
 
+            >
+              <Image
+                width={16}
+                height={16}
+                src={showPassword ? "/eye-off.svg" : "/eye.svg"}
+                alt=""
+              />
+            </button>
+          </div>
+
+
+          <div className="relative w-full">
           <BrInput
             label="Confirmar Senha"
-            type="password"
+            type={showPassword2 ? "text" : "password"}
             name="confirmarSenha"
             required
             pattern=".{8,}"
@@ -152,7 +176,22 @@ function RegisterPage() {
           >
             <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone confirmar senha" />
           </BrInput>
+          <button
+              type="button"
+              aria-label={showPassword2 ? "Ocultar senha" : "Mostrar senha"}
+              onClick={() => setShowPassword2((v) => !v)}
+              className="absolute right-2 top-1/2 -translate-y-1/5 h-8 w-8"
 
+            >
+              <Image
+                width={16}
+                height={16}
+                src={showPassword2 ? "/eye-off.svg" : "/eye.svg"}
+                alt=""
+              />
+            </button>
+          </div>
+          
           <BrButton
             type="submit"
             active

@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   nest-app:
-    image: ghcr.io/ifpebj-ti/back-pe-estudantes:latest
-    pull_policy: always 
+    build:
+      context: ./backend
     container_name: nest-backend
     ports:
       - "${PORT_MACHINE_BACKEND}:3000"
@@ -41,12 +41,14 @@ services:
       start_period: 10s
 
   next-app:
-    image: ghcr.io/ifpebj-ti/front-pe-estudantes:latest
-    pull_policy: always
-
+    build:
+      context: ./frontend
     container_name: next-frontend
     ports:
       - "${PORT_MACHINE_FRONTEND}:3000"
+    environment:
+      PORT: "${PORT_MACHINE_FRONTEND}"
+      NEXT_PUBLIC_API_EDU_TRACE: "${NEXT_PUBLIC_API_EDU_TRACE}"
     networks:
       - app-net
       - proxy-net
@@ -58,7 +60,7 @@ networks:
   app-net:
     driver: bridge
   proxy-net:
-    external: true 
+    external: true
 
 volumes:
   pgdata:

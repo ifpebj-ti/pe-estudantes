@@ -30,6 +30,7 @@ export default function LoginPageWrapper() {
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { setUser } = useAuth();
   const [version, setVersion] = useState("");
@@ -47,6 +48,7 @@ function LoginPage() {
         setVersion(`${tag} (${date})`);
       });
   }, []);
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -100,23 +102,45 @@ function LoginPage() {
               setEmail(target.value);
             }}
           >
-            <Image width={15} height={10} slot="icon" src="/user.svg" alt="Ícone usuário" />
+            <Image width={15} height={10} slot="icon" src="/email.svg" alt="Ícone usuário" />
           </BrInput>
 
-          <BrInput
-            label="Senha"
-            type="password"
-            required
-            pattern="[0-9]{8,11}"
-            icon
-            class="w-full"
-            onInput={(e: React.FormEvent<HTMLBrInputElement>) => {
-              const target = e.target as HTMLInputElement;
-              setPassword(target.value);
-            }}
-          >
-            <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone senha" />
-          </BrInput>
+          <div className="relative w-full">
+            <BrInput
+              label="Senha"
+              type={showPassword ? "text" : "password"}
+              required
+              pattern="[0-9]{8,11}"
+              icon
+              class="w-full"
+              onInput={(e: React.FormEvent<HTMLBrInputElement>) => {
+                const target = e.target as HTMLInputElement;
+                setPassword(target.value);
+              }}
+            >
+              <Image
+                width={15}
+                height={10}
+                slot="icon"
+                src="/locker.svg"
+                alt="Ícone senha"
+              />
+            </BrInput>
+            <button
+              type="button"
+              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-2 top-1/2 -translate-y-1/5 h-8 w-8"
+            >
+              <Image
+                width={16}
+                height={16}
+                src={showPassword ? "/eye-off.svg" : "/eye.svg"}
+                alt=""
+              />
+            </button>
+          </div>
+
 
           <BrButton
             type="submit"

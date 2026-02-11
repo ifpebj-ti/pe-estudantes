@@ -133,63 +133,67 @@ function RegisterPage() {
           </BrInput>
           
 
-          <div className="relative w-full">
-          <BrInput
-            label="Senha"
-            type={showPassword ? "text" : "password"}
-            name="senha"
-            required
-            pattern=".{8,}"
-            icon
-            class="w-full"
-            onInput={handleChange}
-          >
-            <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone senha" />
-          </BrInput>
-          <button
-              type="button"
-              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-              onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-2 top-1/2 -translate-y-1/5 h-8 w-8"
-
+          <div className="w-full">
+            <BrInput
+              label="Senha"
+              type={showPassword ? "text" : "password"}
+              name="senha"
+              required
+              pattern=".{8,}"
+              icon
+              button
+              class="w-full"
+              onInput={handleChange}
             >
-              <Image
-                width={16}
-                height={16}
-                src={showPassword ? "/eye-off.svg" : "/eye.svg"}
-                alt=""
-              />
-            </button>
+              <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone senha" />
+              <button
+                slot="action"
+                type="button"
+                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                aria-pressed={showPassword}
+                onClick={() => setShowPassword((v) => !v)}
+                className="br-button circle"
+              >
+                <Image
+                  width={16}
+                  height={16}
+                  src={showPassword ? "/eye-off.svg" : "/eye.svg"}
+                  alt=""
+                />
+              </button>
+            </BrInput>
           </div>
 
 
-          <div className="relative w-full">
-          <BrInput
-            label="Confirmar Senha"
-            type={showPassword2 ? "text" : "password"}
-            name="confirmarSenha"
-            required
-            pattern=".{8,}"
-            icon
-            class="w-full"
-            onInput={handleChange}
-          >
-            <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone confirmar senha" />
-          </BrInput>
-          <button
-              type="button"
-              aria-label={showPassword2 ? "Ocultar senha" : "Mostrar senha"}
-              onClick={() => setShowPassword2((v) => !v)}
-              className="absolute right-2 top-1/2 -translate-y-1/5 h-8 w-8"
-
+          <div className="w-full">
+            <BrInput
+              label="Confirmar Senha"
+              type={showPassword2 ? "text" : "password"}
+              name="confirmarSenha"
+              required
+              pattern=".{8,}"
+              icon
+              button
+              class="w-full"
+              onInput={handleChange}
             >
-              <Image
-                width={16}
-                height={16}
-                src={showPassword2 ? "/eye-off.svg" : "/eye.svg"}
-                alt=""
-              />
-            </button>
+              <Image width={15} height={10} slot="icon" src="/locker.svg" alt="Ícone confirmar senha" />
+              <button
+                slot="action"
+                type="button"
+                aria-label={showPassword2 ? "Ocultar senha" : "Mostrar senha"}
+                aria-pressed={showPassword2}
+                onClick={() => setShowPassword2((v) => !v)}
+                className="br-button circle"
+              >
+                <Image
+                  width={16}
+                  height={16}
+                  src={showPassword2 ? "/eye-off.svg" : "/eye.svg"}
+                  alt=""
+                />
+              </button>
+            </BrInput>
           </div>
           
           <BrButton

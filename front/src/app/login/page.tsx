@@ -105,13 +105,14 @@ function LoginPage() {
             <Image width={15} height={10} slot="icon" src="/email.svg" alt="Ícone usuário" />
           </BrInput>
 
-          <div className="relative w-full">
+          <div className="w-full">
             <BrInput
               label="Senha"
               type={showPassword ? "text" : "password"}
               required
               pattern="[0-9]{8,11}"
               icon
+              button
               class="w-full"
               onInput={(e: React.FormEvent<HTMLBrInputElement>) => {
                 const target = e.target as HTMLInputElement;
@@ -125,20 +126,22 @@ function LoginPage() {
                 src="/locker.svg"
                 alt="Ícone senha"
               />
+              <button
+                slot="action"
+                type="button"
+                aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                aria-pressed={showPassword}
+                onClick={() => setShowPassword((v) => !v)}
+                className="br-button circle"
+              >
+                <Image
+                  width={16}
+                  height={16}
+                  src={showPassword ? "/eye-off.svg" : "/eye.svg"}
+                  alt=""
+                />
+              </button>
             </BrInput>
-            <button
-              type="button"
-              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-              onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-2 top-1/2 -translate-y-1/5 h-8 w-8"
-            >
-              <Image
-                width={16}
-                height={16}
-                src={showPassword ? "/eye-off.svg" : "/eye.svg"}
-                alt=""
-              />
-            </button>
           </div>
 
 

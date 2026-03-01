@@ -1,7 +1,8 @@
 import { AnamnesisData } from "../interfaces/AnamnesisData";
+import { getApiUrl } from "@/utils/runtimeApiUrl";
 
 export async function getAnamneseByEmail(email: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/anamnesis/${email}`, {
     method: 'GET',
@@ -21,7 +22,7 @@ export async function getAnamneseByEmail(email: string) {
 }
 
 export async function getAllAnamneses() {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/anamnesis`, {
     method: 'GET',
@@ -41,7 +42,7 @@ export async function getAllAnamneses() {
 }
 
 export async function postAnamneses(anamneseData: AnamnesisData): Promise<AnamnesisData> {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/anamnesis`, {
     method: 'POST',
@@ -62,7 +63,7 @@ export async function postAnamneses(anamneseData: AnamnesisData): Promise<Anamne
 }
 
 export async function deleteAnamnesis(email: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/anamnesis/${email}`, {
     method: 'DELETE',
@@ -82,7 +83,7 @@ export async function deleteAnamnesis(email: string) {
 }
 
 export async function patchAnamnesis(anamneseData: AnamnesisData, email: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/anamnesis/${email}`, {
     method: 'PATCH',

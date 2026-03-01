@@ -1,7 +1,8 @@
 import { RegisterData } from "@/interfaces/RegisterData";
+import { getApiUrl } from "@/utils/runtimeApiUrl";
 
 export async function login(email: string, password: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
@@ -25,7 +26,7 @@ export async function login(email: string, password: string) {
 }
 
 export async function register(registerData: RegisterData) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/users`, {
     method: 'POST',

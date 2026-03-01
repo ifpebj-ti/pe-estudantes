@@ -1,5 +1,7 @@
+import { getApiUrl } from "@/utils/runtimeApiUrl";
+
 export async function getReportByEmail(email: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/reports/${email}`, {
     method: 'GET',

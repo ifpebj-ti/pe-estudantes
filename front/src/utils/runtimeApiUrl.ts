@@ -15,5 +15,5 @@ export function getApiUrl() {
     }
   }
 
-  return process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_EDU_TRACE || '';
+  return process.env.NEXT_PUBLIC_API_EDU_TRACE || '';
 }

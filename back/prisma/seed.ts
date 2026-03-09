@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { hash } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -30,6 +31,37 @@ async function main() {
       update: {},
       create: phase,
     });
+  }
+
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (adminPassword) {
+    const admin = await prisma.user.findUnique({
+      where: { email: 'admin@edutrace.com' },
+    });
+
+    if (!admin) {
+      const adminLevel = await prisma.level.findUnique({
+        where: { name: 'Administrador' },
+      });
+
+      const triagePhase = await prisma.currentPhases.findUnique({
+        where: { name: 'Triagem' },
+      });
+
+      if (adminLevel && triagePhase) {
+        const encryptedPassword = await hash(adminPassword, 10);
+        await prisma.user.create({
+          data: {
+            full_name: 'Administrador Padrão',
+            cpf: '00000000000',
+            email: 'admin@edutrace.com',
+            password: encryptedPassword,
+            id_level: adminLevel.id,
+            id_current_phase: triagePhase.id,
+          },
+        });
+      }
+    }
   }
 
   console.log('Seed concluída');

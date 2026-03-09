@@ -115,7 +115,8 @@ jobs:
           docker build ./front \
             -f front/Dockerfile \
             -t ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.TAG }} \
-            --build-arg REPO_URL="https://github.com/${{ github.repository }}"
+            --build-arg REPO_URL="https://github.com/${{ github.repository }}" \
+            --build-arg NEXT_PUBLIC_API_EDU_TRACE="${{ secrets.NEXT_PUBLIC_API_EDU_TRACE }}"
 
       # Scan Docker image
       - name: Trivy Scan

@@ -1,6 +1,8 @@
+import { getApiUrl } from "@/utils/runtimeApiUrl";
+
 // vai dar certo 2
 export async function updateUser(email: string, id_level: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/users/${email}`, {
     method: 'PATCH',

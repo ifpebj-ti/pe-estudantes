@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ClientProviders } from "./ClientProviders";
 
@@ -25,6 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Script src="/runtime-config.js" strategy="beforeInteractive" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

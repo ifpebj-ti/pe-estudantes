@@ -1,7 +1,8 @@
 import { CommentData } from "@/interfaces/CommentData";
+import { getApiUrl } from "@/utils/runtimeApiUrl";
 
 export async function getAllCommentsByIdUser(id_user: number) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/comments/${id_user}`, {
     method: 'GET',
@@ -21,7 +22,7 @@ export async function getAllCommentsByIdUser(id_user: number) {
 }
 
 export async function postComment(commentData: CommentData): Promise<CommentData> {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/comments`, {
     method: 'POST',

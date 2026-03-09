@@ -1,7 +1,8 @@
 import { ScreeningData } from "@/interfaces/ScreeningData";
+import { getApiUrl } from "@/utils/runtimeApiUrl";
 
 export async function getScreeningByEmail(email: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/screenings/${email}`, {
     method: 'GET',
@@ -21,7 +22,7 @@ export async function getScreeningByEmail(email: string) {
 }
 
 export async function getAllScreenings() {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/screenings`, {
     method: 'GET',
@@ -39,7 +40,7 @@ export async function getAllScreenings() {
 }
 
 export async function postScreening(screeningData: ScreeningData): Promise<ScreeningData> {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/screenings`, {
     method: 'POST',
@@ -60,7 +61,7 @@ export async function postScreening(screeningData: ScreeningData): Promise<Scree
 }
 
 export async function deleteScreening(email: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/screenings/${email}`, {
     method: 'DELETE',
@@ -80,7 +81,7 @@ export async function deleteScreening(email: string) {
 }
 
 export async function patchScreening(screeningData: ScreeningData, email: string): Promise<ScreeningData> {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/screenings/${email}`, {
     method: 'PATCH',

@@ -3,7 +3,7 @@ version: '3.8'
 services:
   nest-app:
     build:
-      context: ./backend
+      context: ./back
     container_name: nest-backend
     ports:
       - "${PORT_MACHINE_BACKEND}:3000"
@@ -42,12 +42,13 @@ services:
 
   next-app:
     build:
-      context: ./frontend
+      context: ./front
     container_name: next-frontend
     ports:
       - "${PORT_MACHINE_FRONTEND}:3000"
     environment:
       PORT: "${PORT_MACHINE_FRONTEND}"
+      API_URL: "${API_URL}"
       NEXT_PUBLIC_API_EDU_TRACE: "${NEXT_PUBLIC_API_EDU_TRACE}"
     networks:
       - app-net

@@ -1,7 +1,8 @@
 import { PlansEducationData } from "@/interfaces/PlansEducationData";
+import { getApiUrl } from "@/utils/runtimeApiUrl";
 
 export async function getPEIByEmail(email: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/plans-education/${email}`, {
     method: 'GET',
@@ -20,7 +21,7 @@ export async function getPEIByEmail(email: string) {
 }
 
 export async function getAllPEIs() {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/plans-education`, {
     method: 'GET',
@@ -38,7 +39,7 @@ export async function getAllPEIs() {
 }
 
 export async function postPEI(plansEducationData: PlansEducationData): Promise<PlansEducationData> {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/plans-education`, {
     method: 'POST',
@@ -59,7 +60,7 @@ export async function postPEI(plansEducationData: PlansEducationData): Promise<P
 }
 
 export async function deletePEI(email: string) {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/plans-education/${email}`, {
     method: 'DELETE',
@@ -79,7 +80,7 @@ export async function deletePEI(email: string) {
 }
 
 export async function patchPEI(plansEducationData: PlansEducationData, email: string): Promise<PlansEducationData> {
-  const API_URL = process.env.NEXT_PUBLIC_API_EDU_TRACE;
+  const API_URL = getApiUrl();
 
   const res = await fetch(`${API_URL}/plans-education/${email}`, {
     method: 'PATCH',

@@ -1,0 +1,58 @@
+services:
+  next-app:
+    image: ghcr.io/ifpebj-ti/front-pe-estudantes:latest
+    container_name: next-frontend
+    ports:
+      - "${PORT_MACHINE_FRONTEND}:3000"
+    environment:
+      NEXT_PUBLIC_API_EDU_TRACE: "${NEXT_PUBLIC_API_EDU_TRACE}"
+    networks:
+      - app-net
+    depends_on:
+      - nest-app
+    restart: unless-stopped
+
+  nest-app:
+    image: ghcr.io/ifpebj-ti/back-pe-estudantes:latest
+    container_name: nest-backend
+    ports:
+      - "${PORT_MACHINE_BACKEND}:3000"
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+      NODE_ENV: "${NODE_ENV}"
+      SECRET_KEY: "${SECRET_KEY}"
+      FRONTEND_URL: "${FRONTEND_URL}"
+    networks:
+      - app-net
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-db
+    ports:
+      - "${PORT_MACHINE_DB}:5432"
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  pgdata:

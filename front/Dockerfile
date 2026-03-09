@@ -21,7 +21,7 @@ COPY --from=builder /app/package*.json ./
 RUN npm ci --production
 
 COPY docker-entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 EXPOSE 3000
 ENTRYPOINT ["/app/entrypoint.sh"]

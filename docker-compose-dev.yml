@@ -1,22 +1,7 @@
 services:
-  next-app:
-    image: ghcr.io/ifpebj-ti/front-pe-estudantes:latest
-    container_name: next-frontend
-    ports:
-      - "${PORT_MACHINE_FRONTEND}:3000"
-    environment:
-      PORT: "${PORT_MACHINE_FRONTEND}"
-      API_URL: "${API_URL}"
-      NEXT_PUBLIC_API_EDU_TRACE: "${NEXT_PUBLIC_API_EDU_TRACE}"
-    networks:
-      - app-net
-      - proxy-net
-    depends_on:
-      - nest-app
-    restart: unless-stopped
-
   nest-app:
-    image: ghcr.io/ifpebj-ti/back-pe-estudantes:latest
+    build:
+      context: ./back
     container_name: nest-backend
     ports:
       - "${PORT_MACHINE_BACKEND}:3000"
@@ -54,6 +39,23 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  next-app:
+    build:
+      context: ./front
+    container_name: next-frontend
+    ports:
+      - "${PORT_MACHINE_FRONTEND}:3000"
+    environment:
+      PORT: "${PORT_MACHINE_FRONTEND}"
+      API_URL: "${API_URL}"
+      NEXT_PUBLIC_API_EDU_TRACE: "${NEXT_PUBLIC_API_EDU_TRACE}"
+    networks:
+      - app-net
+      - proxy-net
+    depends_on:
+      - nest-app
+    restart: unless-stopped
 
 networks:
   app-net:

@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const port = 3000;
 
   const isProduction = process.env.NODE_ENV === 'production';
   const origins = process.env.FRONTEND_URL
@@ -28,7 +29,7 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, documentFactory);
 
-  await app.listen(process.env.PORT ?? 3001);
+  await app.listen(port);
 }
 
 // Start application

@@ -14,15 +14,15 @@ RUN npm run build
 FROM node:24-alpine3.22 AS runner
 
 WORKDIR /app
+ENV NODE_ENV=production
 
-COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
-RUN npm ci --production
 
 COPY docker-entrypoint.sh /app/entrypoint.sh
 RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 EXPOSE 3000
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

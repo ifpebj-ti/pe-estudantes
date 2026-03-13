@@ -105,6 +105,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Validar standalone do Next
+        working-directory: front
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: |
+          npm ci
+          npm run build
+          test -f .next/standalone/server.js || (echo "standalone nao encontrado: .next/standalone/server.js" && exit 1)
+
       # Build Docker image
       - name: Injetar label de source no Dockerfile
         run: |

@@ -25,13 +25,23 @@ export async function login(email: string, password: string) {
   return data;
 }
 
-export async function register(registerData: RegisterData) {
+export async function createUserByAdmin(registerData: RegisterData) {
   const API_URL = getApiUrl();
+  const localToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  const cookieToken = typeof window !== 'undefined'
+    ? document.cookie
+        .split(';')
+        .map((item) => item.trim())
+        .find((item) => item.startsWith('token='))
+        ?.split('=')[1]
+    : null;
+  const token = localToken || cookieToken;
 
   const res = await fetch(`${API_URL}/users`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(registerData),
   });

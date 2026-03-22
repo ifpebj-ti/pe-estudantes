@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { TokenPayload } from './services/auth/decodeToken'
 import { jwtDecode } from 'jwt-decode'
-import { ESTUDANTE } from './consts'
+import { ADMIN, ESTUDANTE } from './consts'
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value
@@ -36,12 +36,22 @@ export function middleware(request: NextRequest) {
       }
 
       const isStudent = payload.id_level === ESTUDANTE;
+      const isAdmin = payload.id_level === ADMIN;
       const restrictedPathsStudent = ['/estudantes', '/relatorio', '/visualizar', '/configuracao', '/editar-anamnese', '/editar-pei', '/editar-triagem'];
       const tryingToAccessRestricted = restrictedPathsStudent.some(path =>
         pathname.startsWith(path)
       );
 
       if (isStudent && tryingToAccessRestricted) {
+        return NextResponse.redirect(new URL('/home', request.url));
+      }
+
+      const adminOnlyPaths = ['/admin'];
+      const tryingToAccessAdminOnly = adminOnlyPaths.some(path =>
+        pathname.startsWith(path)
+      );
+
+      if (tryingToAccessAdminOnly && !isAdmin) {
         return NextResponse.redirect(new URL('/home', request.url));
       }
 
@@ -60,5 +70,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|favicon.ico|assets|public|register|.*\\..*).*)'],
+  matcher: ['/((?!api|_next|favicon.ico|assets|public|.*\\..*).*)'],
 }

@@ -11,11 +11,13 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const encryptedPassword = await hash(createUserDto.password, 10);
+    const { id_level, ...userData } = createUserDto;
+
     const userCreated = this.prisma.user.create({
       data: {
-        ...createUserDto,
+        ...userData,
         password: encryptedPassword,
-        id_level: LEVELS.ALUNO_ESTUDANTE,
+        id_level: id_level ?? LEVELS.ALUNO_ESTUDANTE,
         id_current_phase: PHASES.TRIAGEM,
       },
     });

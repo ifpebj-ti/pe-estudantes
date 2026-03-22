@@ -28,9 +28,11 @@ export default function LoginPageWrapper() {
 }
 
 function LoginPage() {
+  const contactEmail = "admin@pe-estudantes.edu.br";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showFirstAccessInfo, setShowFirstAccessInfo] = useState(false);
   const router = useRouter();
   const { setUser } = useAuth();
   const [version, setVersion] = useState("");
@@ -153,10 +155,26 @@ function LoginPage() {
           >
             Entrar
           </BrButton>
-          <div className="flex items-center justify-center w-full">
-            <a className="text-lg" href="/register">
-              Primeiro Acesso?
-            </a>
+          <div className="flex items-center justify-center w-full text-center">
+            <div className="text-sm">
+              <button
+                type="button"
+                onClick={() => setShowFirstAccessInfo((current) => !current)}
+                className="font-semibold text-emerald-800 underline"
+              >
+                Primeiro acesso?
+              </button>
+
+              {showFirstAccessInfo && (
+                <p className="mt-2">
+                  Entre em contato com um administrador pelo e-mail {" "}
+                  <a className="text-emerald-800 underline" href={`mailto:${contactEmail}`}>
+                    {contactEmail}
+                  </a>
+                  .
+                </p>
+              )}
+            </div>
           </div>
         </form>
         <div>

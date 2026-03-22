@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Controller,
   Get,
   Post,
@@ -6,12 +7,13 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBody } from '@nestjs/swagger';
-import { Public } from 'src/auth/constants/constants';
 import { Levels } from 'src/auth/decorators/levels.decorator';
 import { LEVELS } from 'src/constants';
 
@@ -19,14 +21,19 @@ import { LEVELS } from 'src/constants';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Public()
   @ApiBody({
     type: CreateUserDto,
     description:
-      'Objeto para criação de um novo usuário, novos usuário são setados automaticamente com id_level 2 (Aluno/Família)',
+      'Objeto para criação de um novo usuário por um administrador.',
   })
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto, @Req() req: Request) {
+    const user = (req as Request & { user?: { id_level?: number } }).user;
+
+    if (user?.id_level !== LEVELS.ADMIN) {
+      throw new ForbiddenException('Apenas administradores podem cadastrar usuários');
+    }
+
     return this.usersService.create(createUserDto);
   }
 

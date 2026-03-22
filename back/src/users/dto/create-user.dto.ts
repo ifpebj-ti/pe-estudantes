@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   MaxLength,
@@ -66,12 +68,14 @@ export class CreateUserDto {
 
   @ApiProperty({
     description:
-      'O campo é setado automaticamente na criação do usuário como 2(Aluno/Família), não envie esse campo.',
+      'Nível de acesso do usuário criado pelo administrador.',
     default: 2,
-    readOnly: true,
     required: false,
   })
-  readonly id_level: number;
+  @IsOptional({ message: 'O campo id_level é opcional.' })
+  @IsNumber({}, { message: 'O campo id_level deve ser um número.' })
+  @IsInt({ message: 'O campo id_level deve ser um inteiro.' })
+  id_level?: number;
 
   @ApiProperty({
     description:

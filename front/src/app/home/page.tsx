@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import HomeCard from "@/components/HomeCard";
 import { useAuth } from "@/contexts/AuthContext";
-import { ESTUDANTE } from "@/consts";
+import { ADMIN, ESTUDANTE } from "@/consts";
 import { Suspense } from "react";
 
 export default function HomePageWrapper() {
@@ -30,6 +30,7 @@ function HomePage() {
   }
 
   const isStudent = user.id_level === ESTUDANTE;
+  const isAdmin = user.id_level === ADMIN;
 
   return (
     <AppLayout
@@ -46,6 +47,11 @@ function HomePage() {
               <HomeCard label="Anamnese" icon={Stethoscope} href="/anamnese" />
               <HomeCard label="Comentários Multiprofissionais" icon={MessagesSquare} href="/comentarios" />
               <HomeCard label="PEI" icon={BookOpenCheck} href="/pei" />
+            </>
+          ) : isAdmin ? (
+            <>
+              <HomeCard label="Pessoas" icon={Users} href="/estudantes" />
+              <HomeCard label="Cadastrar novas pessoas" icon={ClipboardPlus} href="/admin/usuarios/cadastro" />
             </>
           ) : (
             <HomeCard label="Pessoas" icon={Users} href="/estudantes" />

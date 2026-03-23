@@ -7,7 +7,7 @@ import AppLayout from "@/components/AppLayout";
 import { Suspense, useEffect, useState } from "react";
 import { decodeToken } from "@/services/auth/decodeToken";
 import { useAuth } from "@/contexts/AuthContext";
-import { ESTUDANTE } from "@/consts";
+import { ESTUDANTE, PROFISSIONAL_EDUCACAO } from "@/consts";
 import { ScreeningData } from "@/interfaces/ScreeningData";
 import { getScreeningByEmail, patchScreening } from "@/api/screenings"; // Importe o postScreening
 import { useRouter, useSearchParams } from "next/navigation";
@@ -94,6 +94,11 @@ function TriagemPage() {
 
         const isStudent = token.id_level === ESTUDANTE;
 
+        if (token.id_level === PROFISSIONAL_EDUCACAO || isStudent) {
+          router.push(`/triagem${email ? `?email=${email}&nome=${nome}` : ''}`);
+          return;
+        }
+
         const target = isStudent ? token.email : email;
         
         if (target) {
@@ -151,7 +156,7 @@ function TriagemPage() {
             const dadosAtualizados = { ...formData };
             await patchScreening(dadosAtualizados, email);
             alert("Triagem atualizada com sucesso!");
-            router.push("/home");
+            router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`);
         } catch (error) {
             console.error("Erro ao atualizar Triagem: ", error);
             alert("Falha ao atualizar Triagem. Verifique o console para mais detalhes.");
@@ -174,6 +179,9 @@ function TriagemPage() {
       >
         <div className="p-6 text-center">
                 <h2 className="text-xl font-bold text-green-700">O estudante ainda não possui uma Triagem cadastrada</h2>
+                <button className="mt-6 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
+                  Voltar
+                </button>
         </div>
       </AppLayout>
     )
@@ -255,7 +263,7 @@ function TriagemPage() {
           </section>
 
           <div className="flex justify-center gap-4 mt-8">
-            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/triagem?email=${email}&nome=${nome}`)}>
               Cancelar
             </button>
             <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={handleEdit}>

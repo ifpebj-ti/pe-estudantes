@@ -8,8 +8,7 @@ async function main() {
     { name: 'Administrador' },
     { name: 'Estudante/Família' },
     { name: 'Profissional da Educação' },
-    { name: 'Profissional da Saúde' },
-    { name: 'Professor' }
+    { name: 'Profissional da Saúde' }
   ];
 
   for (const level of levels) {

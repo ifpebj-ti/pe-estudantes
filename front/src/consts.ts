@@ -1,3 +1,4 @@
 export const ADMIN = 1
 export const ESTUDANTE = 2
-export const PROFESSOR = 5
+export const PROFISSIONAL_EDUCACAO = 3
+export const PROFISSIONAL_SAUDE = 4

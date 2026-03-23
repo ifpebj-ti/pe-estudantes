@@ -177,10 +177,9 @@ function AdminUserCreatePage() {
               className="br-select h-10 w-full rounded border border-gray-400 px-4 focus:border-yellow-600"
             >
               <option value="1">Administrador</option>
-              <option value="2">Aluno/Estudante</option>
+              <option value="2">Pais/Responsaveis e Estudante</option>
               <option value="3">Profissional de Educacao</option>
               <option value="4">Profissional de Saude</option>
-              <option value="5">Professor</option>
             </select>
           </div>
 

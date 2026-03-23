@@ -18,13 +18,12 @@ import { AuthenticatedRequest } from 'src/comments/types/express';
 export class PlansEducationController {
   constructor(private readonly plansEducationService: PlansEducationService) {}
 
-  @Levels(LEVELS.ALUNO_ESTUDANTE)
+  @Levels(LEVELS.ALUNO_ESTUDANTE, LEVELS.PROFISSIONAL_SAUDE)
   @Post()
   create(@Body() createPlansEducationDto: CreatePlansEducationDto) {
     return this.plansEducationService.create(createPlansEducationDto);
   }
 
-  @Levels(LEVELS.ALUNO_ESTUDANTE)
   @Get()
   findAll() {
     return this.plansEducationService.findAll();
@@ -38,6 +37,7 @@ export class PlansEducationController {
     return this.plansEducationService.findOne(email, request);
   }
 
+  @Levels(LEVELS.ALUNO_ESTUDANTE, LEVELS.PROFISSIONAL_SAUDE)
   @Patch(':email')
   update(
     @Param('email') email: string,
@@ -46,6 +46,10 @@ export class PlansEducationController {
     return this.plansEducationService.update(email, data);
   }
 
+  @Levels(
+    LEVELS.ALUNO_ESTUDANTE,
+    LEVELS.PROFISSIONAL_SAUDE,
+  )
   @Delete(':email')
   remove(@Param('email') email: string) {
     return this.plansEducationService.remove(email);

@@ -7,7 +7,7 @@ import AppLayout from "@/components/AppLayout";
 import { Suspense, useEffect, useState } from "react";
 import { decodeToken } from "@/services/auth/decodeToken";
 import { useAuth } from "@/contexts/AuthContext";
-import { ESTUDANTE } from "@/consts";
+import { ESTUDANTE, PROFISSIONAL_EDUCACAO } from "@/consts";
 import { ScreeningData } from "@/interfaces/ScreeningData";
 import { getScreeningByEmail, postScreening, deleteScreening } from "@/api/screenings"; // Importe o postScreening
 import { useRouter, useSearchParams } from "next/navigation";
@@ -78,7 +78,7 @@ function TriagemPage() {
 
   const [screening, setScreening] = useState<ScreeningData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [userIsStudent, setUserIsStudent] = useState(true);
+  const [userIsReadOnly, setUserIsReadOnly] = useState(true);
 
   // Estado para o formulário de criação
   const [formData, setFormData] = useState<ScreeningData>(initialScreeningState);
@@ -94,7 +94,8 @@ function TriagemPage() {
         }
 
         const isStudent = token.id_level === ESTUDANTE;
-        setUserIsStudent(isStudent);
+        const isReadOnly = isStudent || token.id_level === PROFISSIONAL_EDUCACAO;
+        setUserIsReadOnly(isReadOnly);
 
         const target = isStudent ? token.email : email;
         
@@ -157,7 +158,7 @@ function TriagemPage() {
       };
       await postScreening(screeningParaEnviar);
       alert("Triagem criada com sucesso!");
-      router.push(`/home`);
+      router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`);
     } catch (error) {
       console.error("Erro ao criar triagem:", error);
       alert("Falha ao criar a triagem. Verifique o console para mais detalhes.");
@@ -178,7 +179,7 @@ function TriagemPage() {
     try {
       await deleteScreening(email);
       alert("Triagem deletada com sucesso!");
-      router.push("/home");
+      router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`);
     } catch (error) {
       console.error("Erro ao deletar triagem: ", error);
       alert("Falha ao deletar triagem. Verifique o console para mais detalhes.");
@@ -191,7 +192,7 @@ function TriagemPage() {
   }
 
   // Se a triagem NÃO EXISTE, renderiza o formulário de CRIAÇÃO
-  if (screening === null && !userIsStudent) {
+  if (screening === null && !userIsReadOnly) {
     return (
       <AppLayout
         breadcrumbs={[
@@ -267,7 +268,7 @@ function TriagemPage() {
           </section>
 
           <div className="flex justify-center gap-4 mt-8">
-            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
               Cancelar
             </button>
             <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={handleSubmit}>
@@ -277,7 +278,7 @@ function TriagemPage() {
         </div>
       </AppLayout>
     );
-  } else if (screening && !userIsStudent ) {
+  } else if (screening && !userIsReadOnly ) {
     return (
       <AppLayout
         breadcrumbs={[
@@ -353,7 +354,7 @@ function TriagemPage() {
           </section>
 
           <div className="flex justify-center gap-4 mt-8">
-            <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+            <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
               Voltar
             </button>
             <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/editar-triagem?email=${email}&nome=${nome}`)}>
@@ -366,7 +367,7 @@ function TriagemPage() {
         </div>
       </AppLayout>
     );
-  } else if (screening === null && userIsStudent) {
+  } else if (screening === null && userIsReadOnly) {
     return (
       <AppLayout
         breadcrumbs={[
@@ -377,6 +378,9 @@ function TriagemPage() {
       >
         <div className="p-6 text-center">
                 <h2 className="text-xl font-bold text-green-700">O estudante ainda não possui uma Triagem cadastrada</h2>
+                <button className="mt-6 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
+                  Voltar
+                </button>
         </div>
       </AppLayout>
     )
@@ -458,7 +462,7 @@ function TriagemPage() {
         </section>
 
         <div className="flex justify-center gap-4 mt-8">
-          <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+          <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
             Voltar
           </button>
         </div>

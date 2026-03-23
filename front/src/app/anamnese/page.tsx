@@ -9,7 +9,7 @@ import { getAnamneseByEmail, postAnamneses, deleteAnamnesis } from "@/api/anamne
 import { AnamnesisData } from "@/interfaces/AnamnesisData";
 import { decodeToken } from "@/services/auth/decodeToken";
 import { useAuth } from "@/contexts/AuthContext";
-import { ESTUDANTE } from "@/consts";
+import { ESTUDANTE, PROFISSIONAL_EDUCACAO } from "@/consts";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const BrInput = dynamic(() =>
@@ -51,7 +51,7 @@ function AnamnesePage() {
 
   const [anamnesis, setAnamnesis] = useState<AnamnesisData | null>(null);
   const [isLoading, setIsLoading] = useState(true); 
-  const [userIsStudent, setUserIsStudent] = useState(true);
+  const [userIsReadOnly, setUserIsReadOnly] = useState(true);
 
   const [formData, setFormData] = useState<AnamnesisData>(initialAnamnesisState);
   
@@ -66,7 +66,8 @@ function AnamnesePage() {
         }
 
         const isStudent = token.id_level === ESTUDANTE;
-        setUserIsStudent(isStudent);
+        const isReadOnly = isStudent || token.id_level === PROFISSIONAL_EDUCACAO;
+        setUserIsReadOnly(isReadOnly);
 
         const target = isStudent ? token.email : email;
 
@@ -132,7 +133,7 @@ function AnamnesePage() {
       const anamneseParaEnviar = { ...formData, email };
       await postAnamneses(anamneseParaEnviar);
       alert("Anamnese criada com sucesso!");
-      router.push(`/home`); 
+      router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`);
     } catch (error) {
       console.error("Erro ao criar anamnese:", error);
       alert("Falha ao criar a anamnese. Verifique o console para mais detalhes.");
@@ -153,7 +154,7 @@ function AnamnesePage() {
     try {
       await deleteAnamnesis(email);
       alert("Anamnese deletada com sucesso!");
-      router.push("/home");
+      router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`);
     } catch (error) {
       console.error("Erro ao deletar Anamnese: ", error);
       alert("Falha ao deletar Anamnese. Verifique o console para mais detalhes.");
@@ -164,7 +165,7 @@ function AnamnesePage() {
       return <h1>Carregando...</h1>; //ADICIONAR COMPONENTE DE LOADING
   }
 
-  if (anamnesis === null  && !userIsStudent) {
+  if (anamnesis === null  && !userIsReadOnly) {
     return (
         <AppLayout
           breadcrumbs={[
@@ -464,7 +465,7 @@ function AnamnesePage() {
 
             {/* Botões */}
             <div className="flex justify-center gap-4 mt-8">
-              <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/home')}>
+              <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
                 Cancelar
               </button>
               <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={handleSubmit}>
@@ -474,7 +475,7 @@ function AnamnesePage() {
           </div>
         </AppLayout>
       );
-  } else if ( anamnesis && !userIsStudent ) {
+  } else if ( anamnesis && !userIsReadOnly ) {
     return (
       <AppLayout
         breadcrumbs={[
@@ -786,7 +787,7 @@ function AnamnesePage() {
 
           {/* Botões */}
           <div className="flex justify-center gap-4 mt-8">
-            <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+            <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
               Voltar
             </button>
             <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/editar-anamnese?email=${email}&nome=${nome}`)}>
@@ -799,7 +800,7 @@ function AnamnesePage() {
         </div>
       </AppLayout>
     );
-  } else if (anamnesis === null && userIsStudent) {
+  } else if (anamnesis === null && userIsReadOnly) {
     return (
       <AppLayout
           breadcrumbs={[
@@ -810,6 +811,9 @@ function AnamnesePage() {
         >
           <div className="p-6 text-center">
                 <h2 className="text-xl font-bold text-green-700">O estudante ainda não possui uma Anamnese cadastrada</h2>
+                <button className="mt-6 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
+                  Voltar
+                </button>
         </div>
         </AppLayout>
     )
@@ -1126,7 +1130,7 @@ function AnamnesePage() {
 
         {/* Botões */}
         <div className="flex justify-center gap-4 mt-8">
-          <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+          <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
             Voltar
           </button>
         </div>

@@ -21,6 +21,11 @@ import { LEVELS } from 'src/constants';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Levels(
+    LEVELS.ALUNO_ESTUDANTE,
+    LEVELS.PROFISSIONAL_EDUCACAO,
+    LEVELS.PROFISSIONAL_SAUDE,
+  )
   @ApiBody({
     type: CreateUserDto,
     description:
@@ -51,7 +56,6 @@ export class UsersController {
 
   @Levels(
     LEVELS.ALUNO_ESTUDANTE,
-    LEVELS.PROFESSOR,
     LEVELS.PROFISSIONAL_EDUCACAO,
     LEVELS.PROFISSIONAL_SAUDE,
   )
@@ -66,7 +70,6 @@ export class UsersController {
 
   @Levels(
     LEVELS.ALUNO_ESTUDANTE,
-    LEVELS.PROFESSOR,
     LEVELS.PROFISSIONAL_EDUCACAO,
     LEVELS.PROFISSIONAL_SAUDE,
   ) 

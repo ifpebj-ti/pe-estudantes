@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 import { decodeToken } from "@/services/auth/decodeToken";
 import { getPEIByEmail, postPEI, deletePEI } from "@/api/plans-education";
-import { ESTUDANTE } from "@/consts";
+import { ESTUDANTE, PROFISSIONAL_SAUDE } from "@/consts";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const BrInput = dynamic(() =>
@@ -60,7 +60,7 @@ function PEIPage() {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [userIsStudent, setUserIsStudent] = useState(true);
+  const [userIsReadOnly, setUserIsReadOnly] = useState(true);
 
   const [formData, setFormData] = useState<PlansEducationData>(initialPEIState);
 
@@ -75,7 +75,8 @@ function PEIPage() {
         }
 
         const isStudent = token.id_level === ESTUDANTE;
-        setUserIsStudent(isStudent);
+        const isReadOnly = isStudent || token.id_level === PROFISSIONAL_SAUDE;
+        setUserIsReadOnly(isReadOnly);
 
         const target = isStudent ? token.email : email;
         if (target) {
@@ -135,10 +136,10 @@ function PEIPage() {
       };
       await postPEI(peiParaEnviar);
       alert("PEI criado com sucesso!");
-      router.push(`/home`);
+      router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`);
     } catch (error) {
       console.error("Erro ao criar PEI:", error);
-      alert(`Falha ao criar o PEI. ${error}, você deve ser professor para fazer isso.`);
+      alert(`Falha ao criar o PEI. ${error}. Verifique suas permissões de acesso.`);
     }
   };
 
@@ -156,7 +157,7 @@ function PEIPage() {
     try {
       await deletePEI(email);
       alert("PEI deletado com sucesso!");
-      router.push("/home");
+      router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`);
     } catch (error) {
       console.error("Erro ao deletar PEI: ", error);
       alert("Falha ao deletar PEI. Verifique o console para mais detalhes.");
@@ -167,7 +168,7 @@ function PEIPage() {
     return <h1>Carregando...</h1>;
   }
 
-  if (pei === null && !userIsStudent) {
+  if (pei === null && !userIsReadOnly) {
     return (
       <AppLayout
         breadcrumbs={[
@@ -378,7 +379,7 @@ function PEIPage() {
           </section>
 
           <div className="flex justify-center gap-4 mt-8">
-            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
               Cancelar
             </button>
             <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={handleSubmit}>
@@ -388,7 +389,7 @@ function PEIPage() {
         </div>
       </AppLayout>
     );
-    } else if ( pei && !userIsStudent ) {
+    } else if ( pei && !userIsReadOnly ) {
       return (
         <AppLayout
           breadcrumbs={[
@@ -561,7 +562,7 @@ function PEIPage() {
             </section>
 
             <div className="flex justify-center gap-4 mt-8">
-              <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+              <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
                 Voltar
               </button>
               <button className="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/editar-pei?email=${email}&nome=${nome}`)}>
@@ -574,7 +575,7 @@ function PEIPage() {
           </div>
         </AppLayout>
       );
-    } else if (pei === null && userIsStudent) {
+    } else if (pei === null && userIsReadOnly) {
       return (
         <AppLayout
           breadcrumbs={[
@@ -585,6 +586,9 @@ function PEIPage() {
         >
           <div className="p-6 text-center">
                 <h2 className="text-xl font-bold text-green-700">O estudante ainda não possui um PEI cadastrado</h2>
+                <button className="mt-6 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
+                  Voltar
+                </button>
         </div>
         </AppLayout>
       )
@@ -763,7 +767,7 @@ function PEIPage() {
         </section>
 
         <div className="flex justify-center gap-4 mt-8">
-          <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+          <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
             Voltar
           </button>
         </div>

@@ -52,8 +52,6 @@ export default function TabelaEstudantes() {
         return "Profissional da Educação";
       case 4:
         return "Profissional da Saúde";
-      case 5:
-        return "Professor";
       default:
         return "Nível desconhecido";
     }

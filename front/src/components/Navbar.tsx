@@ -11,7 +11,6 @@ export default function Navbar() {
     2: "Aluno/Estudante",
     3: "Profissional Educação",
     4: "Profissional Saúde",
-    5: "Professor",
   };
 
   const router = useRouter();

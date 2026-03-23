@@ -10,7 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 import { decodeToken } from "@/services/auth/decodeToken";
 import { getPEIByEmail, patchPEI } from "@/api/plans-education";
-import { ESTUDANTE } from "@/consts";
+import { ESTUDANTE, PROFISSIONAL_SAUDE } from "@/consts";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const BrInput = dynamic(() =>
@@ -75,6 +75,11 @@ function PEIPage() {
 
         const isStudent = token.id_level === ESTUDANTE;
 
+        if (token.id_level === PROFISSIONAL_SAUDE || isStudent) {
+          router.push(`/pei${email ? `?email=${email}&nome=${nome}` : ''}`);
+          return;
+        }
+
         const target = isStudent ? token.email : email;
         if (target) {
           const data = await getPEIByEmail(target);
@@ -129,7 +134,7 @@ function PEIPage() {
           const dadosAtualizados = { ...formData };
           await patchPEI(dadosAtualizados, email);
           alert("PEI atualizado com sucesso!");
-          router.push("/home");
+          router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`);
       } catch (error) {
           console.error("Erro ao atualizar PEI: ", error);
           alert("Falha ao atualizar PEI. Verifique o console para mais detalhes.");
@@ -151,6 +156,9 @@ function PEIPage() {
         >
           <div className="p-6 text-center">
                 <h2 className="text-xl font-bold text-green-700">O estudante ainda não possui um PEI cadastrado</h2>
+                <button className="mt-6 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/estudantes/visualizar?email=${email}&nome=${nome}`)}>
+                  Voltar
+                </button>
         </div>
         </AppLayout>
       )
@@ -366,7 +374,7 @@ function PEIPage() {
           </section>
 
           <div className="flex justify-center gap-4 mt-8">
-            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push('/')}>
+            <button className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-full" onClick={() => router.push(`/pei?email=${email}&nome=${nome}`)}>
               Cancelar
             </button>
             <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-full" onClick={handleEdit}>
